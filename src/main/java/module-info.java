@@ -8,8 +8,10 @@ module grupo.proyecto_aula_carpethome {
     requires net.synedra.validatorfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-    requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
+    requires static lombok;
+    requires ojdbc8;
 
     opens grupo.proyecto_aula_carpethome to javafx.fxml;
     exports grupo.proyecto_aula_carpethome;
