@@ -1,5 +1,9 @@
 package grupo.proyecto_aula_carpethome.config;
 
+
+import lombok.Builder;
+
+@Builder
 public record DatabaseConfig(
         String host,
         String port,
@@ -7,6 +11,7 @@ public record DatabaseConfig(
         String user,
         String password
 ) {
+
     // Constructor compacto con validación
     public DatabaseConfig {
         if (host == null || host.isBlank())

@@ -21,7 +21,7 @@ public class Main {
 
         try {
             dbConnection.connect();
-            System.out.println("🎉 Conexión exitosa!\n");
+            System.out.println("Conexión exitosa!\n");
 
             // Aquí usamos AdministradorRepositoryImpl
             var adminRepo = new AdministradorRepositoryImpl(dbConnection);
@@ -42,7 +42,7 @@ public class Main {
             adminRepo.findAll().forEach(System.out::println);
 
         } catch (SQLException e) {
-            System.err.println("❌ Error: " + e.getMessage());
+            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
