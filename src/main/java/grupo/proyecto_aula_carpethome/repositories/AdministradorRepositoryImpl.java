@@ -1,14 +1,14 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.entities.Administrador;
+import grupo.proyecto_aula_carpethome.entities.Administradores;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AdministradorRepositoryImpl implements Repository<Administrador, String> {
+public class AdministradorRepositoryImpl implements Repository<Administradores, String> {
     private final OracleDatabaseConnection dbConnection;
 
     public AdministradorRepositoryImpl(OracleDatabaseConnection connection) {
@@ -16,13 +16,13 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
     }
 
     @Override
-    public Administrador save(Administrador entity) throws SQLException {
+    public Administradores save(Administradores entity) throws SQLException {
         Connection conn = null;
         try {
             conn = dbConnection.getConnection();
             conn.setAutoCommit(false);
 
-            // 1. Insertar en USUARIOS - NOTA: Nombres de columnas con guiones bajos
+            // 1. Insertar en USUARIOS
             var sqlUsuario = """
                     INSERT INTO USUARIOS 
                     (id_usuario, p_nombre, s_nombre, p_apellido, s_apellido, 
@@ -51,7 +51,7 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
             }
 
             conn.commit();
-            System.out.println("Administrador guardado: " + entity.getNombreCompleto());
+            System.out.println("Administradores guardado: " + entity.getNombreCompleto());
             return entity;
 
         } catch (SQLException e) {
@@ -67,13 +67,12 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
     }
 
     @Override
-    public Optional<Administrador> findById(String id) throws SQLException {
-        // Nombres de columnas con guiones bajos en SQL
+    public Optional<Administradores> findById(String id) throws SQLException {
         var sql = """
                 SELECT u.id_usuario, u.p_nombre, u.s_nombre, u.p_apellido, 
                        u.s_apellido, u.correo, u.contrasena, u.telefono
                 FROM USUARIOS u 
-                INNER JOIN ADMINISTRADOR a ON u.id_usuario = a.id_usuario 
+                INNER JOIN ADMINISTRADORES a ON u.id_usuario = a.id_usuario 
                 WHERE u.id_usuario = ?
                 """;
 
@@ -92,13 +91,13 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
     }
 
     @Override
-    public List<Administrador> findAll() throws SQLException {
-        var administradores = new ArrayList<Administrador>();
+    public List<Administradores> findAll() throws SQLException {
+        var administradores = new ArrayList<Administradores>();
         var sql = """
                 SELECT u.id_usuario, u.p_nombre, u.s_nombre, u.p_apellido, 
                        u.s_apellido, u.correo, u.contrasena, u.telefono
                 FROM USUARIOS u 
-                INNER JOIN ADMINISTRADOR a ON u.id_usuario = a.id_usuario 
+                INNER JOIN ADMINISTRADORES a ON u.id_usuario = a.id_usuario 
                 ORDER BY u.id_usuario
                 """;
 
@@ -115,7 +114,7 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
     }
 
     @Override
-    public void update(Administrador entity) throws SQLException {
+    public void update(Administradores entity) throws SQLException {
         var sql = """
                 UPDATE USUARIOS 
                 SET p_nombre=?, s_nombre=?, p_apellido=?, s_apellido=?, 
@@ -141,7 +140,7 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
                 throw new SQLException("No se encontró el administrador con ID: " + entity.getIdUsuario());
             }
 
-            System.out.println("✅ Administrador actualizado: " + entity.getNombreCompleto());
+            System.out.println("Administradores actualizado: " + entity.getNombreCompleto());
         }
     }
 
@@ -153,7 +152,7 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
             conn.setAutoCommit(false);
 
             // 1. Eliminar de ADMINISTRADOR
-            var sqlAdmin = "DELETE FROM ADMINISTRADOR WHERE id_usuario = ?";
+            var sqlAdmin = "DELETE FROM ADMINISTRADORES WHERE id_usuario = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlAdmin)) {
                 stmt.setString(1, id);
                 stmt.executeUpdate();
@@ -171,7 +170,7 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
             }
 
             conn.commit();
-            System.out.println("✅ Administrador eliminado con ID: " + id);
+            System.out.println("✅ Administradores eliminado con ID: " + id);
 
         } catch (SQLException e) {
             if (conn != null) {
@@ -186,11 +185,11 @@ public class AdministradorRepositoryImpl implements Repository<Administrador, St
     }
 
     /**
-     * Mapea un ResultSet a un objeto Administrador
+     * Mapea un ResultSet a un objeto Administradores
      * IMPORTANTE: Los nombres de las columnas deben coincidir con la BD (snake_case)
      */
-    private Administrador mapResultSetToAdministrador(ResultSet rs) throws SQLException {
-        return Administrador.builder()
+    private Administradores mapResultSetToAdministrador(ResultSet rs) throws SQLException {
+        return Administradores.builder()
                 .idUsuario(rs.getString("id_usuario"))      // BD: id_usuario
                 .pNombre(rs.getString("p_nombre"))          // BD: p_nombre
                 .sNombre(rs.getString("s_nombre"))          // BD: s_nombre

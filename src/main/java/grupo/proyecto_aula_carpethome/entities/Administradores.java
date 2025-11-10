@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 
 
-public class Administrador extends Usuarios {
+public class Administradores extends Usuarios {
 
     @Override
     public String toString() {
