@@ -3,80 +3,110 @@ package grupo.proyecto_aula_carpethome.repositories;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Administradores;
 
+import lombok.*;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AdministradorRepositoryImpl implements Repository<Administradores, String> {
+
+
+@RequiredArgsConstructor
+public class AdministradorRepositoryImpl implements AdministradorRepository{
     private final OracleDatabaseConnection dbConnection;
 
-    public AdministradorRepositoryImpl(OracleDatabaseConnection connection) {
-        this.dbConnection = connection;
+
+    private Administradores mapResultSetToAdministrador(ResultSet rs) throws SQLException {
+        return Administradores.builder()
+                .cedula(rs.getString("cedula"))
+                .pNombre(rs.getString("p_nombre"))
+                .sNombre(rs.getString("s_nombre"))
+                .pApellido(rs.getString("p_apellido"))
+                .sApellido(rs.getString("s_apellido"))
+                .pCorreo(rs.getString("p_correo"))
+                .sCorreo(rs.getString("s_correo"))
+                .pTelefono(rs.getLong("p_telefono"))
+                .sTelefono(rs.getObject("s_telefono") != null ? rs.getLong("s_telefono") : null)
+                .idAdmin(rs.getString("id_admin"))
+                .contrasena(rs.getString("contrasena"))
+                .build();
     }
+
 
     @Override
     public Administradores save(Administradores entity) throws SQLException {
-        Connection conn = null;
-        try {
-            conn = dbConnection.getConnection();
-            conn.setAutoCommit(false);
+        String sql = "{CALL PKG_GESTION_PERSONAS.sp_registrar_administrador(?,?,?,?,?,?,?,?,?,?,?)}";
 
-            // 1. Insertar en USUARIOS
-            var sqlUsuario = """
-                    INSERT INTO USUARIOS 
-                    (id_usuario, p_nombre, s_nombre, p_apellido, s_apellido, 
-                     correo, contrasena, telefono) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    """;
+        try (Connection conn = dbConnection.connect();
+             CallableStatement stmt = conn.prepareCall(sql)) {
 
-            try (PreparedStatement stmt = conn.prepareStatement(sqlUsuario)) {
-                // Usamos los getters en camelCase que genera Lombok
-                stmt.setString(1, entity.getIdUsuario());
-                stmt.setString(2, entity.getPNombre());
+            stmt.setString(1, entity.getCedula());
+            stmt.setString(2, entity.getPNombre());
+
+            if (entity.getSNombre() != null && !entity.getSNombre().isEmpty()) {
                 stmt.setString(3, entity.getSNombre());
-                stmt.setString(4, entity.getPApellido());
+            } else {
+                stmt.setNull(3, Types.VARCHAR);
+            }
+
+            stmt.setString(4, entity.getPApellido());
+
+            if (entity.getSApellido() != null && !entity.getSApellido().isEmpty()) {
                 stmt.setString(5, entity.getSApellido());
-                stmt.setString(6, entity.getCorreo());
-                stmt.setString(7, entity.getContrasena());
-                stmt.setLong(8, entity.getTelefono());
-                stmt.executeUpdate();
+            } else {
+                stmt.setNull(5, Types.VARCHAR);
             }
 
-            // 2. Insertar en ADMINISTRADOR
-            var sqlAdmin = "INSERT INTO ADMINISTRADOR (id_usuario) VALUES (?)";
-            try (PreparedStatement stmt = conn.prepareStatement(sqlAdmin)) {
-                stmt.setString(1, entity.getIdUsuario());
-                stmt.executeUpdate();
+            stmt.setString(6, entity.getPCorreo());
+
+            if (entity.getSCorreo() != null && !entity.getSCorreo().isEmpty()) {
+                stmt.setString(7, entity.getSCorreo());
+            } else {
+                stmt.setNull(7, Types.VARCHAR);
             }
 
-            conn.commit();
-            System.out.println("Administradores guardado: " + entity.getNombreCompleto());
+            stmt.setLong(8, entity.getPTelefono());
+
+            if (entity.getSTelefono() != null) {
+                stmt.setLong(9, entity.getSTelefono());
+            } else {
+                stmt.setNull(9, Types.NUMERIC);
+            }
+
+            stmt.setString(10, entity.getContrasena());
+
+            // Parámetro OUT
+            stmt.registerOutParameter(11, Types.VARCHAR);
+
+            stmt.execute();
+
+            String idGenerado = stmt.getString(11);
+            entity.setIdAdmin(idGenerado);
+
+            System.out.println("Administrador guardado con ID: " + idGenerado);
             return entity;
 
         } catch (SQLException e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw new SQLException("Error al guardar administrador: " + e.getMessage(), e);
-        } finally {
-            if (conn != null) {
-                conn.setAutoCommit(true);
-            }
+            System.err.println("Error al guardar Administrador: " + e.getMessage());
+            System.err.println("  Código de error: " + e.getErrorCode());
+            System.err.println("  Estado SQL: " + e.getSQLState());
+            throw e;
         }
     }
 
+
+
     @Override
     public Optional<Administradores> findById(String id) throws SQLException {
-        var sql = """
-                SELECT u.id_usuario, u.p_nombre, u.s_nombre, u.p_apellido, 
-                       u.s_apellido, u.correo, u.contrasena, u.telefono
-                FROM USUARIOS u 
-                INNER JOIN ADMINISTRADORES a ON u.id_usuario = a.id_usuario 
-                WHERE u.id_usuario = ?
+        String sql = """
+                SELECT p.*, e.id_admin
+                FROM PERSONAS p
+                INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
+                WHERE e.id_admin = ?
                 """;
 
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, id);
@@ -92,55 +122,88 @@ public class AdministradorRepositoryImpl implements Repository<Administradores, 
 
     @Override
     public List<Administradores> findAll() throws SQLException {
-        var administradores = new ArrayList<Administradores>();
-        var sql = """
-                SELECT u.id_usuario, u.p_nombre, u.s_nombre, u.p_apellido, 
-                       u.s_apellido, u.correo, u.contrasena, u.telefono
-                FROM USUARIOS u 
-                INNER JOIN ADMINISTRADORES a ON u.id_usuario = a.id_usuario 
-                ORDER BY u.id_usuario
+        List<Administradores> admins = new ArrayList<>();
+        String sql = """
+                SELECT p.*, e.id_admin
+                FROM PERSONAS p
+                INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
+                ORDER BY e.id_empleado
                 """;
 
-        try (Connection conn = dbConnection.getConnection();
+        try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                administradores.add(mapResultSetToAdministrador(rs));
+                admins.add(mapResultSetToAdministrador(rs));
             }
         }
 
-        return administradores;
+        return admins;
     }
 
     @Override
     public void update(Administradores entity) throws SQLException {
-        var sql = """
-                UPDATE USUARIOS 
-                SET p_nombre=?, s_nombre=?, p_apellido=?, s_apellido=?, 
-                    correo=?, contrasena=?, telefono=? 
-                WHERE id_usuario=?
-                """;
+        Connection conn = null;
+        try {
+            conn = dbConnection.connect();
+            conn.setAutoCommit(false);
 
-        try (Connection conn = dbConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            String sqlPersona = """
+                    UPDATE PERSONAS 
+                    SET p_nombre=?, s_nombre=?, p_apellido=?, s_apellido=?, 
+                        p_correo=?, s_correo=?, p_telefono=?, s_telefono=?
+                    WHERE cedula=?
+                    """;
 
-            stmt.setString(1, entity.getPNombre());
-            stmt.setString(2, entity.getSNombre());
-            stmt.setString(3, entity.getPApellido());
-            stmt.setString(4, entity.getSApellido());
-            stmt.setString(5, entity.getCorreo());
-            stmt.setString(6, entity.getContrasena());
-            stmt.setLong(7, entity.getTelefono());
-            stmt.setString(8, entity.getIdUsuario());
+            try (PreparedStatement stmt = conn.prepareStatement(sqlPersona)) {
+                stmt.setString(1, entity.getPNombre());
+                stmt.setString(2, entity.getSNombre());
+                stmt.setString(3, entity.getPApellido());
+                stmt.setString(4, entity.getSApellido());
+                stmt.setString(5, entity.getPCorreo());
+                stmt.setString(6, entity.getSCorreo());
+                stmt.setLong(7, entity.getPTelefono());
 
-            int rowsAffected = stmt.executeUpdate();
+                if (entity.getSTelefono() != null) {
+                    stmt.setLong(8, entity.getSTelefono());
+                } else {
+                    stmt.setNull(8, Types.NUMERIC);
+                }
 
-            if (rowsAffected == 0) {
-                throw new SQLException("No se encontró el administrador con ID: " + entity.getIdUsuario());
+                stmt.setString(9, entity.getCedula());
+
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("No se encontró la persona con cédula: " + entity.getCedula());
+                }
             }
 
-            System.out.println("Administradores actualizado: " + entity.getNombreCompleto());
+            // 2. Actualizar ADMINISTRADORES
+            String sqlEmpleado = """
+                    UPDATE ADMINISTRADORES 
+                    SET contrasena=? 
+                    WHERE id_admin=?
+                    """;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
+                stmt.setString(2, entity.getContrasena());
+                stmt.setString(3, entity.getIdAdmin());
+
+                int rowsAffected = stmt.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("No se encontró el administrador con ID: " + entity.getIdAdmin());
+                }
+            }
+
+            conn.commit();
+            System.out.println("Administrador actualizado: " + entity.getNombreCompleto());
+
+        } catch (SQLException e) {
+            if (conn != null) conn.rollback();
+            throw new SQLException("Error al actualizar administrador: " + e.getMessage(), e);
+        } finally {
+            if (conn != null) conn.setAutoCommit(true);
         }
     }
 
@@ -148,56 +211,74 @@ public class AdministradorRepositoryImpl implements Repository<Administradores, 
     public void delete(String id) throws SQLException {
         Connection conn = null;
         try {
-            conn = dbConnection.getConnection();
+            conn = dbConnection.connect();
             conn.setAutoCommit(false);
 
-            // 1. Eliminar de ADMINISTRADOR
-            var sqlAdmin = "DELETE FROM ADMINISTRADORES WHERE id_usuario = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sqlAdmin)) {
+            String cedula = null;
+            String sqlGetCedula = "SELECT cedula FROM ADMINISTRADORES WHERE id_admin = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlGetCedula)) {
+                stmt.setString(1, id);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        cedula = rs.getString("cedula");
+                    }
+                }
+            }
+
+            if (cedula == null) {
+                throw new SQLException("No se encontró el administrador con ID: " + id);
+            }
+
+            // Eliminar de EMPLEADOS
+            String sqlEmpleado = "DELETE FROM ADMINISTRADOR WHERE id_admin = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
                 stmt.setString(1, id);
                 stmt.executeUpdate();
             }
 
-            // 2. Eliminar de USUARIOS
-            var sqlUsuario = "DELETE FROM USUARIOS WHERE id_usuario = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(sqlUsuario)) {
-                stmt.setString(1, id);
-                int rowsAffected = stmt.executeUpdate();
-
-                if (rowsAffected == 0) {
-                    throw new SQLException("No se encontró el usuario con ID: " + id);
-                }
+            // Eliminar de PERSONAS
+            String sqlPersona = "DELETE FROM PERSONAS WHERE cedula = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sqlPersona)) {
+                stmt.setString(1, cedula);
+                stmt.executeUpdate();
             }
 
             conn.commit();
-            System.out.println("✅ Administradores eliminado con ID: " + id);
+            System.out.println("Administrador eliminado con ID: " + id);
 
         } catch (SQLException e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw new SQLException("Error al eliminar administrador: " + e.getMessage(), e);
+            if (conn != null) conn.rollback();
+            throw new SQLException("Error al eliminar empleado: " + e.getMessage(), e);
         } finally {
-            if (conn != null) {
-                conn.setAutoCommit(true);
-            }
+            if (conn != null) conn.setAutoCommit(true);
         }
     }
 
-    /**
-     * Mapea un ResultSet a un objeto Administradores
-     * IMPORTANTE: Los nombres de las columnas deben coincidir con la BD (snake_case)
-     */
-    private Administradores mapResultSetToAdministrador(ResultSet rs) throws SQLException {
-        return Administradores.builder()
-                .idUsuario(rs.getString("id_usuario"))      // BD: id_usuario
-                .pNombre(rs.getString("p_nombre"))          // BD: p_nombre
-                .sNombre(rs.getString("s_nombre"))          // BD: s_nombre
-                .pApellido(rs.getString("p_apellido"))      // BD: p_apellido
-                .sApellido(rs.getString("s_apellido"))      // BD: s_apellido
-                .correo(rs.getString("correo"))             // BD: correo
-                .contrasena(rs.getString("contrasena"))     // BD: contrasena
-                .telefono(rs.getLong("telefono"))           // BD: telefono
-                .build();
+
+
+    @Override
+    public Optional<Administradores> findByCedula(String cedula) throws SQLException {
+        String sql = """
+                SELECT p.*, e.id_admin
+                FROM PERSONAS p
+                INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
+                WHERE p.cedula = ?
+                """;
+
+        try (Connection conn = dbConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cedula);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToAdministrador(rs));
+                }
+            }
+        }
+        return Optional.empty();
     }
+
+
+
 }

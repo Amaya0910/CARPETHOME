@@ -14,53 +14,26 @@ public class OracleDatabaseConnection implements IDatabaseConnection {
 
     @Override
     public Connection connect() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            return connection;
-        }
-
         try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection(
-                    config.getJdbcUrl(),  // Este método sí existe en tu Record
-                    config.user(),         // Acceso directo
-                    config.password()      // Acceso directo
+                    config.getJdbcUrl(),
+                    config.getUser(),
+                    config.getPassword()
             );
-
-            System.out.println("""
-                ✅ Conexión establecida exitosamente
-                   Host: %s:%s
-                   Service: %s
-                   Usuario: %s
-                """.formatted(config.host(), config.port(), config.service(), config.user()));
-
-            return connection;
-
-        } catch (SQLException e) {
-            System.err.println("Error al conectar con Oracle: " + e.getMessage());
-            throw new SQLException("No se pudo establecer conexión con la base de datos", e);
+            System.out.println("Conexión establecida con Oracle");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("No se encontró el driver JDBC de Oracle", e);
         }
+        return connection;
     }
 
     @Override
     public void disconnect() throws SQLException {
         if (connection != null && !connection.isClosed()) {
             connection.close();
-            connection = null;
             System.out.println("Conexión cerrada correctamente");
         }
     }
-
-    public boolean isConnected() {
-        try {
-            return connection != null && !connection.isClosed() && connection.isValid(2);
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-
-    public Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
-            return connect();
-        }
-        return connection;
-    }
 }
+

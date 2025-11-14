@@ -7,3 +7,5 @@ public interface IDatabaseConnection {
     Connection connect() throws SQLException;
     void disconnect() throws SQLException;
 }
+
+

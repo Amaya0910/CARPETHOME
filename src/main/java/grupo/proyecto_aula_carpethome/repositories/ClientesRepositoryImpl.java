@@ -1,8 +1,9 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.entities.Empleados;
-import lombok.RequiredArgsConstructor;
+import grupo.proyecto_aula_carpethome.entities.Administradores;
+import grupo.proyecto_aula_carpethome.entities.Clientes;
+import lombok.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,12 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class EmpleadoRepositoryImpl implements EmpleadoRepository {
+public class ClientesRepositoryImpl implements ClientesRepository {
     private final OracleDatabaseConnection dbConnection;
 
-
-    private Empleados mapResultSetToEmpleado(ResultSet rs) throws SQLException {
-        return Empleados.builder()
+    private Clientes mapResultSetToCliente(ResultSet rs) throws SQLException {
+        return Clientes.builder()
                 .cedula(rs.getString("cedula"))
                 .pNombre(rs.getString("p_nombre"))
                 .sNombre(rs.getString("s_nombre"))
@@ -25,15 +25,36 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
                 .sCorreo(rs.getString("s_correo"))
                 .pTelefono(rs.getLong("p_telefono"))
                 .sTelefono(rs.getObject("s_telefono") != null ? rs.getLong("s_telefono") : null)
-                .idEmpleado(rs.getString("id_empleado"))
-                .cargo(rs.getString("cargo"))
-                .contrasena(rs.getString("contrasena"))
+                .idCliente(rs.getString("id_cliente"))
                 .build();
     }
 
     @Override
-    public Empleados save(Empleados entity) throws SQLException {
-        String sql = "{CALL PKG_GESTION_PERSONAS.sp_registrar_empleado(?,?,?,?,?,?,?,?,?,?,?,?)}";
+    public Optional<Clientes> findByCedula(String cedula) throws SQLException {
+        String sql = """
+                SELECT p.*, e.id_cliente
+                FROM PERSONAS p
+                INNER JOIN CLIENTES e ON p.cedula = e.cedula
+                WHERE p.cedula = ?
+                """;
+
+        try (Connection conn = dbConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cedula);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(mapResultSetToCliente(rs));
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Clientes save(Clientes entity) throws SQLException {
+        String sql = "{CALL PKG_GESTION_PERSONAS.sp_registrar_cliente(?,?,?,?,?,?,?,?,?,?)}";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
@@ -71,33 +92,31 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
                 stmt.setNull(9, Types.NUMERIC);
             }
 
-            stmt.setString(10, entity.getCargo());
-            stmt.setString(11, entity.getContrasena());
-
-            // Parámetro OUT
-            stmt.registerOutParameter(12, Types.VARCHAR);
+            stmt.registerOutParameter(10, Types.VARCHAR);
 
             stmt.execute();
 
-            String idGenerado = stmt.getString(12);
-            entity.setIdEmpleado(idGenerado);
+            String idGenerado = stmt.getString(10);
+            entity.setIdCliente(idGenerado);
 
-            System.out.println("Empleado guardado con ID: " + idGenerado + " - Cargo: " + entity.getCargo());
+            System.out.println("Cliente guardado exitosamente con ID: " + idGenerado);
             return entity;
 
         } catch (SQLException e) {
-            System.err.println("Error al guardar empleado: " + e.getMessage());
+            System.err.println("Error al guardar Cliente: " + e.getMessage());
+            System.err.println("  Código de error: " + e.getErrorCode());
+            System.err.println("  Estado SQL: " + e.getSQLState());
             throw e;
         }
     }
 
     @Override
-    public Optional<Empleados> findById(String id) throws SQLException {
+    public Optional<Clientes> findById(String id) throws SQLException {
         String sql = """
-                SELECT p.*, e.id_empleado, e.cargo, e.contrasena
+                SELECT p.*, e.id_cliente
                 FROM PERSONAS p
-                INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
-                WHERE e.id_empleado = ?
+                INNER JOIN CLIENTES e ON p.cedula = e.cedula
+                WHERE e.id_cliente = ?
                 """;
 
         try (Connection conn = dbConnection.connect();
@@ -107,7 +126,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(mapResultSetToEmpleado(rs));
+                    return Optional.of(mapResultSetToCliente(rs));
                 }
             }
         }
@@ -115,13 +134,13 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     }
 
     @Override
-    public List<Empleados> findAll() throws SQLException {
-        List<Empleados> empleados = new ArrayList<>();
+    public List<Clientes> findAll() throws SQLException {
+        List<Clientes> clientes = new ArrayList<>();
         String sql = """
-                SELECT p.*, e.id_empleado
+                SELECT p.*, e.id_cliente
                 FROM PERSONAS p
-                INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
-                ORDER BY e.id_empleado
+                INNER JOIN CLIENTES e ON p.cedula = e.cedula
+                ORDER BY e.id_cliente
                 """;
 
         try (Connection conn = dbConnection.connect();
@@ -129,15 +148,15 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                empleados.add(mapResultSetToEmpleado(rs));
+                clientes.add(mapResultSetToCliente(rs));
             }
         }
 
-        return empleados;
+        return clientes;
     }
 
     @Override
-    public void update(Empleados entity) throws SQLException {
+    public void update(Clientes entity) throws SQLException {
         Connection conn = null;
         try {
             conn = dbConnection.connect();
@@ -174,30 +193,13 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
                 }
             }
 
-            // 2. Actualizar EMPLEADOS (cargo y contraseña)
-            String sqlEmpleado = """
-                    UPDATE EMPLEADOS 
-                    SET cargo=?, contrasena=? 
-                    WHERE id_empleado=?
-                    """;
-
-            try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
-                stmt.setString(1, entity.getCargo());
-                stmt.setString(2, entity.getContrasena());
-                stmt.setString(3, entity.getIdEmpleado());
-
-                int rowsAffected = stmt.executeUpdate();
-                if (rowsAffected == 0) {
-                    throw new SQLException("No se encontró el empleado con ID: " + entity.getIdEmpleado());
-                }
-            }
 
             conn.commit();
-            System.out.println("Empleado actualizado: " + entity.getNombreCompleto() + " - Cargo: " + entity.getCargo());
+            System.out.println("Cliente actualizado: " + entity.getNombreCompleto());
 
         } catch (SQLException e) {
             if (conn != null) conn.rollback();
-            throw new SQLException("Error al actualizar empleado: " + e.getMessage(), e);
+            throw new SQLException("Error al actualizar cliente: " + e.getMessage(), e);
         } finally {
             if (conn != null) conn.setAutoCommit(true);
         }
@@ -211,7 +213,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
             conn.setAutoCommit(false);
 
             String cedula = null;
-            String sqlGetCedula = "SELECT cedula FROM EMPLEADOS WHERE id_empleado = ?";
+            String sqlGetCedula = "SELECT cedula FROM CLIENTES WHERE id_cliente = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlGetCedula)) {
                 stmt.setString(1, id);
                 try (ResultSet rs = stmt.executeQuery()) {
@@ -222,11 +224,11 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
             }
 
             if (cedula == null) {
-                throw new SQLException("No se encontró el empleado con ID: " + id);
+                throw new SQLException("No se encontró el cliente con ID: " + id);
             }
 
             // Eliminar de EMPLEADOS
-            String sqlEmpleado = "DELETE FROM EMPLEADOS WHERE id_empleado = ?";
+            String sqlEmpleado = "DELETE FROM CLIENTES WHERE id_cliente = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
                 stmt.setString(1, id);
                 stmt.executeUpdate();
@@ -240,103 +242,13 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
             }
 
             conn.commit();
-            System.out.println("Empleado eliminado con ID: " + id);
+            System.out.println("Cliente eliminado con ID: " + id);
 
         } catch (SQLException e) {
             if (conn != null) conn.rollback();
-            throw new SQLException("Error al eliminar empleado: " + e.getMessage(), e);
+            throw new SQLException("Error al eliminar cliente: " + e.getMessage(), e);
         } finally {
             if (conn != null) conn.setAutoCommit(true);
         }
     }
-
-
-    @Override
-    public List<Empleados> findByCargo(String cargo) throws SQLException {
-        List<Empleados> empleados = new ArrayList<>();
-        String sql = """
-                SELECT p.*, e.id_empleado, e.cargo, e.contrasena
-                FROM PERSONAS p
-                INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
-                WHERE UPPER(e.cargo) = UPPER(?)
-                ORDER BY p.p_nombre
-                """;
-
-        try (Connection conn = dbConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cargo);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    empleados.add(mapResultSetToEmpleado(rs));
-                }
-            }
-        }
-
-        return empleados;
-    }
-
-
-    @Override
-    public Optional<Empleados> findByCedula(String cedula) throws SQLException {
-        String sql = """
-                SELECT p.*, e.id_empleado, e.cargo
-                FROM PERSONAS p
-                INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
-                WHERE p.cedula = ?
-                """;
-
-        try (Connection conn = dbConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cedula);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(mapResultSetToEmpleado(rs));
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-
-    @Override
-    public int countByCargo(String cargo) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM EMPLEADOS WHERE UPPER(cargo) = UPPER(?)";
-
-        try (Connection conn = dbConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, cargo);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        }
-        return 0;
-    }
-
-    @Override
-    public List<String> getAllCargos() throws SQLException {
-        List<String> cargos = new ArrayList<>();
-        String sql = "SELECT DISTINCT cargo FROM EMPLEADOS ORDER BY cargo";
-
-        try (Connection conn = dbConnection.connect();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                cargos.add(rs.getString("cargo"));
-            }
-        }
-
-        return cargos;
-    }
-
-
-
 }
