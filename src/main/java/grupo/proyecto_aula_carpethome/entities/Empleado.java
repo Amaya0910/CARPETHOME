@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 
-public class Empleados extends Personas {
+public class Empleado extends Persona {
     private String idEmpleado;   // El id lo genera el trigger de la bd
     private String cargo;
     private String contrasena;

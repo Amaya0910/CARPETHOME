@@ -1,7 +1,7 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.entities.Etapas;
+import grupo.proyecto_aula_carpethome.entities.Etapa;
 import lombok.*;
 
 import java.sql.*;
@@ -14,8 +14,8 @@ public class EtapasRepositoryImpl implements EtapasRepository {
     private final OracleDatabaseConnection dbConnection;
 
 
-    private Etapas mapResultSetToEtapas(ResultSet rs) throws SQLException {
-        return Etapas.builder()
+    private Etapa mapResultSetToEtapas(ResultSet rs) throws SQLException {
+        return Etapa.builder()
                 .idEtapa(rs.getString("id_etapa"))
                 .nombreEtapa(rs.getString("nombre_etapa"))
                 .descripcionEtapa(rs.getString("descripcion_etapa"))
@@ -25,9 +25,9 @@ public class EtapasRepositoryImpl implements EtapasRepository {
 
 
     @Override
-    public Etapas save(Etapas entity) throws SQLException {
+    public Etapa save(Etapa entity) throws SQLException {
 
-        String sql = "{CALL PKG_GESTION_OPERACIONES.sp_crear_etapa(?,?,?)}";
+        String sql = "{CALL PKG_ETAPAS.sp_crear_etapa(?,?,?)}";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
@@ -52,7 +52,7 @@ public class EtapasRepositoryImpl implements EtapasRepository {
     }
 
     @Override
-    public Optional<Etapas> findById(String id) throws SQLException {
+    public Optional<Etapa> findById(String id) throws SQLException {
         String sql = """
                 SELECT * FROM etapas WHERE id_etapa = ?;
                 """;
@@ -71,8 +71,8 @@ public class EtapasRepositoryImpl implements EtapasRepository {
     }
 
     @Override
-    public List<Etapas> findAll() throws SQLException {
-        List<Etapas> etapas = new ArrayList<>();
+    public List<Etapa> findAll() throws SQLException {
+        List<Etapa> etapas = new ArrayList<>();
         String sql = """
                 SELECT  * FROM etapas;
                 """;
@@ -87,8 +87,8 @@ public class EtapasRepositoryImpl implements EtapasRepository {
     }
 
     @Override
-    public void update(Etapas entity) throws SQLException {
-        String sql = "{CALL pkg_gestion_operaciones.sp_actualizar_etapa(?,?,?)} ";
+    public void update(Etapa entity) throws SQLException {
+        String sql = "{CALL PKG_ETAPAS.sp_actualizar_etapa(?,?,?)} ";
 
         try(Connection conn = dbConnection.connect();
         CallableStatement stmt = conn.prepareCall(sql)) {
@@ -105,7 +105,7 @@ public class EtapasRepositoryImpl implements EtapasRepository {
 
     @Override
     public void delete(String id) throws SQLException {
-        String sql = "{ CALL pkg_gestion_operaciones.sp_eliminar_etapa(?) }";
+        String sql = "{ CALL PKG_ETAPAS.sp_eliminar_etapa(?) }";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {

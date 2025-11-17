@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Prendas {
+public class Prenda {
     private String idPrenda;
     private String nombrePrenda;
     private String descripcionPrenda;

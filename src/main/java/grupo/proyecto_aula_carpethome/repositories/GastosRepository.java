@@ -1,10 +1,9 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
-import grupo.proyecto_aula_carpethome.entities.Etapas;
-import grupo.proyecto_aula_carpethome.entities.Gastos;
+import grupo.proyecto_aula_carpethome.entities.Gasto;
 
 import java.sql.SQLException;
 
-public interface GastosRepository extends Repository<Gastos, String>{
+public interface GastosRepository extends Repository<Gasto, String>{
     public double TotalGastos(String id) throws SQLException;
 }

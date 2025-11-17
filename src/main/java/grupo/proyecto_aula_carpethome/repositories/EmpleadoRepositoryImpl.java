@@ -1,7 +1,7 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.entities.Empleados;
+import grupo.proyecto_aula_carpethome.entities.Empleado;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.*;
@@ -14,8 +14,8 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     private final OracleDatabaseConnection dbConnection;
 
 
-    private Empleados mapResultSetToEmpleado(ResultSet rs) throws SQLException {
-        return Empleados.builder()
+    private Empleado mapResultSetToEmpleado(ResultSet rs) throws SQLException {
+        return Empleado.builder()
                 .cedula(rs.getString("cedula"))
                 .pNombre(rs.getString("p_nombre"))
                 .sNombre(rs.getString("s_nombre"))
@@ -32,7 +32,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     }
 
     @Override
-    public Empleados save(Empleados entity) throws SQLException {
+    public Empleado save(Empleado entity) throws SQLException {
         String sql = "{CALL PKG_GESTION_PERSONAS.sp_registrar_empleado(?,?,?,?,?,?,?,?,?,?,?,?)}";
 
         try (Connection conn = dbConnection.connect();
@@ -92,7 +92,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     }
 
     @Override
-    public Optional<Empleados> findById(String id) throws SQLException {
+    public Optional<Empleado> findById(String id) throws SQLException {
         String sql = """
                 SELECT p.*, e.id_empleado, e.cargo, e.contrasena
                 FROM PERSONAS p
@@ -115,8 +115,8 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     }
 
     @Override
-    public List<Empleados> findAll() throws SQLException {
-        List<Empleados> empleados = new ArrayList<>();
+    public List<Empleado> findAll() throws SQLException {
+        List<Empleado> empleados = new ArrayList<>();
         String sql = """
                 SELECT p.*, e.id_empleado
                 FROM PERSONAS p
@@ -137,7 +137,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     }
 
     @Override
-    public void update(Empleados entity) throws SQLException {
+    public void update(Empleado entity) throws SQLException {
         Connection conn = null;
         try {
             conn = dbConnection.connect();
@@ -252,8 +252,8 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
 
 
     @Override
-    public List<Empleados> findByCargo(String cargo) throws SQLException {
-        List<Empleados> empleados = new ArrayList<>();
+    public List<Empleado> findByCargo(String cargo) throws SQLException {
+        List<Empleado> empleados = new ArrayList<>();
         String sql = """
                 SELECT p.*, e.id_empleado, e.cargo, e.contrasena
                 FROM PERSONAS p
@@ -279,7 +279,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
 
 
     @Override
-    public Optional<Empleados> findByCedula(String cedula) throws SQLException {
+    public Optional<Empleado> findByCedula(String cedula) throws SQLException {
         String sql = """
                 SELECT p.*, e.id_empleado, e.cargo
                 FROM PERSONAS p

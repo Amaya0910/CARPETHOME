@@ -1,7 +1,7 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.entities.Administradores;
+import grupo.proyecto_aula_carpethome.entities.Administrador;
 
 import lombok.*;
 
@@ -17,8 +17,8 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
     private final OracleDatabaseConnection dbConnection;
 
 
-    private Administradores mapResultSetToAdministrador(ResultSet rs) throws SQLException {
-        return Administradores.builder()
+    private Administrador mapResultSetToAdministrador(ResultSet rs) throws SQLException {
+        return Administrador.builder()
                 .cedula(rs.getString("cedula"))
                 .pNombre(rs.getString("p_nombre"))
                 .sNombre(rs.getString("s_nombre"))
@@ -35,7 +35,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
 
 
     @Override
-    public Administradores save(Administradores entity) throws SQLException {
+    public Administrador save(Administrador entity) throws SQLException {
         String sql = "{CALL PKG_GESTION_PERSONAS.sp_registrar_administrador(?,?,?,?,?,?,?,?,?,?,?)}";
 
         try (Connection conn = dbConnection.connect();
@@ -98,13 +98,13 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
 
 
     @Override
-    public Optional<Administradores> findById(String id) throws SQLException {
+    public Optional<Administrador> findById(String id) throws SQLException {
         String sql = """
-                SELECT p.*, e.id_admin
-                FROM PERSONAS p
-                INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
-                WHERE e.id_admin = ?
-                """;
+            SELECT p.*, e.id_admin, e.contrasena
+            FROM PERSONAS p
+            INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
+            WHERE e.id_admin = ?
+            """;
 
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -121,14 +121,14 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
     }
 
     @Override
-    public List<Administradores> findAll() throws SQLException {
-        List<Administradores> admins = new ArrayList<>();
+    public List<Administrador> findAll() throws SQLException {
+        List<Administrador> admins = new ArrayList<>();
         String sql = """
-                SELECT p.*, e.id_admin
-                FROM PERSONAS p
-                INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
-                ORDER BY e.id_empleado
-                """;
+            SELECT p.*, e.id_admin, e.contrasena
+            FROM PERSONAS p
+            INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
+            ORDER BY e.id_admin
+            """;  // ← También corregí "id_empleado" por "id_admin"
 
         try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();
@@ -143,7 +143,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
     }
 
     @Override
-    public void update(Administradores entity) throws SQLException {
+    public void update(Administrador entity) throws SQLException {
         Connection conn = null;
         try {
             conn = dbConnection.connect();
@@ -257,13 +257,13 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
 
 
     @Override
-    public Optional<Administradores> findByCedula(String cedula) throws SQLException {
+    public Optional<Administrador> findByCedula(String cedula) throws SQLException {
         String sql = """
-                SELECT p.*, e.id_admin
-                FROM PERSONAS p
-                INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
-                WHERE p.cedula = ?
-                """;
+            SELECT p.*, e.id_admin, e.contrasena
+            FROM PERSONAS p
+            INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
+            WHERE p.cedula = ?
+            """;
 
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

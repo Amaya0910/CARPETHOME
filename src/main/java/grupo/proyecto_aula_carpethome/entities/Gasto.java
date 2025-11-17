@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Gastos {
+public class Gasto {
     private String idGasto;
     private String nombreGasto;
     private String idPrenda;

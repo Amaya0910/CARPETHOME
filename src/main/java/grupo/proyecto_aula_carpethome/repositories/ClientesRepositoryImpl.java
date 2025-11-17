@@ -1,8 +1,7 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.entities.Administradores;
-import grupo.proyecto_aula_carpethome.entities.Clientes;
+import grupo.proyecto_aula_carpethome.entities.Cliente;
 import lombok.*;
 
 import java.sql.*;
@@ -14,8 +13,8 @@ import java.util.Optional;
 public class ClientesRepositoryImpl implements ClientesRepository {
     private final OracleDatabaseConnection dbConnection;
 
-    private Clientes mapResultSetToCliente(ResultSet rs) throws SQLException {
-        return Clientes.builder()
+    private Cliente mapResultSetToCliente(ResultSet rs) throws SQLException {
+        return Cliente.builder()
                 .cedula(rs.getString("cedula"))
                 .pNombre(rs.getString("p_nombre"))
                 .sNombre(rs.getString("s_nombre"))
@@ -30,7 +29,7 @@ public class ClientesRepositoryImpl implements ClientesRepository {
     }
 
     @Override
-    public Optional<Clientes> findByCedula(String cedula) throws SQLException {
+    public Optional<Cliente> findByCedula(String cedula) throws SQLException {
         String sql = """
                 SELECT p.*, e.id_cliente
                 FROM PERSONAS p
@@ -53,7 +52,7 @@ public class ClientesRepositoryImpl implements ClientesRepository {
     }
 
     @Override
-    public Clientes save(Clientes entity) throws SQLException {
+    public Cliente save(Cliente entity) throws SQLException {
         String sql = "{CALL PKG_GESTION_PERSONAS.sp_registrar_cliente(?,?,?,?,?,?,?,?,?,?)}";
 
         try (Connection conn = dbConnection.connect();
@@ -111,7 +110,7 @@ public class ClientesRepositoryImpl implements ClientesRepository {
     }
 
     @Override
-    public Optional<Clientes> findById(String id) throws SQLException {
+    public Optional<Cliente> findById(String id) throws SQLException {
         String sql = """
                 SELECT p.*, e.id_cliente
                 FROM PERSONAS p
@@ -134,8 +133,8 @@ public class ClientesRepositoryImpl implements ClientesRepository {
     }
 
     @Override
-    public List<Clientes> findAll() throws SQLException {
-        List<Clientes> clientes = new ArrayList<>();
+    public List<Cliente> findAll() throws SQLException {
+        List<Cliente> clientes = new ArrayList<>();
         String sql = """
                 SELECT p.*, e.id_cliente
                 FROM PERSONAS p
@@ -156,7 +155,7 @@ public class ClientesRepositoryImpl implements ClientesRepository {
     }
 
     @Override
-    public void update(Clientes entity) throws SQLException {
+    public void update(Cliente entity) throws SQLException {
         Connection conn = null;
         try {
             conn = dbConnection.connect();

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Medidas {
+public class Medida {
     private String idMedida;
     private String nombreMedida;
     private String tipoMedida;

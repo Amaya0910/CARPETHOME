@@ -1,7 +1,7 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.entities.Gastos;
+import grupo.proyecto_aula_carpethome.entities.Gasto;
 import lombok.*;
 
 import java.sql.*;
@@ -13,8 +13,8 @@ import java.util.Optional;
 public class GastosRepositoryImpl implements GastosRepository {
     private final OracleDatabaseConnection dbConnection;
 
-    private Gastos mapResultSetToGastos(ResultSet rs) throws SQLException {
-        return Gastos.builder()
+    private Gasto mapResultSetToGastos(ResultSet rs) throws SQLException {
+        return Gasto.builder()
                 .idGasto(rs.getString("id_gasto"))
                 .nombreGasto(rs.getString("nombre_gasto"))
                 .idPrenda(rs.getString("id_prenda"))
@@ -25,8 +25,8 @@ public class GastosRepositoryImpl implements GastosRepository {
 
 
     @Override
-    public Gastos save(Gastos entity) throws SQLException {
-        String sql = "{CALL pkg_gestion_operaciones.sp_registrar_gasto(?,?,?,?,?)}";
+    public Gasto save(Gasto entity) throws SQLException {
+        String sql = "{CALL PKG_GESTION_GASTOS.sp_registrar_gasto(?,?,?,?,?)}";
 
         try(Connection conn = dbConnection.connect();
             CallableStatement stmt = conn.prepareCall(sql)) {
@@ -50,7 +50,7 @@ public class GastosRepositoryImpl implements GastosRepository {
     }
 
     @Override
-    public Optional<Gastos> findById(String id) throws SQLException {
+    public Optional<Gasto> findById(String id) throws SQLException {
         String sql = """
                 SELECT * FROM gastos WHERE id_gasto = ?;
                 """;
@@ -70,8 +70,8 @@ public class GastosRepositoryImpl implements GastosRepository {
     }
 
     @Override
-    public List<Gastos> findAll() throws SQLException {
-        List<Gastos> gastos = new ArrayList<>();
+    public List<Gasto> findAll() throws SQLException {
+        List<Gasto> gastos = new ArrayList<>();
         String sql = """
                 SELECT * FROM gastos;
         """;
@@ -86,8 +86,8 @@ public class GastosRepositoryImpl implements GastosRepository {
     }
 
     @Override
-    public void update(Gastos entity) throws SQLException {
-        String sql = "{CALL pkg_gestion_operaciones.sp_actualizar_gasto(?,?,?,?)}";
+    public void update(Gasto entity) throws SQLException {
+        String sql = "{CALL PKG_GESTION_GASTOS.sp_actualizar_gasto(?,?,?,?)}";
 
 
         try(Connection conn = dbConnection.connect();
@@ -106,7 +106,7 @@ public class GastosRepositoryImpl implements GastosRepository {
 
     @Override
     public void delete(String s) throws SQLException {
-        String sql = "{CALL pkg_gestion_operaciones.sp_eliminar_gasto(?)}";
+        String sql = "{CALL PKG_GESTION_GASTOS.sp_eliminar_gasto(?)}";
 
         try(Connection conn = dbConnection.connect();
         CallableStatement stmt = conn.prepareCall(sql)){
@@ -121,7 +121,7 @@ public class GastosRepositoryImpl implements GastosRepository {
 
     @Override
     public double TotalGastos(String id) throws SQLException {
-        String sql = "{ ? = call pkg_gestion_operaciones.fn_total_gastos_prendas(?) }";
+        String sql = "{ ? = call PKG_GESTION_GASTOS.fn_total_gastos_prendas(?) }";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {

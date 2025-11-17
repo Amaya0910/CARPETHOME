@@ -5,7 +5,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Etapas {
+public class Etapa {
     private String idEtapa;
     private String nombreEtapa;
     private String descripcionEtapa;

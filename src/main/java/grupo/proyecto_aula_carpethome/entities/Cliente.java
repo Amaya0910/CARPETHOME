@@ -1,6 +1,9 @@
 package grupo.proyecto_aula_carpethome.entities;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Data
@@ -9,10 +12,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 
-public class Administradores extends Personas {
-    private String idAdmin;      // Esto lo genera el trigger
-    private String contrasena;
-
-
+public class Cliente extends Persona {
+    private String idCliente;
 }
 

@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Proyectos {
+public class Proyecto {
     private String idProyecto;
     private String nombreProyecto;
     private String tipoProduccion;
