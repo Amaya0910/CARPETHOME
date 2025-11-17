@@ -33,15 +33,15 @@ public class Main {
             System.out.println("═══ TEST 1: Guardar nuevo administrador ═══");
 
             Administrador nuevoAdmin = Administrador.builder()
-                    .cedula("1234567890")
-                    .pNombre("Carlos")
-                    .sNombre("Alberto")
-                    .pApellido("García")
-                    .sApellido("López")
-                    .pCorreo("carlos@carpethome.com")
-                    .sCorreo("cgarcia@personal.com")
-                    .pTelefono(3201234567L)
-                    .sTelefono(6012345678L)
+                    .cedula("1066872721")
+                    .pNombre("Taylor")
+                    .sNombre("")
+                    .pApellido("Amaya")
+                    .sApellido("Ferreira")
+                    .pCorreo("Tay17@carpethome.com")
+                    .sCorreo("tayTay17@gmail.com")
+                    .pTelefono(3502271297L)
+                    .sTelefono(3157777951L)
                     .contrasena("admin123")
                     .build();
 
