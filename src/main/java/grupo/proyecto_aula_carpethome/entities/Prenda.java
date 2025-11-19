@@ -13,6 +13,6 @@ public class Prenda {
     private double costoMateriales;
     private double costoTotalEstimado;
     private String idProyecto;
-    private String idMedidas;
+    private String idMedida ;
 
 }

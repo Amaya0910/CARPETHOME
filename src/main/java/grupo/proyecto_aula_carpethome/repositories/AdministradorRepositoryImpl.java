@@ -128,7 +128,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
             FROM PERSONAS p
             INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
             ORDER BY e.id_admin
-            """;  // ← También corregí "id_empleado" por "id_admin"
+            """;
 
         try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();
@@ -187,8 +187,8 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
                     """;
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
-                stmt.setString(2, entity.getContrasena());
-                stmt.setString(3, entity.getIdAdmin());
+                stmt.setString(1, entity.getContrasena());
+                stmt.setString(2, entity.getIdAdmin());
 
                 int rowsAffected = stmt.executeUpdate();
                 if (rowsAffected == 0) {
@@ -230,7 +230,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
             }
 
             // Eliminar de EMPLEADOS
-            String sqlEmpleado = "DELETE FROM ADMINISTRADOR WHERE id_admin = ?";
+            String sqlEmpleado = "DELETE FROM ADMINISTRADORES WHERE id_admin = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
                 stmt.setString(1, id);
                 stmt.executeUpdate();
@@ -248,7 +248,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
 
         } catch (SQLException e) {
             if (conn != null) conn.rollback();
-            throw new SQLException("Error al eliminar empleado: " + e.getMessage(), e);
+            throw new SQLException("Error al eliminar administrador: " + e.getMessage(), e);
         } finally {
             if (conn != null) conn.setAutoCommit(true);
         }

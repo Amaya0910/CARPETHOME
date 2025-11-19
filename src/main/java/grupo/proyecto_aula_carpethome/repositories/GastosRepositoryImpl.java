@@ -42,6 +42,9 @@ public class GastosRepositoryImpl implements GastosRepository {
             entity.setIdGasto(idGenerado);
 
             System.out.println("Gasto guardado con ID: " + idGenerado);
+
+
+
             return entity;
         } catch (SQLException e) {
             System.err.println("Error al guardar gasto: " + e.getMessage());
@@ -135,6 +138,28 @@ public class GastosRepositoryImpl implements GastosRepository {
             return stmt.getDouble(1);
 
         }
+    }
+
+
+    @Override
+    public List<Gasto> findByPrenda(String idPrenda) throws SQLException {
+        List<Gasto> gastos = new ArrayList<>();
+        String sql = "SELECT * FROM GASTOS WHERE id_prenda = ? ORDER BY nombre_gasto";
+
+        try (Connection conn = dbConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idPrenda);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    gastos.add(mapResultSetToGastos(rs));
+                }
+            }
+
+        }
+
+        return gastos;
     }
 
 

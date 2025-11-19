@@ -33,15 +33,15 @@ public class Main {
             System.out.println("═══ TEST 1: Guardar nuevo administrador ═══");
 
             Administrador nuevoAdmin = Administrador.builder()
-                    .cedula("1066872721")
-                    .pNombre("Taylor")
-                    .sNombre("")
-                    .pApellido("Amaya")
-                    .sApellido("Ferreira")
-                    .pCorreo("Tay17@carpethome.com")
-                    .sCorreo("tayTay17@gmail.com")
-                    .pTelefono(3502271297L)
-                    .sTelefono(3157777951L)
+                    .cedula("1080580207")
+                    .pNombre("Leonel")
+                    .sNombre("Eduardo")
+                    .pApellido("Garrido")
+                    .sApellido("Naeder")
+                    .pCorreo("u8uw@c.com")
+                    .sCorreo("po8w@gmail.com")
+                    .pTelefono(3853232700L)
+                    .sTelefono(3863232700L)
                     .contrasena("admin123")
                     .build();
 
@@ -116,10 +116,10 @@ public class Main {
             // ============================================
             System.out.println("\n\n═══ TEST 5: Actualizar administrador ═══");
 
-            adminGuardado.setSNombre("José");
-            adminGuardado.setPCorreo("carlos.garcia.nuevo@carpethome.com");
-            adminGuardado.setContrasena("nuevaContrasena456");
-            adminGuardado.setPTelefono(3109876543L);
+            adminGuardado.setSNombre("Leo");
+            adminGuardado.setPCorreo("u8u@carpethome.com");
+            adminGuardado.setContrasena("LeoLeo");
+            adminGuardado.setPTelefono(8858421456L);
 
             System.out.println("Actualizando datos:");
             System.out.println("  Nuevo segundo nombre: " + adminGuardado.getSNombre());
