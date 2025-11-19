@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.HistEtapa;
 import lombok.*;
@@ -30,11 +31,14 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
+            Validador.validarTexto(entity.getIdEtapa(),"id de proyecto: ", 10,true);
             stmt.setString(1, entity.getIdProyecto());
+            Validador.validarTexto(entity.getIdEtapa(),"id de Etapa: ", 10,true);
             stmt.setString(2, entity.getIdEtapa());
             stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
 
             if (entity.getObservaciones() != null) {
+                Validador.validarTexto(entity.getObservaciones(),"observaciones: ", 10,true);
                 stmt.setString(4, entity.getObservaciones());
             } else {
                 stmt.setNull(4, Types.VARCHAR);
@@ -70,7 +74,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
         String idEtapa = parts[1].trim();
 
 
-        String sql = "SELECT * FROM HIST_ETAPA WHERE id_proyecto = ? AND id_etapa = ?";
+        String sql = "SELECT id_proyecto, id_etapa, fecha_inicio, fecha_final FROM HIST_ETAPA WHERE id_proyecto = ? AND id_etapa = ?";
 
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -131,12 +135,15 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
             } else {
                 stmt.setNull(4, Types.DATE);
             }
+            Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaFinal());
 
             if (entity.getObservaciones() != null && !entity.getObservaciones().trim().isEmpty()) {
                 stmt.setString(5, entity.getObservaciones());
             } else {
                 stmt.setNull(5, Types.VARCHAR);
             }
+
+
 
             stmt.execute();
 
@@ -145,7 +152,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
             System.out.println("  Etapa: " + entity.getIdEtapa());
 
         } catch (SQLException e) {
-            System.err.println("✗ Error al actualizar historial de etapa: " + e.getMessage());
+            System.err.println("  Error al actualizar historial de etapa: " + e.getMessage());
             System.err.println("  Código: " + e.getErrorCode());
 
             if (e.getErrorCode() == 20042) {

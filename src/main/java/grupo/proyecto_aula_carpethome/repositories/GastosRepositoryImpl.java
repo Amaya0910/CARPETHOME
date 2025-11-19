@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Gasto;
 import lombok.*;
@@ -31,9 +32,12 @@ public class GastosRepositoryImpl implements GastosRepository {
         try(Connection conn = dbConnection.connect();
             CallableStatement stmt = conn.prepareCall(sql)) {
 
+            Validador.validarTexto(entity.getNombreGasto(),"Nombre del gasto: ", 15, true);
             stmt.setString(1, entity.getNombreGasto());
+            Validador.validarTexto(entity.getIdPrenda(), "Id de la prenda: ", 15, true);
             stmt.setString(2, entity.getIdPrenda());
             stmt.setDouble(3, entity.getPrecio());
+            Validador.validarTexto(entity.getDescripcionGasto(),  "Descripcion del gasto: ", 15, false);
             stmt.setString(4, entity.getDescripcionGasto());
             stmt.registerOutParameter(5, Types.VARCHAR);
             stmt.execute();
@@ -55,7 +59,7 @@ public class GastosRepositoryImpl implements GastosRepository {
     @Override
     public Optional<Gasto> findById(String id) throws SQLException {
         String sql = """
-                SELECT * FROM gastos WHERE id_gasto = ?;
+                SELECT id_gasto, nombre_gasto, id_prenda, gasto, descripcion FROM gastos WHERE id_gasto = ?;
                 """;
 
         try(Connection conn = dbConnection.connect();
@@ -76,7 +80,7 @@ public class GastosRepositoryImpl implements GastosRepository {
     public List<Gasto> findAll() throws SQLException {
         List<Gasto> gastos = new ArrayList<>();
         String sql = """
-                SELECT * FROM gastos;
+                SELECT id_gasto, nombre_gasto, id_prenda, gasto, descripcion FROM gastos;
         """;
         try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();
@@ -96,8 +100,10 @@ public class GastosRepositoryImpl implements GastosRepository {
         try(Connection conn = dbConnection.connect();
         CallableStatement stmt = conn.prepareCall(sql)){
             stmt.setString(1, entity.getIdGasto());
+            Validador.validarTexto(entity.getNombreGasto(), "Nombre del gasto: ", 15, true);
             stmt.setString(2, entity.getNombreGasto());
             stmt.setDouble(3, entity.getPrecio());
+            Validador.validarTexto(entity.getNombreGasto(), "Descripción del gasto: ", 150, false);
             stmt.setString(4, entity.getDescripcionGasto());
             stmt.execute();
 
@@ -129,7 +135,6 @@ public class GastosRepositoryImpl implements GastosRepository {
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            // Este es el parametro de salida "lo que devuelve la funcion"
             stmt.registerOutParameter(1, Types.NUMERIC);
             stmt.setString(2, id);
 
@@ -144,7 +149,7 @@ public class GastosRepositoryImpl implements GastosRepository {
     @Override
     public List<Gasto> findByPrenda(String idPrenda) throws SQLException {
         List<Gasto> gastos = new ArrayList<>();
-        String sql = "SELECT * FROM GASTOS WHERE id_prenda = ? ORDER BY nombre_gasto";
+        String sql = "SELECT id_gasto, nombre_gasto, id_prenda, gasto, descripcion FROM GASTOS WHERE id_prenda = ? ORDER BY nombre_gasto";
 
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

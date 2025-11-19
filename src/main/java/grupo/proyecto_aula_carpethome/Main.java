@@ -23,7 +23,7 @@ public class Main {
         AdministradorRepositoryImpl adminRepository = new AdministradorRepositoryImpl(dbConnection);
 
         try {
-            System.out.println("╔════════════════════════════════════════════════════╗");
+            System.out.println("╔═══════════════════════════════════════════════════╗");
             System.out.println("║  PRUEBAS DE ADMINISTRADOR REPOSITORY               ║");
             System.out.println("╚════════════════════════════════════════════════════╝\n");
 

@@ -150,7 +150,7 @@ public class MedidaRepositoryImpl implements MedidaRepository{
     @Override
     public Optional<Medida> findById(String s) throws SQLException {
         String sql = """
-                SELECT *
+                SELECT id_medida, nombre_medida, tipo_medida, c_busto,c_cintura,c_cadera,Altura_busto,separacion_busto,radio_busto,bajo_busto,largo_falda,largo_cadera,largo_vestido,largo_pantalon,largo_manga
                 FROM MEDIDAS
                 WHERE id_medida = ?;
                 """;
@@ -172,7 +172,7 @@ public class MedidaRepositoryImpl implements MedidaRepository{
     public List<Medida> findAll() throws SQLException {
         List<Medida> medidas = new ArrayList<>();
         String sql = """
-            SELECT *
+            SELECT id_medida, nombre_medida, tipo_medida, c_busto,c_cintura,c_cadera,Altura_busto,separacion_busto,radio_busto,bajo_busto,largo_falda,largo_cadera,largo_vestido,largo_pantalon,largo_manga
             FROM medidas
             """;
 
@@ -307,7 +307,9 @@ public class MedidaRepositoryImpl implements MedidaRepository{
     @Override
 public List<Medida> findByTipoMedida(String tipo) throws SQLException {
     List<Medida> medidas = new ArrayList<>();
-    String sql = "SELECT * FROM MEDIDAS WHERE tipo_medida = ?";
+    String sql = "SELECT id_medida, nombre_medida, tipo_medida, c_busto,c_cintura,c_cadera,Altura_busto,separacion_busto,radio_busto,bajo_busto,largo_falda,largo_cadera,largo_vestido,largo_pantalon,largo_manga " +
+            "FROM MEDIDAS " +
+            "WHERE tipo_medida = ?";
 
     try (Connection conn = dbConnection.connect();
          PreparedStatement stmt = conn.prepareStatement(sql)){

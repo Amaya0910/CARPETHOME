@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Prenda;
 import lombok.*;
@@ -41,7 +42,9 @@ public class PrendaRepositoryImpl implements PrendaRepository{
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
+            Validador.validarTexto(entity.getNombrePrenda(), "Nombre de la prenda: ", 15, true);
             stmt.setString(1, entity.getNombrePrenda());
+            Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 15, false);
             stmt.setString(2, entity.getDescripcionPrenda());
             stmt.setDouble(3, costoMateriales);
             stmt.setDouble(4, costoTotalEstimado);
@@ -74,8 +77,8 @@ public class PrendaRepositoryImpl implements PrendaRepository{
     @Override
     public Optional<Prenda> findById(String s) throws SQLException {
         String sql = """
-                SELECT * 
-                FROM prenda 
+                SELECT id_prenda, nombre_prenda, descripcion, costo_materiales, costo_total_estimado, id_proyecto, id_medida
+                FROM prendas
                 WHERE id_prenda = ?;""";
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -95,7 +98,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
     public List<Prenda> findAll() throws SQLException {
         List<Prenda> prendas = new ArrayList<>();
         String sql = """
-            SELECT *
+            SELECT id_prenda, nombre_prenda, descripcion, costo_materiales, costo_total_estimado, id_proyecto, id_medida
             FROM prendas
             """;
         try (Connection conn = dbConnection.connect();
@@ -112,9 +115,26 @@ public class PrendaRepositoryImpl implements PrendaRepository{
 
     @Override
     public void update(Prenda entity) throws SQLException {
+        double costoMateriales;
+
+        if(entity.getCostoMateriales() != 0.0){
+            costoMateriales = entity.getCostoMateriales();
+        }else { costoMateriales = 0.0;}
+
+        double costoTotalEstimado = costoMateriales * (1 + ganancia);
+
         String sql = "{CALL PKG_PRENDAS.sp_actualizar_prenda(?,?,?,?,?,?)}";
         try (Connection conn = dbConnection.connect();
-             CallableStatement stmt = conn.prepareCall(sql)) {}
+             CallableStatement stmt = conn.prepareCall(sql)) {
+            stmt.setString(1, entity.getIdPrenda());
+            Validador.validarTexto(entity.getNombrePrenda(), "Nombre de la prenda: ", 15, true);
+            stmt.setString(2, entity.getNombrePrenda());
+            Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 15, false);
+            stmt.setString(3, entity.getDescripcionPrenda());
+            stmt.setDouble(4, costoMateriales);
+            stmt.setDouble(5, costoTotalEstimado);
+            stmt.setString(6, entity.getIdProyecto());
+        }
     }
 
     @Override

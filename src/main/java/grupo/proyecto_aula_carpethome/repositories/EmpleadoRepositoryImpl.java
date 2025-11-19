@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Empleado;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +95,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     @Override
     public Optional<Empleado> findById(String id) throws SQLException {
         String sql = """
-                SELECT p.*, e.id_empleado, e.cargo, e.contrasena
+                SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_empleado, e.cargo, e.contrasena
                 FROM PERSONAS p
                 INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
                 WHERE e.id_empleado = ?
@@ -118,7 +119,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     public List<Empleado> findAll() throws SQLException {
         List<Empleado> empleados = new ArrayList<>();
         String sql = """
-                SELECT p.*, e.id_empleado
+                SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_empleado
                 FROM PERSONAS p
                 INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
                 ORDER BY e.id_empleado
@@ -152,15 +153,40 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
                     """;
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlPersona)) {
+                Validador.validarNombre(entity.getPNombre(), "Primer nombre");
                 stmt.setString(1, entity.getPNombre());
-                stmt.setString(2, entity.getSNombre());
+
+                if (entity.getSNombre() != null && !entity.getSNombre().isEmpty()) {
+                    Validador.validarTexto(entity.getSNombre(), "Segundo nombre", 15, false );
+                    stmt.setString(2, entity.getSNombre());
+                } else {
+                    stmt.setNull(2, Types.VARCHAR);
+                }
+
+                Validador.validarNombre(entity.getPApellido(), "Primer apellido");
                 stmt.setString(3, entity.getPApellido());
-                stmt.setString(4, entity.getSApellido());
+
+                if (entity.getSApellido() != null && !entity.getSApellido().isEmpty()) {
+                    stmt.setString(4, entity.getSApellido());
+                } else {
+                    stmt.setNull(4, Types.VARCHAR);
+                }
+
+                Validador.validarCorreo(entity.getPCorreo());
                 stmt.setString(5, entity.getPCorreo());
-                stmt.setString(6, entity.getSCorreo());
+
+                if (entity.getSCorreo() != null && !entity.getSCorreo().isEmpty()) {
+                    Validador.validarCorreo(entity.getSCorreo());
+                    stmt.setString(6, entity.getSCorreo());
+                } else {
+                    stmt.setNull(6, Types.VARCHAR);
+                }
+
+                Validador.validarTelefono(entity.getPTelefono());
                 stmt.setLong(7, entity.getPTelefono());
 
                 if (entity.getSTelefono() != null) {
+                    Validador.validarTelefono(entity.getSTelefono());
                     stmt.setLong(8, entity.getSTelefono());
                 } else {
                     stmt.setNull(8, Types.NUMERIC);
@@ -183,6 +209,8 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
                 stmt.setString(1, entity.getCargo());
+
+                Validador.validarContrasena(entity.getContrasena());
                 stmt.setString(2, entity.getContrasena());
                 stmt.setString(3, entity.getIdEmpleado());
 
@@ -255,7 +283,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     public List<Empleado> findByCargo(String cargo) throws SQLException {
         List<Empleado> empleados = new ArrayList<>();
         String sql = """
-                SELECT p.*, e.id_empleado, e.cargo, e.contrasena
+                SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_empleado, e.cargo, e.contrasena
                 FROM PERSONAS p
                 INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
                 WHERE UPPER(e.cargo) = UPPER(?)
@@ -281,7 +309,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     @Override
     public Optional<Empleado> findByCedula(String cedula) throws SQLException {
         String sql = """
-                SELECT p.*, e.id_empleado, e.cargo
+                SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_empleado, e.cargo
                 FROM PERSONAS p
                 INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
                 WHERE p.cedula = ?

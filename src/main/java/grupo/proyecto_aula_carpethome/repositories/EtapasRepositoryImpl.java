@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Etapa;
 import lombok.*;
@@ -32,7 +33,10 @@ public class EtapasRepositoryImpl implements EtapasRepository {
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
+            Validador.validarTexto(entity.getNombreEtapa(), "Nombre etapa: ", 15, true);
             stmt.setString(1, entity.getNombreEtapa());
+
+            Validador.validarTexto(entity.getDescripcionEtapa(), "Descripcion etapa: ", 15, false);
             stmt.setString(2, entity.getDescripcionEtapa());
 
             stmt.registerOutParameter(3, Types.VARCHAR);
@@ -54,7 +58,7 @@ public class EtapasRepositoryImpl implements EtapasRepository {
     @Override
     public Optional<Etapa> findById(String id) throws SQLException {
         String sql = """
-                SELECT * FROM etapas WHERE id_etapa = ?;
+                SELECT id_etapa, nombre_etapa, descripcion FROM etapas WHERE id_etapa = ?;
                 """;
 
 
@@ -74,7 +78,7 @@ public class EtapasRepositoryImpl implements EtapasRepository {
     public List<Etapa> findAll() throws SQLException {
         List<Etapa> etapas = new ArrayList<>();
         String sql = """
-                SELECT  * FROM etapas;
+                SELECT  id_etapa, nombre_etapa, descripcion FROM etapas;
                 """;
         try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();
@@ -94,7 +98,10 @@ public class EtapasRepositoryImpl implements EtapasRepository {
         CallableStatement stmt = conn.prepareCall(sql)) {
 
             stmt.setString(1, entity.getIdEtapa());
+
+            Validador.validarTexto(entity.getNombreEtapa(), "Nombre etapa: ", 15, true);
             stmt.setString(2, entity.getNombreEtapa());
+            Validador.validarTexto(entity.getDescripcionEtapa(), "Descripcion etapa: ", 15, false);
             stmt.setString(3, entity.getDescripcionEtapa());
             stmt.execute();
         }catch (SQLException e){

@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Proyecto;
 import lombok.*;
@@ -46,14 +47,20 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
             conn.setAutoCommit(false);
 
             try (CallableStatement stmt = conn.prepareCall(sql)) {
+                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto: ", 15, true);
             stmt.setString(1, entity.getNombreProyecto());
-            stmt.setString(2, entity.getTipoProduccion());
+                Validador.validarTexto(entity.getNombreProyecto(), "Tipo de producción del proyecto: ", 15, true);
+                stmt.setString(2, entity.getTipoProduccion());
+                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
             stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
             stmt.setDate(4, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
             stmt.setDate(5, new java.sql.Date(fecha_real.getTime()));
-            stmt.setString(6, entity.getEstado());
+                Validador.validarTexto(entity.getNombreProyecto(), "Estado del proyecto: ", 15, true);
+                stmt.setString(6, entity.getEstado());
             stmt.setDouble(7, entity.getCostoEstimado());
-            stmt.setString(8, entity.getIdCliente());
+                Validador.validarTexto(entity.getNombreProyecto(), "Cliente del proyecto: ", 15, false);
+
+                stmt.setString(8, entity.getIdCliente());
 
             stmt.execute();
 
@@ -83,7 +90,7 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
     @Override
     public Optional<Proyecto> findById(String s) throws SQLException {
         String sql = """
-                SELECT *
+                SELECT id_proyecto, nombre_proyecto, tipo_produccion, fecha_inicio,fecha_entrega_estimada, fecha_entrega_real, estado,costo_estimado, id_cliente
                 FROM proyectos
                 WHERE id_proyecto = ?;""";
         try (Connection conn = dbConnection.connect();
@@ -103,7 +110,7 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
         List<Proyecto> proyectos = new ArrayList<>();
 
         String sql = """
-                SELECT *
+                SELECT id_proyecto, nombre_proyecto, tipo_produccion, fecha_inicio,fecha_entrega_estimada, fecha_entrega_real, estado,costo_estimado, id_cliente
                 FROM  proyectos;
                 """;
         try (Connection conn = dbConnection.connect();
@@ -128,9 +135,13 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
 
             try (CallableStatement stmt = conn.prepareCall(sqlActualizar)) {
 
+
                 stmt.setString(1, entity.getIdProyecto());
+                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto: ", 15, true);
                 stmt.setString(2, entity.getNombreProyecto());
+                Validador.validarTexto(entity.getTipoProduccion(), "Nombre del proyecto: ", 15, true);
                 stmt.setString(3, entity.getTipoProduccion());
+                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
                 stmt.setDate(4, new java.sql.Date(entity.getFechaInicio().getTime()));
                 stmt.setDate(5, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
 
@@ -140,6 +151,8 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
                 } else {
                     stmt.setNull(6, Types.DATE);
                 }
+
+
 
                 stmt.setString(7, entity.getEstado());
                 stmt.setDouble(8, entity.getCostoEstimado());
@@ -152,6 +165,7 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
             if (entity.getFechaEntregaReal() != null) {
                 try (CallableStatement stmt2 = conn.prepareCall(sqlFinalizar)) {
                     stmt2.setString(1, entity.getIdProyecto());
+                    Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaReal());
                     stmt2.setDate(2, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
                     stmt2.execute();
                 }

@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Administrador;
 
@@ -42,14 +43,18 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
              CallableStatement stmt = conn.prepareCall(sql)) {
 
             stmt.setString(1, entity.getCedula());
+
+            Validador.validarNombre(entity.getPNombre(), "Primer nombre");
             stmt.setString(2, entity.getPNombre());
 
             if (entity.getSNombre() != null && !entity.getSNombre().isEmpty()) {
+                Validador.validarTexto(entity.getSNombre(), "Segundo nombre", 15, false );
                 stmt.setString(3, entity.getSNombre());
             } else {
                 stmt.setNull(3, Types.VARCHAR);
             }
 
+            Validador.validarNombre(entity.getPApellido(), "Primer apellido");
             stmt.setString(4, entity.getPApellido());
 
             if (entity.getSApellido() != null && !entity.getSApellido().isEmpty()) {
@@ -58,22 +63,27 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
                 stmt.setNull(5, Types.VARCHAR);
             }
 
+            Validador.validarCorreo(entity.getPCorreo());
             stmt.setString(6, entity.getPCorreo());
 
             if (entity.getSCorreo() != null && !entity.getSCorreo().isEmpty()) {
+                Validador.validarCorreo(entity.getSCorreo());
                 stmt.setString(7, entity.getSCorreo());
             } else {
                 stmt.setNull(7, Types.VARCHAR);
             }
 
+            Validador.validarTelefono(entity.getPTelefono());
             stmt.setLong(8, entity.getPTelefono());
 
             if (entity.getSTelefono() != null) {
+                Validador.validarTelefono(entity.getSTelefono());
                 stmt.setLong(9, entity.getSTelefono());
             } else {
                 stmt.setNull(9, Types.NUMERIC);
             }
 
+            Validador.validarContrasena(entity.getContrasena());
             stmt.setString(10, entity.getContrasena());
 
             // Parámetro OUT
@@ -100,7 +110,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
     @Override
     public Optional<Administrador> findById(String id) throws SQLException {
         String sql = """
-            SELECT p.*, e.id_admin, e.contrasena
+            SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono , e.id_admin, e.contrasena
             FROM PERSONAS p
             INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
             WHERE e.id_admin = ?
@@ -124,7 +134,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
     public List<Administrador> findAll() throws SQLException {
         List<Administrador> admins = new ArrayList<>();
         String sql = """
-            SELECT p.*, e.id_admin, e.contrasena
+            SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_admin, e.contrasena
             FROM PERSONAS p
             INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
             ORDER BY e.id_admin
@@ -157,15 +167,40 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
                     """;
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlPersona)) {
+                Validador.validarNombre(entity.getPNombre(), "Primer nombre");
                 stmt.setString(1, entity.getPNombre());
-                stmt.setString(2, entity.getSNombre());
+
+                if (entity.getSNombre() != null && !entity.getSNombre().isEmpty()) {
+                    Validador.validarTexto(entity.getSNombre(), "Segundo nombre", 15, false );
+                    stmt.setString(2, entity.getSNombre());
+                } else {
+                    stmt.setNull(2, Types.VARCHAR);
+                }
+
+                Validador.validarNombre(entity.getPApellido(), "Primer apellido");
                 stmt.setString(3, entity.getPApellido());
-                stmt.setString(4, entity.getSApellido());
+
+                if (entity.getSApellido() != null && !entity.getSApellido().isEmpty()) {
+                    stmt.setString(4, entity.getSApellido());
+                } else {
+                    stmt.setNull(4, Types.VARCHAR);
+                }
+
+                Validador.validarCorreo(entity.getPCorreo());
                 stmt.setString(5, entity.getPCorreo());
-                stmt.setString(6, entity.getSCorreo());
+
+                if (entity.getSCorreo() != null && !entity.getSCorreo().isEmpty()) {
+                    Validador.validarCorreo(entity.getSCorreo());
+                    stmt.setString(6, entity.getSCorreo());
+                } else {
+                    stmt.setNull(6, Types.VARCHAR);
+                }
+
+                Validador.validarTelefono(entity.getPTelefono());
                 stmt.setLong(7, entity.getPTelefono());
 
                 if (entity.getSTelefono() != null) {
+                    Validador.validarTelefono(entity.getSTelefono());
                     stmt.setLong(8, entity.getSTelefono());
                 } else {
                     stmt.setNull(8, Types.NUMERIC);
@@ -187,6 +222,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
                     """;
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
+                Validador.validarContrasena(entity.getContrasena());
                 stmt.setString(1, entity.getContrasena());
                 stmt.setString(2, entity.getIdAdmin());
 
@@ -259,7 +295,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
     @Override
     public Optional<Administrador> findByCedula(String cedula) throws SQLException {
         String sql = """
-            SELECT p.*, e.id_admin, e.contrasena
+            SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_admin, e.contrasena
             FROM PERSONAS p
             INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
             WHERE p.cedula = ?
