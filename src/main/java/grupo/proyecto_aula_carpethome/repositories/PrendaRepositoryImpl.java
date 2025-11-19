@@ -13,7 +13,7 @@ import java.util.Optional;
 public class PrendaRepositoryImpl implements PrendaRepository{
     private final OracleDatabaseConnection dbConnection;
     private static final double ganancia = 0.25;
-    private Prenda mapRessultSetToEtapas(ResultSet rs) throws SQLException
+    private Prenda mapRessultSetToPrenda(ResultSet rs) throws SQLException
     {
         return Prenda.builder()
                 .idPrenda(rs.getString("id_prenda"))
@@ -84,7 +84,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(mapRessultSetToEtapas(rs));
+                    return Optional.of(mapRessultSetToPrenda(rs));
                 }
             }
         }
@@ -103,7 +103,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                prendas.add(mapRessultSetToEtapas(rs));
+                prendas.add(mapRessultSetToPrenda(rs));
             }
         }
 
@@ -119,7 +119,24 @@ public class PrendaRepositoryImpl implements PrendaRepository{
 
     @Override
     public void delete(String s) throws SQLException {
+        String sql = "{CALL PKG_PRENDAS.sp_eliminar_prenda(?)}";
 
+        try (Connection conn = dbConnection.connect();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setString(1, s);
+            stmt.execute();
+
+        } catch (SQLException e) {
+            int errorCode = e.getErrorCode();
+            if (errorCode == 20021) {
+                throw new SQLException("La prenda no existe.");
+            } else if (errorCode == 20022) {
+                throw new SQLException("No se puede eliminar: la prenda");
+            } else {
+                throw e;
+            }
+        }
     }
 
     @Override
@@ -128,7 +145,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
 
         try (Connection conn = dbConnection.connect()) {
 
-            // 1. Obtener el total de gastos
+            // Obtener el total de gastos
             double costoMaterialesReal;
             try (CallableStatement stmt = conn.prepareCall(sqlGetGastos)) {
                 stmt.registerOutParameter(1, Types.NUMERIC);
@@ -138,10 +155,10 @@ public class PrendaRepositoryImpl implements PrendaRepository{
                 costoMaterialesReal = stmt.getDouble(1);
             }
 
-            // 2. Calcular el costo total (+25%)
+            // Calcular el costo total (+25%)
             double costoTotalEstimado = costoMaterialesReal * (1 + ganancia);
 
-            // 3. Actualizar la prenda con los nuevos costos
+            // Actualizar la prenda con los nuevos costos
             String sqlUpdate = """
                     UPDATE PRENDAS 
                     SET costo_materiales = ?, 
@@ -160,7 +177,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
                 }
             }
 
-            // 4. Obtener la prenda actualizada
+            //  Obtener la prenda actualizada
             Optional<Prenda> prendaOpt = findById(idPrenda);
             if (prendaOpt.isEmpty()) {
                 throw new SQLException("Error al obtener prenda actualizada");
