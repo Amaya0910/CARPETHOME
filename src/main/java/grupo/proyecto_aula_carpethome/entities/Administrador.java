@@ -14,5 +14,9 @@ public class Administrador extends Persona {
     private String contrasena;
 
 
+    public String getRol(){
+        return "Administrador";
+    }
+
 }
 

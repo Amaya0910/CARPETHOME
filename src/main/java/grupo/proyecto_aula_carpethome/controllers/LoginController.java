@@ -1,5 +1,12 @@
 package grupo.proyecto_aula_carpethome.controllers;
 
+import grupo.proyecto_aula_carpethome.HelloApplication;
+import grupo.proyecto_aula_carpethome.config.ServiceFactory;
+import grupo.proyecto_aula_carpethome.entities.Administrador;
+import grupo.proyecto_aula_carpethome.entities.Persona;
+import grupo.proyecto_aula_carpethome.entities.UsuarioLogueado;
+import grupo.proyecto_aula_carpethome.services.AdministradorService;
+import grupo.proyecto_aula_carpethome.services.EmpleadoService;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -7,6 +14,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class LoginController {
 
@@ -44,16 +54,80 @@ public class LoginController {
     // ============================================
 
     @FXML
-    private void clickAcceder() {
-        // Aquí va tu lógica de login
-        System.out.println("Botón de login presionado");
-
-        // Ejemplo de cómo obtener los datos:
-        String username = usernameField.getText();
+    private void clickAcceder() throws SQLException {
+        // 1. Capturar los datos
+        String username = usernameField.getText().trim();
         String password = passwordField.getText();
 
-        System.out.println("Usuario: " + username);
-        System.out.println("Password: " + password);
+        // 2. Validar que no estén vacíos
+        if (username.isEmpty() || password.isEmpty()) {
+            mostrarError("Por favor, completa todos los campos");
+            return;
+        }
+
+        System.out.println("Intentando login con usuario: " + username);
+
+        // 3. Intentar validar como Administrador
+        AdministradorService adminService = ServiceFactory.getAdministradorService();
+        var administrador = adminService.validarCredenciales(username, password);
+
+        if (administrador != null) {
+            // Es un administrador válido
+            System.out.println("Login exitoso como Administrador: " + administrador.get().getNombreCompleto());
+            UsuarioLogueado usuario = new UsuarioLogueado(
+                    administrador.get().getNombreCompleto(),
+                    "Administrador"
+            );
+            try {
+                HelloApplication.loadMenu(usuario); // Asume que Administrador extiende o es Usuario
+                // O si necesitas crear un Usuario desde Administrador:
+                // Usuario usuario = new Usuario(administrador.getNombre(), "Administrador", username, password);
+                // HelloApplication.loadMenu(usuario);
+            } catch (IOException e) {
+                e.printStackTrace();
+                mostrarError("Error al cargar el menú");
+            }
+            return;
+        }
+
+        // 4. Si no es admin, intentar validar como Empleado
+        EmpleadoService empleadoService = ServiceFactory.getEmpleadoService();
+        var empleado = empleadoService.validarCredenciales(username, password);
+
+        if (empleado != null) {
+            // Es un empleado válido
+            System.out.println("Login exitoso como Empleado: " + empleado.get().getNombreCompleto());
+            UsuarioLogueado usuario = new UsuarioLogueado(
+                    empleado.get().getNombreCompleto(),
+                    "Administrador"
+            );
+            try {
+                HelloApplication.loadMenu(usuario); // Asume que Empleado extiende o es Usuario
+                // O si necesitas crear un Usuario desde Empleado:
+                // Usuario usuario = new Usuario(empleado.getNombre(), "Empleado", username, password);
+                // HelloApplication.loadMenu(usuario);
+            } catch (IOException e) {
+                e.printStackTrace();
+                mostrarError("Error al cargar el menú");
+            }
+            return;
+        }
+
+        // 5. Si no es ni admin ni empleado, mostrar error
+        System.out.println("Credenciales incorrectas");
+        mostrarError("Usuario o contraseña incorrectos");
+        passwordField.clear();
+        passwordField.requestFocus();
+    }
+
+// ============================================
+// MÉTODO PARA MOSTRAR ERRORES
+// ============================================
+
+    private void mostrarError(String mensaje) {
+        errorLabel.setText(mensaje);
+        errorLabel.setVisible(true);
+        errorLabel.setManaged(true);
     }
 
     // ============================================

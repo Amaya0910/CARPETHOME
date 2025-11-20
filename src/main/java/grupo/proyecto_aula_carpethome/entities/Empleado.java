@@ -14,5 +14,9 @@ public class Empleado extends Persona {
     private String cargo;
     private String contrasena;
 
+    public String getRol(){
+        return "Empleado";
+    }
+
 }
 

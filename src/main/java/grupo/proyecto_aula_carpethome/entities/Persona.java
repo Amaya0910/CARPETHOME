@@ -33,6 +33,9 @@ public class Persona {
         return nombre.toString();
     }
 
+    public String getRol(){
+        return "Cliente";
+    }
 
 }
 

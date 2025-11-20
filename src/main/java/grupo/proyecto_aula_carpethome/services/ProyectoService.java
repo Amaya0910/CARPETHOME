@@ -13,7 +13,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProyectoService {
     private final ProyectoRepository proyectoRepository;
-    private final PrendaService prendaService;
+    private PrendaService prendaService; // ← Quitar final
+
+    // Setter para inyectar la dependencia después
+    public void setPrendaService(PrendaService prendaService) {
+        this.prendaService = prendaService;
+    }
 
     private void validarProyecto(Proyecto proyecto) {
         if (proyecto == null) throw new IllegalArgumentException("El proyecto no puede ser nulo");

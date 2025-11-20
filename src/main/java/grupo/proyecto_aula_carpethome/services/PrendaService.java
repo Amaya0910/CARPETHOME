@@ -4,6 +4,7 @@ import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.entities.Prenda;
 import grupo.proyecto_aula_carpethome.repositories.PrendaRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -12,7 +13,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PrendaService {
     private final PrendaRepository prendaRepository;
-    private final ProyectoService proyectoService;
+    // Setter para inyectar la dependencia
+    @Setter
+    private ProyectoService proyectoService; // ← Quitar final y agregar setter
+
     private void validarPrenda(Prenda prenda) {
         if (prenda == null)
             throw new IllegalArgumentException("La prenda no puede ser nula");
