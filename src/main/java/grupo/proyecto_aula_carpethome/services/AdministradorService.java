@@ -140,12 +140,12 @@ public class AdministradorService {
 
 
     public Optional<Administrador> validarCredenciales(String correo, String contrasena) throws SQLException {
-        if (correo == null || correo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El correo es obligatorio");
-        }
-        if (contrasena == null || contrasena.trim().isEmpty()) {
-            throw new IllegalArgumentException("La contraseña es obligatoria");
-        }
+//        if (correo == null || correo.trim().isEmpty()) {
+//            throw new IllegalArgumentException("El correo es obligatorio");
+//        }
+//        if (contrasena == null || contrasena.trim().isEmpty()) {
+//            throw new IllegalArgumentException("La contraseña es obligatoria");
+//        }
 
         // Buscar todos los administradores y filtrar por correo y contraseña
         List<Administrador> admins = administradorRepository.findAll();

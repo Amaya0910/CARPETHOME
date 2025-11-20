@@ -1,7 +1,6 @@
 package grupo.proyecto_aula_carpethome;
 
 import grupo.proyecto_aula_carpethome.controllers.MenuController;
-import grupo.proyecto_aula_carpethome.entities.Persona;
 import grupo.proyecto_aula_carpethome.entities.UsuarioLogueado;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

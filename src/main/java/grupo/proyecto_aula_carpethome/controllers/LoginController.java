@@ -39,7 +39,6 @@ public class LoginController {
     @FXML
     private Button loginButton;
 
-    // Método initialize (se ejecuta automáticamente al cargar el FXML)
     @FXML
     public void initialize() {
         System.out.println("LoginController inicializado correctamente");
@@ -48,10 +47,6 @@ public class LoginController {
         errorLabel.setVisible(false);
         errorLabel.setManaged(false);
     }
-
-    // ============================================
-    // MÉTODO DEL BOTÓN LOGIN (VACÍO)
-    // ============================================
 
     @FXML
     private void clickAcceder() throws SQLException {
@@ -65,24 +60,19 @@ public class LoginController {
             return;
         }
 
-        System.out.println("Intentando login con usuario: " + username);
 
         // 3. Intentar validar como Administrador
         AdministradorService adminService = ServiceFactory.getAdministradorService();
         var administrador = adminService.validarCredenciales(username, password);
 
-        if (administrador != null) {
+        if (administrador != null && administrador.isPresent()) {
             // Es un administrador válido
-            System.out.println("Login exitoso como Administrador: " + administrador.get().getNombreCompleto());
             UsuarioLogueado usuario = new UsuarioLogueado(
                     administrador.get().getNombreCompleto(),
                     "Administrador"
             );
             try {
-                HelloApplication.loadMenu(usuario); // Asume que Administrador extiende o es Usuario
-                // O si necesitas crear un Usuario desde Administrador:
-                // Usuario usuario = new Usuario(administrador.getNombre(), "Administrador", username, password);
-                // HelloApplication.loadMenu(usuario);
+                HelloApplication.loadMenu(usuario);
             } catch (IOException e) {
                 e.printStackTrace();
                 mostrarError("Error al cargar el menú");
@@ -94,18 +84,14 @@ public class LoginController {
         EmpleadoService empleadoService = ServiceFactory.getEmpleadoService();
         var empleado = empleadoService.validarCredenciales(username, password);
 
-        if (empleado != null) {
+        if (empleado != null && empleado.isPresent()) {
             // Es un empleado válido
-            System.out.println("Login exitoso como Empleado: " + empleado.get().getNombreCompleto());
             UsuarioLogueado usuario = new UsuarioLogueado(
                     empleado.get().getNombreCompleto(),
                     "Administrador"
             );
             try {
-                HelloApplication.loadMenu(usuario); // Asume que Empleado extiende o es Usuario
-                // O si necesitas crear un Usuario desde Empleado:
-                // Usuario usuario = new Usuario(empleado.getNombre(), "Empleado", username, password);
-                // HelloApplication.loadMenu(usuario);
+                HelloApplication.loadMenu(usuario);
             } catch (IOException e) {
                 e.printStackTrace();
                 mostrarError("Error al cargar el menú");
@@ -113,16 +99,14 @@ public class LoginController {
             return;
         }
 
+
         // 5. Si no es ni admin ni empleado, mostrar error
         System.out.println("Credenciales incorrectas");
         mostrarError("Usuario o contraseña incorrectos");
         passwordField.clear();
         passwordField.requestFocus();
-    }
 
-// ============================================
-// MÉTODO PARA MOSTRAR ERRORES
-// ============================================
+    }
 
     private void mostrarError(String mensaje) {
         errorLabel.setText(mensaje);

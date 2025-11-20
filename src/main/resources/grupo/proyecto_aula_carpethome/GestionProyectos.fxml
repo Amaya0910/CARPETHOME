@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionProyectosController">
+
+    <VBox spacing="20" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+          style="-fx-padding: 20; -fx-background-color: #f8f9fa;">
+
+        <!-- Header -->
+        <HBox spacing="20" alignment="CENTER_LEFT">
+            <VBox>
+                <Label text="Gestión de Proyectos"
+                       style="-fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-font-size: 24px;"/>
+                <Label text="Administra y da seguimiento a todos los proyectos"
+                       style="-fx-text-fill: #7f8c8d; -fx-font-size: 14px;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Nuevo Proyecto" fx:id="btnNuevoProyecto"
+                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5;"/>
+        </HBox>
+
+        <!-- Search Bar -->
+        <HBox spacing="15" alignment="CENTER_LEFT">
+            <TextField promptText="Buscar por nombre o ID..." fx:id="txtBuscar" HBox.hgrow="ALWAYS"
+                       style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 8 12 8 35;"/>
+            <ComboBox promptText="Filtrar por estado" fx:id="cmbEstado"
+                      style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5; -fx-pref-width: 150;"/>
+            <ComboBox promptText="Filtrar por tipo" fx:id="cmbTipo"
+                      style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5; -fx-pref-width: 150;"/>
+        </HBox>
+
+        <!-- Table -->
+        <TableView fx:id="proyectosTable" VBox.vgrow="ALWAYS"
+                   style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;">
+
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+            </columnResizePolicy>
+
+            <columns>
+                <TableColumn text="ID" prefWidth="80">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="idProyecto"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="NOMBRE" prefWidth="150">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="nombreProyecto"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="TIPO PRODUCCIÓN" prefWidth="120">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="tipoProduccion"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="FECHA INICIO" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="fechaInicio"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="ENTREGA ESTIMADA" prefWidth="120">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="fechaEntregaEstimada"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="ENTREGA REAL" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="fechaEntregaReal"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="ESTADO" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="estado"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="COSTO ESTIMADO" prefWidth="100">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="costoEstimado"/>
+                    </cellValueFactory>
+                </TableColumn>
+
+                <TableColumn text="ID CLIENTE" prefWidth="80">
+                    <cellValueFactory>
+                        <PropertyValueFactory property="idCliente"/>
+                    </cellValueFactory>
+                </TableColumn>
+            </columns>
+        </TableView>
+    </VBox>
+</AnchorPane>

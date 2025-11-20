@@ -48,14 +48,9 @@ public class MenuController {
     @FXML
     public void initialize() {
         System.out.println("MenuController inicializado");
-
-        // Establecer el botón de usuarios como seleccionado por defecto
         currentSelectedButton = btnUsers;
         setButtonSelected(btnUsers, true);
 
-        // Aquí puedes establecer el usuario y rol dinámicamente
-        // Por ejemplo, recibirlos desde el login
-        setUserInfo("Juan Pérez", "Administrador");
     }
 
     // ============================================
@@ -76,7 +71,7 @@ public class MenuController {
         System.out.println("Gestión de Proyecto seleccionada");
         selectButton(btnProjects);
         // Aquí cargarías la vista de gestión de proyectos
-        // loadView("ProjectsView.fxml");
+        loadView("GestionProyectos.fxml");
     }
 
     @FXML
