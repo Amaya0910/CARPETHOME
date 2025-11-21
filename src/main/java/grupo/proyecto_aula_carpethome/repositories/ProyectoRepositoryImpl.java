@@ -35,39 +35,48 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
     public Proyecto save(Proyecto entity) throws SQLException {
         String sql ="{CALL PKG_PROYECTOS.sp_crear_proyecto(?,?,?,?,?,?,?,?,?)}";
         String sqlFinalizar  = "{CALL PKG_PROYECTOS.sp_finalizar_proyecto(?,?)}";
-        Date fecha_real;
-
-        if(entity.getFechaEntregaReal() != null){
-            fecha_real = entity.getFechaEntregaReal();
-        }else{fecha_real = null;}
-
 
         try (Connection conn = dbConnection.connect()) {
 
             conn.setAutoCommit(false);
 
             try (CallableStatement stmt = conn.prepareCall(sql)) {
+                // Parámetros IN
                 Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto: ", 15, true);
-            stmt.setString(1, entity.getNombreProyecto());
-                Validador.validarTexto(entity.getNombreProyecto(), "Tipo de producción del proyecto: ", 15, true);
-                stmt.setString(2, entity.getTipoProduccion());
-                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
-            stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
-            stmt.setDate(4, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
-            stmt.setDate(5, new java.sql.Date(fecha_real.getTime()));
-                Validador.validarTexto(entity.getNombreProyecto(), "Estado del proyecto: ", 15, true);
-                stmt.setString(6, entity.getEstado());
-            stmt.setDouble(7, entity.getCostoEstimado());
-                Validador.validarTexto(entity.getNombreProyecto(), "Cliente del proyecto: ", 15, false);
+                stmt.setString(1, entity.getNombreProyecto());
 
+                Validador.validarTexto(entity.getTipoProduccion(), "Tipo de producción del proyecto: ", 15, true);
+                stmt.setString(2, entity.getTipoProduccion());
+
+                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
+                stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
+                stmt.setDate(4, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
+
+                if (entity.getFechaEntregaReal() != null) {
+                    stmt.setDate(5, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
+                } else {
+                    stmt.setNull(5, java.sql.Types.DATE);
+                }
+
+                Validador.validarTexto(entity.getEstado(), "Estado del proyecto: ", 15, true);
+                stmt.setString(6, entity.getEstado());
+
+                stmt.setDouble(7, entity.getCostoEstimado());
+
+                Validador.validarTexto(entity.getIdCliente(), "Cliente del proyecto: ", 15, false);
                 stmt.setString(8, entity.getIdCliente());
 
-            stmt.execute();
+                // REGISTRAR EL PARÁMETRO OUT ANTES DE EJECUTAR
+                stmt.registerOutParameter(9, java.sql.Types.VARCHAR);
 
-            String idGenerado = stmt.getString(9);
-            entity.setIdProyecto(idGenerado);
+                // Ejecutar
+                stmt.execute();
 
-            System.out.println("Proyecto guardado con ID: "+ idGenerado);
+                // Obtener el ID generado
+                String idGenerado = stmt.getString(9);
+                entity.setIdProyecto(idGenerado);
+
+                System.out.println("Proyecto guardado con ID: "+ idGenerado);
 
                 if (entity.getFechaEntregaReal() != null) {
                     try (CallableStatement stmt2 = conn.prepareCall(sqlFinalizar)) {
@@ -79,11 +88,11 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
 
                 conn.commit();
                 return entity;
-        } catch (SQLException e) {
-            System.err.println("Error al guardar proyecto"+ e.getMessage());
-            throw e;
-        }
-
+            } catch (SQLException e) {
+                conn.rollback();
+                System.err.println("Error al guardar proyecto: " + e.getMessage());
+                throw e;
+            }
         }
     }
 

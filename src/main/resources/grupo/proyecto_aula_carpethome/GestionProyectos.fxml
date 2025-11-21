@@ -3,101 +3,178 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<AnchorPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionProyectosController">
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionProyectosController"
+      style="-fx-background-color: #E4DFD7;"
+      spacing="0">
 
-    <VBox spacing="20" AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
-          style="-fx-padding: 20; -fx-background-color: #f8f9fa;">
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT" style="-fx-background-color: #E4DFD7; -fx-padding: 30 40 20 40;">
+        <Label text="Gestión de Proyectos"
+               style="-fx-font-size: 32px;
+                      -fx-font-weight: 700;
+                      -fx-text-fill: #181716;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
 
-        <!-- Header -->
-        <HBox spacing="20" alignment="CENTER_LEFT">
-            <VBox>
-                <Label text="Gestión de Proyectos"
-                       style="-fx-text-fill: #2c3e50; -fx-font-weight: bold; -fx-font-size: 24px;"/>
-                <Label text="Administra y da seguimiento a todos los proyectos"
-                       style="-fx-text-fill: #7f8c8d; -fx-font-size: 14px;"/>
-            </VBox>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Button text="Nuevo Proyecto" fx:id="btnNuevoProyecto"
-                    style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 5;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- BOTÓN AGREGAR PROYECTO -->
+        <Button fx:id="btnAgregarProyecto"
+                text="+ Agregar Proyecto"
+                onAction="#handleAgregarProyecto"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 24;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                onMouseEntered="#handleButtonHover"
+                onMouseExited="#handleButtonExit"/>
+    </HBox>
+
+    <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+    <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 0 40 25 40;">
+
+        <!-- CAMPO DE BÚSQUEDA -->
+        <HBox alignment="CENTER_LEFT" spacing="10"
+              style="-fx-background-color: white;
+                     -fx-background-radius: 10;
+                     -fx-padding: 12 18;
+                     -fx-min-width: 400;
+                     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);">
+            <Label text="🔍" style="-fx-font-size: 16px;"/>
+            <TextField fx:id="searchField"
+                       promptText="Buscar por nombre o ID..."
+                       style="-fx-background-color: transparent;
+                             -fx-border-width: 0;
+                             -fx-font-size: 14px;
+                             -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                             -fx-text-fill: #181716;
+                             -fx-prompt-text-fill: #A59B8F;"
+                       HBox.hgrow="ALWAYS"/>
         </HBox>
 
-        <!-- Search Bar -->
-        <HBox spacing="15" alignment="CENTER_LEFT">
-            <TextField promptText="Buscar por nombre o ID..." fx:id="txtBuscar" HBox.hgrow="ALWAYS"
-                       style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 8 12 8 35;"/>
-            <ComboBox promptText="Filtrar por estado" fx:id="cmbEstado"
-                      style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5; -fx-pref-width: 150;"/>
-            <ComboBox promptText="Filtrar por tipo" fx:id="cmbTipo"
-                      style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5; -fx-pref-width: 150;"/>
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- FILTRO POR ESTADO -->
+        <HBox alignment="CENTER_LEFT" spacing="12">
+            <Label text="Filtrar por Estado:"
+                   style="-fx-font-size: 14px;
+                          -fx-font-weight: 500;
+                          -fx-text-fill: #61564A;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+            <ComboBox fx:id="estadoFilter"
+                      promptText="Todos"
+                      style="-fx-background-color: white;
+                            -fx-background-radius: 8;
+                            -fx-font-size: 14px;
+                            -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                            -fx-min-width: 150;
+                            -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);"/>
         </HBox>
+    </HBox>
 
-        <!-- Table -->
-        <TableView fx:id="proyectosTable" VBox.vgrow="ALWAYS"
-                   style="-fx-background-color: white; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;">
+    <!-- CONTENEDOR DE LA TABLA -->
+    <VBox style="-fx-padding: 0 40 40 40;" VBox.vgrow="ALWAYS">
 
-            <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-            </columnResizePolicy>
+        <!-- TABLA DE PROYECTOS -->
+        <TableView fx:id="tablaProyectos"
+                   style="-fx-background-color: white;
+                         -fx-background-radius: 12;
+                         -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 12, 0, 0, 4);"
+                   VBox.vgrow="ALWAYS">
 
             <columns>
-                <TableColumn text="ID" prefWidth="80">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="idProyecto"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- ID -->
+                <TableColumn fx:id="colId"
+                             text="ID"
+                             prefWidth="80"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="NOMBRE" prefWidth="150">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="nombreProyecto"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- NOMBRE -->
+                <TableColumn fx:id="colNombre"
+                             text="NOMBRE"
+                             prefWidth="150"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="TIPO PRODUCCIÓN" prefWidth="120">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="tipoProduccion"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- ESTADO -->
+                <TableColumn fx:id="colEstado"
+                             text="ESTADO"
+                             prefWidth="130"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="FECHA INICIO" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="fechaInicio"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- ETAPA -->
+                <TableColumn fx:id="colEtapa"
+                             text="ETAPA"
+                             prefWidth="140"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="ENTREGA ESTIMADA" prefWidth="120">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="fechaEntregaEstimada"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- TIPO PRODUCCIÓN -->
+                <TableColumn fx:id="colTipoProduccion"
+                             text="TIPO PRODUCCIÓN"
+                             prefWidth="140"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="ENTREGA REAL" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="fechaEntregaReal"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- FECHA INICIO -->
+                <TableColumn fx:id="colFechaInicio"
+                             text="FECHA INICIO"
+                             prefWidth="110"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="ESTADO" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="estado"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- ENTREGA ESTIMADA -->
+                <TableColumn fx:id="colEntregaEstimada"
+                             text="ENTREGA ESTIMADA"
+                             prefWidth="130"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="COSTO ESTIMADO" prefWidth="100">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="costoEstimado"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- ENTREGA REAL -->
+                <TableColumn fx:id="colEntregaReal"
+                             text="ENTREGA REAL"
+                             prefWidth="120"
+                             style="-fx-font-weight: 600;"/>
 
-                <TableColumn text="ID CLIENTE" prefWidth="80">
-                    <cellValueFactory>
-                        <PropertyValueFactory property="idCliente"/>
-                    </cellValueFactory>
-                </TableColumn>
+                <!-- COSTO ESTIMADO -->
+                <TableColumn fx:id="colCostoEstimado"
+                             text="COSTO ESTIMADO"
+                             prefWidth="130"
+                             style="-fx-font-weight: 600;"/>
+
+                <!-- CLIENTE -->
+                <TableColumn fx:id="colCliente"
+                             text="CLIENTE"
+                             prefWidth="150"
+                             style="-fx-font-weight: 600;"/>
+
+                <!-- ACCIONES -->
+                <TableColumn fx:id="colAcciones"
+                             text=""
+                             prefWidth="120"
+                             sortable="false"
+                             style="-fx-alignment: CENTER;"/>
             </columns>
+
+            <placeholder>
+                <VBox alignment="CENTER" spacing="15" style="-fx-padding: 40;">
+                    <Label text="📋" style="-fx-font-size: 48px;"/>
+                    <Label text="No hay proyectos registrados"
+                           style="-fx-font-size: 16px;
+                                  -fx-text-fill: #A59B8F;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    <Label text="Comienza agregando un nuevo proyecto"
+                           style="-fx-font-size: 13px;
+                                  -fx-text-fill: #A59B8F;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                </VBox>
+            </placeholder>
+
         </TableView>
+
     </VBox>
-</AnchorPane>
+
+</VBox>

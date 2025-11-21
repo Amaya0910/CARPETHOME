@@ -27,7 +27,7 @@ public class ProyectoService {
         Validador.validarTexto(proyecto.getEstado(), "Estado del proyecto: ", 15, true);
         Validador.validarRangoFechas(proyecto.getFechaInicio(), proyecto.getFechaEntregaEstimada());
         if (proyecto.getFechaEntregaReal() != null) {
-            Validador.validarRangoFechas(proyecto.getFechaInicio(), proyecto.getFechaEntregaReal());
+            Validador.validarRangoFechas(proyecto.getFechaInicio(), proyecto.getFechaEntregaEstimada());
         }
         if (proyecto.getIdCliente() == null || proyecto.getIdCliente().trim().isEmpty()) {
             throw new IllegalArgumentException("El cliente del proyecto es obligatorio");
