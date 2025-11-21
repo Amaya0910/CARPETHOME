@@ -113,7 +113,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
             SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono , e.id_admin, e.contrasena
             FROM PERSONAS p
             INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
-            WHERE e.id_admin = ?
+            WHERE e.id_admin = ?;
             """;
 
         try (Connection conn = dbConnection.connect();
@@ -137,7 +137,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
             SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_admin, e.contrasena
             FROM PERSONAS p
             INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
-            ORDER BY e.id_admin
+            ORDER BY e.id_admin;
             """;
 
         try (Connection conn = dbConnection.connect();
@@ -163,7 +163,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
                     UPDATE PERSONAS 
                     SET p_nombre=?, s_nombre=?, p_apellido=?, s_apellido=?, 
                         p_correo=?, s_correo=?, p_telefono=?, s_telefono=?
-                    WHERE cedula=?
+                    WHERE cedula=?;
                     """;
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlPersona)) {
@@ -218,7 +218,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
             String sqlEmpleado = """
                     UPDATE ADMINISTRADORES 
                     SET contrasena=? 
-                    WHERE id_admin=?
+                    WHERE id_admin=?;
                     """;
 
             try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
@@ -266,14 +266,14 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
             }
 
             // Eliminar de EMPLEADOS
-            String sqlEmpleado = "DELETE FROM ADMINISTRADORES WHERE id_admin = ?";
+            String sqlEmpleado = "DELETE FROM ADMINISTRADORES WHERE id_admin = ?;";
             try (PreparedStatement stmt = conn.prepareStatement(sqlEmpleado)) {
                 stmt.setString(1, id);
                 stmt.executeUpdate();
             }
 
             // Eliminar de PERSONAS
-            String sqlPersona = "DELETE FROM PERSONAS WHERE cedula = ?";
+            String sqlPersona = "DELETE FROM PERSONAS WHERE cedula = ?;";
             try (PreparedStatement stmt = conn.prepareStatement(sqlPersona)) {
                 stmt.setString(1, cedula);
                 stmt.executeUpdate();
@@ -298,7 +298,7 @@ public class AdministradorRepositoryImpl implements AdministradorRepository{
             SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_admin, e.contrasena
             FROM PERSONAS p
             INNER JOIN ADMINISTRADORES e ON p.cedula = e.cedula
-            WHERE p.cedula = ?
+            WHERE p.cedula = ?;
             """;
 
         try (Connection conn = dbConnection.connect();

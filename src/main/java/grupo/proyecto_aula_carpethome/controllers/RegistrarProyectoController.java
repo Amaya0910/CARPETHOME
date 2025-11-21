@@ -232,7 +232,8 @@ public class RegistrarProyectoController {
             // Aquí puedes mostrar un alert o manejar el error como quieras
             e.printStackTrace();
             return null; // o lanza una excepción personalizada
-        }        proyecto.setTipoProduccion(comboTipoProduccion.getValue());
+        }
+        proyecto.setTipoProduccion(comboTipoProduccion.getValue().toUpperCase());
         proyecto.setEstado("Pendiente"); // Estado inicial
 
         // Convertir LocalDate a Date
