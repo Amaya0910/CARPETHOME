@@ -95,11 +95,13 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     @Override
     public Optional<Empleado> findById(String id) throws SQLException {
         String sql = """
-                SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_empleado, e.cargo, e.contrasena
-                FROM PERSONAS p
-                INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
-                WHERE e.id_empleado = ?
-                """;
+    SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, 
+           p.p_correo, p.s_correo, p.p_telefono, p.s_telefono,
+           e.id_empleado, e.cargo
+    FROM PERSONAS p
+    INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
+    WHERE p.cedula = ?
+    """;
 
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
