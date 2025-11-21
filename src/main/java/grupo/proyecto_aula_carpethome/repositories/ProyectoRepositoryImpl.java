@@ -108,7 +108,7 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
         String sql = """
                 SELECT id_proyecto, nombre_proyecto, tipo_produccion, fecha_inicio,fecha_entrega_estimada, fecha_entrega_real, estado,costo_estimado, id_cliente
                 FROM proyectos
-                WHERE id_proyecto = ?;""";
+                WHERE id_proyecto = ?""";
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setString(1, s);
@@ -127,7 +127,7 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
 
         String sql = """
                 SELECT id_proyecto, nombre_proyecto, tipo_produccion, fecha_inicio,fecha_entrega_estimada, fecha_entrega_real, estado,costo_estimado, id_cliente
-                FROM  proyectos;
+                FROM  proyectos
                 """;
         try (Connection conn = dbConnection.connect();
         Statement  stmt = conn.createStatement();
