@@ -30,6 +30,11 @@ public class ServiceFactory {
         return new EmpleadoService(empleadoRepo);
     }
 
+    public static ClienteService getClienteService() {
+        var clienteRepo = new ClientesRepositoryImpl(dbConnection);
+        return new ClienteService(clienteRepo);
+    }
+
     public static EtapaService getEtapaService() {
         var etapaRepo = new EtapasRepositoryImpl(dbConnection);
         return new EtapaService(etapaRepo);

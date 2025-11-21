@@ -44,6 +44,7 @@ public class RegistrarProyectoController {
 
         // Inicializar servicio
         proyectoService = ServiceFactory.getProyectoService();
+        clienteService = ServiceFactory.getClienteService();
 
         // Configurar ComboBox de Tipo de Producción
         comboTipoProduccion.setItems(FXCollections.observableArrayList(
