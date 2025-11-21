@@ -8,7 +8,6 @@ import lombok.*;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,64 +32,72 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
 
     @Override
     public Proyecto save(Proyecto entity) throws SQLException {
-        String sql ="{CALL PKG_PROYECTOS.sp_crear_proyecto(?,?,?,?,?,?,?,?,?)}";
-        String sqlFinalizar  = "{CALL PKG_PROYECTOS.sp_finalizar_proyecto(?,?)}";
+        String sql = "{CALL PKG_PROYECTOS.sp_crear_proyecto(?,?,?,?,?,?,?,?)}";  // ← 8 parámetros
+        String sqlFinalizar = "{CALL PKG_PROYECTOS.sp_finalizar_proyecto(?,?)}";
 
         try (Connection conn = dbConnection.connect()) {
-
             conn.setAutoCommit(false);
 
             try (CallableStatement stmt = conn.prepareCall(sql)) {
-                // Parámetros IN
-                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto: ", 15, true);
+                // Parámetro 1: nombre_proyecto
+                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto", 15, true);
                 stmt.setString(1, entity.getNombreProyecto());
 
-                Validador.validarTexto(entity.getTipoProduccion(), "Tipo de producción del proyecto: ", 15, true);
+                // Parámetro 2: tipo_produccion
+                Validador.validarTexto(entity.getTipoProduccion(), "Tipo de producción", 15, true);
                 stmt.setString(2, entity.getTipoProduccion());
 
-                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
+                // Parámetro 3: fecha_inicio
                 stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
+
+                // Parámetro 4: fecha_entrega_estimada
+                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
                 stmt.setDate(4, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
 
-                if (entity.getFechaEntregaReal() != null) {
-                    stmt.setDate(5, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
+                // Parámetro 5: estado
+                Validador.validarTexto(entity.getEstado(), "Estado del proyecto", 15, true);
+                stmt.setString(5, entity.getEstado());
+
+                // Parámetro 6: costo_estimado
+                if (entity.getCostoEstimado() != 0.0) {
+                    stmt.setDouble(6, entity.getCostoEstimado());
                 } else {
-                    stmt.setNull(5, java.sql.Types.DATE);
+                    stmt.setNull(6, Types.NUMERIC);
                 }
 
-                Validador.validarTexto(entity.getEstado(), "Estado del proyecto: ", 15, true);
-                stmt.setString(6, entity.getEstado());
+                // Parámetro 7: id_cliente
+                Validador.validarTexto(entity.getIdCliente(), "Cliente del proyecto", 10, true);
+                stmt.setString(7, entity.getIdCliente());
 
-                stmt.setDouble(7, entity.getCostoEstimado());
-
-                Validador.validarTexto(entity.getIdCliente(), "Cliente del proyecto: ", 15, false);
-                stmt.setString(8, entity.getIdCliente());
-
-                // REGISTRAR EL PARÁMETRO OUT ANTES DE EJECUTAR
-                stmt.registerOutParameter(9, java.sql.Types.VARCHAR);
+                // Parámetro 8: id_proyecto OUT
+                stmt.registerOutParameter(8, Types.VARCHAR);
 
                 // Ejecutar
                 stmt.execute();
 
                 // Obtener el ID generado
-                String idGenerado = stmt.getString(9);
+                String idGenerado = stmt.getString(8);
                 entity.setIdProyecto(idGenerado);
 
-                System.out.println("Proyecto guardado con ID: "+ idGenerado);
+                System.out.println("✓ Proyecto guardado con ID: " + idGenerado);
 
+                // Si ya tiene fecha de entrega real, finalizar el proyecto
                 if (entity.getFechaEntregaReal() != null) {
                     try (CallableStatement stmt2 = conn.prepareCall(sqlFinalizar)) {
-                        stmt2.setString(1, entity.getIdProyecto());
+                        stmt2.setString(1, idGenerado);
+                        Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaReal());
                         stmt2.setDate(2, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
                         stmt2.execute();
+                        System.out.println("✓ Proyecto finalizado");
                     }
                 }
 
                 conn.commit();
                 return entity;
+
             } catch (SQLException e) {
                 conn.rollback();
-                System.err.println("Error al guardar proyecto: " + e.getMessage());
+                System.err.println("✗ Error al guardar proyecto: " + e.getMessage());
                 throw e;
             }
         }
@@ -134,55 +141,72 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
 
     @Override
     public void update(Proyecto entity) throws SQLException {
-
-        String sqlActualizar = "{CALL PKG_PROYECTOS.sp_actualizar_proyecto(?,?,?,?,?,?,?, ?, ?)}";
-        String sqlFinalizar  = "{CALL PKG_PROYECTOS.sp_finalizar_proyecto(?,?)}";
+        String sqlActualizar = "{CALL PKG_PROYECTOS.sp_actualizar_proyecto(?,?,?,?,?,?,?,?)}"; // 8 params
+        String sqlFinalizar = "{CALL PKG_PROYECTOS.sp_finalizar_proyecto(?,?)}";
 
         try (Connection conn = dbConnection.connect()) {
-
             conn.setAutoCommit(false);
 
             try (CallableStatement stmt = conn.prepareCall(sqlActualizar)) {
-
-
+                // Parámetro 1: id_proyecto
                 stmt.setString(1, entity.getIdProyecto());
-                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto: ", 15, true);
+
+                // Parámetro 2: nombre_proyecto
+                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto", 15, true);
                 stmt.setString(2, entity.getNombreProyecto());
-                Validador.validarTexto(entity.getTipoProduccion(), "Nombre del proyecto: ", 15, true);
+
+                // Parámetro 3: tipo_produccion
+                Validador.validarTexto(entity.getTipoProduccion(), "Tipo de producción", 15, true);
                 stmt.setString(3, entity.getTipoProduccion());
+
+                // Parámetro 4: fecha_inicio (NUEVO)
+                if (entity.getFechaInicio() != null) {
+                    stmt.setDate(4, new java.sql.Date(entity.getFechaInicio().getTime()));
+                } else {
+                    stmt.setNull(4, Types.DATE);
+                }
+
+                // Parámetro 5: fecha_entrega_estimada
                 Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
-                stmt.setDate(4, new java.sql.Date(entity.getFechaInicio().getTime()));
                 stmt.setDate(5, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
 
-                // fecha entrega real puede ser null
+                // Parámetro 6: fecha_entrega_real (puede ser null)
                 if (entity.getFechaEntregaReal() != null) {
+                    Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaReal());
                     stmt.setDate(6, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
                 } else {
                     stmt.setNull(6, Types.DATE);
                 }
 
-
-
+                // Parámetro 7: estado
+                Validador.validarTexto(entity.getEstado(), "Estado del proyecto", 15, true);
                 stmt.setString(7, entity.getEstado());
-                stmt.setDouble(8, entity.getCostoEstimado());
-                stmt.setString(9, entity.getIdCliente());
+
+                // Parámetro 8: costo_estimado
+                if (entity.getCostoEstimado() != 0.0) {
+                    stmt.setDouble(8, entity.getCostoEstimado());
+                } else {
+                    stmt.setNull(8, Types.NUMERIC);
+                }
 
                 stmt.execute();
+                System.out.println("✓ Proyecto actualizado");
             }
 
-            // Si el proyecto ya se finalizó llamar procedure finalización
-            if (entity.getFechaEntregaReal() != null) {
+            // Si el proyecto se finalizó, llamar al procedimiento de finalización
+            if (entity.getFechaEntregaReal() != null && "FINALIZADO".equals(entity.getEstado())) {
                 try (CallableStatement stmt2 = conn.prepareCall(sqlFinalizar)) {
                     stmt2.setString(1, entity.getIdProyecto());
-                    Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaReal());
                     stmt2.setDate(2, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
                     stmt2.execute();
+                    System.out.println("✓ Proyecto marcado como finalizado");
                 }
             }
 
             conn.commit();
 
         } catch (SQLException e) {
+            System.err.println("✗ Error al actualizar proyecto: " + e.getMessage());
             throw new SQLException("Error al actualizar proyecto: " + e.getMessage(), e);
         }
     }
@@ -190,16 +214,29 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
 
     @Override
     public void delete(String s) throws SQLException {
-        String sql = """
-                DELETE FROM proyectos
-                WHERE id_proyecto = ?;""";
+        if (s == null || s.trim().isEmpty()) {
+            throw new IllegalArgumentException("El ID del proyecto no puede ser nulo o vacío");
+        }
+
+        String sql = "DELETE FROM PROYECTOS WHERE id_proyecto = ?";
 
         try (Connection conn = dbConnection.connect();
-        CallableStatement stmt = conn.prepareCall(sql)){
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, s);
-            stmt.execute();
-        }catch (SQLException e){
+
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("No se encontró el proyecto con ID: " + s);
+            }
+
+            System.out.println("✓ Proyecto eliminado: " + s);
+
+        } catch (SQLException e) {
+            System.err.println("✗ Error al eliminar proyecto: " + e.getMessage());
             throw new SQLException("Error al eliminar proyecto: " + e.getMessage(), e);
         }
     }
 }
+
+
