@@ -112,13 +112,7 @@ public class MainClienteService {
             int total = clienteService.contarClientes();
             System.out.println("Total de clientes: " + total);
 
-            // ============================================
-            // 10. ELIMINAR CLIENTE
-            // ============================================
-            System.out.println("\n═══ Eliminando cliente ═══");
 
-            clienteService.eliminarCliente(clienteGuardado.getIdCliente());
-            System.out.println("✓ Cliente eliminado");
 
         } catch (SQLException e) {
             System.err.println("✗ Error SQL: " + e.getMessage());

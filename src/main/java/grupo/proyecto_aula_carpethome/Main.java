@@ -111,49 +111,6 @@ public class Main {
                         admin.getNombreCompleto() + " (" + admin.getCedula() + ")");
             }
 
-            // ============================================
-            // TEST 5: ACTUALIZAR ADMINISTRADOR
-            // ============================================
-            System.out.println("\n\n═══ TEST 5: Actualizar administrador ═══");
-
-            adminGuardado.setSNombre("Leo");
-            adminGuardado.setPCorreo("u8u@carpethome.com");
-            adminGuardado.setContrasena("LeoLeo");
-            adminGuardado.setPTelefono(8858421456L);
-
-            System.out.println("Actualizando datos:");
-            System.out.println("  Nuevo segundo nombre: " + adminGuardado.getSNombre());
-            System.out.println("  Nuevo correo: " + adminGuardado.getPCorreo());
-            System.out.println("  Nuevo teléfono: " + adminGuardado.getPTelefono());
-
-            adminRepository.update(adminGuardado);
-
-            // Verificar actualización
-            Optional<Administrador> adminActualizado = adminRepository.findById(idAdminCreado);
-            if (adminActualizado.isPresent()) {
-                Administrador admin = adminActualizado.get();
-                System.out.println("\n✓ Administrador actualizado:");
-                System.out.println("  Nombre completo: " + admin.getNombreCompleto());
-                System.out.println("  Correo: " + admin.getPCorreo());
-                System.out.println("  Teléfono: " + admin.getPTelefono());
-            }
-
-            // ============================================
-            // TEST 6: ELIMINAR ADMINISTRADOR
-            // ============================================
-            System.out.println("\n\n═══ TEST 6: Eliminar administrador ═══");
-            System.out.println("Eliminando ID: " + idAdminCreado);
-
-            adminRepository.delete(idAdminCreado);
-
-            // Verificar eliminación
-            Optional<Administrador> adminEliminado = adminRepository.findById(idAdminCreado);
-
-            if (adminEliminado.isEmpty()) {
-                System.out.println("\n✓ Administrador eliminado correctamente");
-            } else {
-                System.out.println("\n✗ Error: El administrador aún existe");
-            }
 
         } catch (Exception e) {
             System.err.println("\n✗ ERROR INESPERADO:");

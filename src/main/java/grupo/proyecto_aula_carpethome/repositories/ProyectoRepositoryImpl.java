@@ -199,14 +199,14 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
                     stmt2.setString(1, entity.getIdProyecto());
                     stmt2.setDate(2, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
                     stmt2.execute();
-                    System.out.println("✓ Proyecto marcado como finalizado");
+                    System.out.println(" Proyecto marcado como finalizado");
                 }
             }
 
             conn.commit();
 
         } catch (SQLException e) {
-            System.err.println("✗ Error al actualizar proyecto: " + e.getMessage());
+            System.err.println(" Error al actualizar proyecto: " + e.getMessage());
             throw new SQLException("Error al actualizar proyecto: " + e.getMessage(), e);
         }
     }
