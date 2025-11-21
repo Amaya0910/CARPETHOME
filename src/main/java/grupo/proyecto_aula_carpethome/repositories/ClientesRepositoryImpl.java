@@ -1,5 +1,6 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
+import com.almasb.fxgl.net.Client;
 import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Cliente;
@@ -27,6 +28,22 @@ public class ClientesRepositoryImpl implements ClientesRepository {
                 .sTelefono(rs.getObject("s_telefono") != null ? rs.getLong("s_telefono") : null)
                 .idCliente(rs.getString("id_cliente"))
                 .build();
+    }
+
+    @Override
+    public Optional<String> findIdClienteByCedula(String cedula) throws SQLException {
+        String sql = "SELECT id_cliente FROM CLIENTES WHERE cedula = ?";
+        try (Connection conn = dbConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cedula);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Optional.of(rs.getString("id_cliente"));
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     @Override

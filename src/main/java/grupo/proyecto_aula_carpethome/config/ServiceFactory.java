@@ -64,7 +64,7 @@ public class ServiceFactory {
     public static ProyectoService getProyectoService() {
         if (proyectoServiceInstance == null) {
             var proyectoRepo = new ProyectoRepositoryImpl(dbConnection);
-            proyectoServiceInstance = new ProyectoService(proyectoRepo);
+            proyectoServiceInstance = new ProyectoService(proyectoRepo );
             proyectoServiceInstance.setPrendaService(getPrendaService()); // ← Setter
         }
         return proyectoServiceInstance;

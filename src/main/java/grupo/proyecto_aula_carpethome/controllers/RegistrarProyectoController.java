@@ -2,6 +2,7 @@ package grupo.proyecto_aula_carpethome.controllers;
 
 import grupo.proyecto_aula_carpethome.config.ServiceFactory;
 import grupo.proyecto_aula_carpethome.entities.Proyecto;
+import grupo.proyecto_aula_carpethome.services.ClienteService;
 import grupo.proyecto_aula_carpethome.services.ProyectoService;
 import javafx.animation.FadeTransition;
 import javafx.collections.FXCollections;
@@ -35,6 +36,7 @@ public class RegistrarProyectoController {
 
     private ProyectoService proyectoService;
     private GestionProyectosController parentController;
+    private ClienteService clienteService;
 
     @FXML
     public void initialize() {
@@ -221,8 +223,15 @@ public class RegistrarProyectoController {
 
         // Datos del formulario
         proyecto.setNombreProyecto(txtNombre.getText().trim());
-        proyecto.setIdCliente(txtCedulaCliente.getText().trim());
-        proyecto.setTipoProduccion(comboTipoProduccion.getValue());
+        try {
+            proyecto.setIdCliente(clienteService.obtenerIdClientePorCedula(
+                    txtCedulaCliente.getText().trim()
+            ));
+        } catch (SQLException e) {
+            // Aquí puedes mostrar un alert o manejar el error como quieras
+            e.printStackTrace();
+            return null; // o lanza una excepción personalizada
+        }        proyecto.setTipoProduccion(comboTipoProduccion.getValue());
         proyecto.setEstado("Pendiente"); // Estado inicial
 
         // Convertir LocalDate a Date

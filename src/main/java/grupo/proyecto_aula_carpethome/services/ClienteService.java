@@ -13,6 +13,18 @@ import java.util.Optional;
 public class ClienteService {
     private final ClientesRepository clientesRepository;
 
+    public String obtenerIdClientePorCedula(String cedula) throws SQLException {
+        Validador.validarCedula(cedula);
+
+        Optional<String> idOpt = clientesRepository.findIdClienteByCedula(cedula);
+
+        if (idOpt.isEmpty()) {
+            throw new SQLException("No existe un cliente registrado con la cédula: " + cedula);
+        }
+
+        return idOpt.get();
+    }
+
 
     public Cliente registrarCliente(Cliente cliente) throws SQLException {
         validarCliente(cliente);
