@@ -31,6 +31,20 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
     }
 
     @Override
+    public void validarDatosProyecto(Proyecto entity) {
+        Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto", 15, true);
+        Validador.validarTexto(entity.getTipoProduccion(), "Tipo de producción", 15, true);
+        Validador.validarTexto(entity.getEstado(), "Estado del proyecto", 15, true);
+        Validador.validarTexto(entity.getIdCliente(), "Cliente del proyecto", 10, true);
+        Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
+
+        if (entity.getFechaEntregaReal() != null) {
+            Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaReal());
+        }
+    }
+
+
+    @Override
     public Proyecto save(Proyecto entity) throws SQLException {
         String sql = "{CALL PKG_PROYECTOS.sp_crear_proyecto(?,?,?,?,?,?,?,?)}";  // ← 8 parámetros
         String sqlFinalizar = "{CALL PKG_PROYECTOS.sp_finalizar_proyecto(?,?)}";
@@ -39,37 +53,20 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
             conn.setAutoCommit(false);
 
             try (CallableStatement stmt = conn.prepareCall(sql)) {
-                // Parámetro 1: nombre_proyecto
-                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto", 15, true);
+                validarDatosProyecto(entity);
                 stmt.setString(1, entity.getNombreProyecto());
-
-                // Parámetro 2: tipo_produccion
-                Validador.validarTexto(entity.getTipoProduccion(), "Tipo de producción", 15, true);
                 stmt.setString(2, entity.getTipoProduccion());
-
-                // Parámetro 3: fecha_inicio
                 stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
-
-                // Parámetro 4: fecha_entrega_estimada
-                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
                 stmt.setDate(4, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
-
-                // Parámetro 5: estado
-                Validador.validarTexto(entity.getEstado(), "Estado del proyecto", 15, true);
                 stmt.setString(5, entity.getEstado());
-
-                // Parámetro 6: costo_estimado
                 if (entity.getCostoEstimado() != 0.0) {
                     stmt.setDouble(6, entity.getCostoEstimado());
                 } else {
                     stmt.setNull(6, Types.NUMERIC);
                 }
-
-                // Parámetro 7: id_cliente
-                Validador.validarTexto(entity.getIdCliente(), "Cliente del proyecto", 10, true);
                 stmt.setString(7, entity.getIdCliente());
 
-                // Parámetro 8: id_proyecto OUT
+
                 stmt.registerOutParameter(8, Types.VARCHAR);
 
                 // Ejecutar
@@ -148,27 +145,17 @@ public class ProyectoRepositoryImpl implements ProyectoRepository{
             conn.setAutoCommit(false);
 
             try (CallableStatement stmt = conn.prepareCall(sqlActualizar)) {
+                validarDatosProyecto(entity);
                 stmt.setString(1, entity.getIdProyecto());
-
-                Validador.validarTexto(entity.getNombreProyecto(), "Nombre del proyecto", 15, true);
                 stmt.setString(2, entity.getNombreProyecto());
-
-                Validador.validarTexto(entity.getTipoProduccion(), "Tipo de producción", 15, true);
                 stmt.setString(3, entity.getTipoProduccion());
-
-                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaEstimada());
                 stmt.setDate(4, new java.sql.Date(entity.getFechaEntregaEstimada().getTime()));
-
                 if (entity.getFechaEntregaReal() != null) {
-                    Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaEntregaReal());
                     stmt.setDate(5, new java.sql.Date(entity.getFechaEntregaReal().getTime()));
                 } else {
                     stmt.setNull(5, Types.DATE);
                 }
-
-                Validador.validarTexto(entity.getEstado(), "Estado del proyecto", 15, true);
                 stmt.setString(6, entity.getEstado());
-
                 if (entity.getCostoEstimado() != 0.0) {
                     stmt.setDouble(7, entity.getCostoEstimado());
                 } else {
