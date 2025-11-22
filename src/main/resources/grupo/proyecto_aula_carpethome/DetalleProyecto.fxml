@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.DetalleProyectoController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 16;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 40, 0, 0, 8);"
+      spacing="0"
+      maxWidth="900"
+      prefWidth="900">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: #E4DFD7;
+                 -fx-background-radius: 16 16 0 0;
+                 -fx-padding: 25 30;">
+
+        <VBox spacing="5">
+            <Label fx:id="lblTitulo" text="Detalle del Proyecto"
+                   style="-fx-font-size: 24px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label fx:id="lblIdProyecto" text="PRJ-001"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #61564A;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCancelar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 24px;
+                       -fx-cursor: hand;
+                       -fx-padding: 0;
+                       -fx-min-width: 30;
+                       -fx-min-height: 30;"/>
+    </HBox>
+
+    <!-- MENSAJE DE ERROR -->
+    <VBox fx:id="errorContainer"
+          managed="false"
+          visible="false"
+          style="-fx-padding: 20 30 0 30;">
+        <Label fx:id="errorLabel"
+               wrapText="true"
+               alignment="CENTER"
+               style="-fx-text-fill: #D32F2F;
+                      -fx-font-size: 13px;
+                      -fx-font-weight: 500;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                      -fx-padding: 10 15;
+                      -fx-background-color: rgba(211, 47, 47, 0.1);
+                      -fx-background-radius: 8;
+                      -fx-text-alignment: center;"/>
+    </VBox>
+
+    <!-- FORMULARIO -->
+    <ScrollPane fitToWidth="true"
+                style="-fx-background-color: transparent;
+                       -fx-background: transparent;"
+                VBox.vgrow="ALWAYS">
+        <VBox spacing="25" style="-fx-padding: 30;">
+
+            <!-- FILA 1: INFORMACIÓN GENERAL Y DATOS DEL CLIENTE -->
+            <HBox spacing="20" alignment="TOP_LEFT">
+
+                <!-- COLUMNA IZQUIERDA: INFORMACIÓN GENERAL -->
+                <VBox spacing="18" HBox.hgrow="ALWAYS" style="-fx-min-width: 400;">
+
+                    <!-- TÍTULO SECCIÓN -->
+                    <Label text="Información General"
+                           style="-fx-font-size: 16px;
+                                  -fx-font-weight: 700;
+                                  -fx-text-fill: #181716;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <Separator style="-fx-background-color: #E4DFD7;"/>
+
+                    <!-- NOMBRE DEL PROYECTO -->
+                    <VBox spacing="8">
+                        <Label text="Nombre del Proyecto *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtNombre"
+                                   style="-fx-background-color: #F5F5F5;
+                                         -fx-background-radius: 8;
+                                         -fx-font-size: 14px;
+                                         -fx-padding: 12 16;"/>
+                    </VBox>
+
+                    <!-- TIPO DE PRODUCCIÓN -->
+                    <VBox spacing="8">
+                        <Label text="Tipo de Producción *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <ComboBox fx:id="comboTipoProduccion"
+                                  maxWidth="Infinity"
+                                  style="-fx-background-color: #F5F5F5;
+                                        -fx-background-radius: 8;
+                                        -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <!-- ESTADO -->
+                    <VBox spacing="8">
+                        <Label text="Estado *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <ComboBox fx:id="comboEstado"
+                                  maxWidth="Infinity"
+                                  style="-fx-background-color: #F5F5F5;
+                                        -fx-background-radius: 8;
+                                        -fx-font-size: 14px;"/>
+                    </VBox>
+
+                </VBox>
+
+                <!-- COLUMNA DERECHA: DATOS DEL CLIENTE -->
+                <VBox spacing="18" HBox.hgrow="ALWAYS" style="-fx-min-width: 400;">
+
+                    <!-- TÍTULO SECCIÓN -->
+                    <Label text="Datos del Cliente"
+                           style="-fx-font-size: 16px;
+                                  -fx-font-weight: 700;
+                                  -fx-text-fill: #181716;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <Separator style="-fx-background-color: #E4DFD7;"/>
+
+                    <!-- CÉDULA DEL CLIENTE (SOLO LECTURA) -->
+                    <VBox spacing="8">
+                        <Label text="Cédula del Cliente"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtCedulaCliente"
+                                   editable="false"
+                                   style="-fx-background-color: #E4DFD7;
+                                         -fx-background-radius: 8;
+                                         -fx-font-size: 14px;
+                                         -fx-padding: 12 16;
+                                         -fx-opacity: 1;"/>
+                    </VBox>
+
+                    <!-- NOMBRE DEL CLIENTE (SOLO LECTURA) -->
+                    <VBox spacing="8">
+                        <Label text="Nombre del Cliente"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtNombreCliente"
+                                   editable="false"
+                                   style="-fx-background-color: #E4DFD7;
+                                         -fx-background-radius: 8;
+                                         -fx-font-size: 14px;
+                                         -fx-padding: 12 16;
+                                         -fx-opacity: 1;"/>
+                    </VBox>
+
+                    <!-- TELÉFONO DEL CLIENTE (SOLO LECTURA) -->
+                    <VBox spacing="8">
+                        <Label text="Teléfono"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtTelefonoCliente"
+                                   editable="false"
+                                   style="-fx-background-color: #E4DFD7;
+                                         -fx-background-radius: 8;
+                                         -fx-font-size: 14px;
+                                         -fx-padding: 12 16;
+                                         -fx-opacity: 1;"/>
+                    </VBox>
+
+                </VBox>
+
+            </HBox>
+
+            <!-- FILA 2: FECHAS Y COSTOS -->
+            <VBox spacing="18">
+
+                <!-- TÍTULO SECCIÓN -->
+                <Label text="Fechas y Costos"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #181716;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <Separator style="-fx-background-color: #E4DFD7;"/>
+
+                <!-- FECHAS EN FILA -->
+                <HBox spacing="15">
+
+                    <!-- FECHA DE INICIO (SOLO LECTURA) -->
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Fecha de Inicio"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <DatePicker fx:id="dateFechaInicio"
+                                    editable="false"
+                                    mouseTransparent="true"
+                                    focusTraversable="false"
+                                    maxWidth="Infinity"
+                                    style="-fx-background-color: #E4DFD7;
+                                          -fx-background-radius: 8;
+                                          -fx-opacity: 1;"/>
+                    </VBox>
+
+                    <!-- FECHA ENTREGA ESTIMADA (SOLO LECTURA) -->
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Entrega Estimada"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <DatePicker fx:id="dateFechaEntregaEstimada"
+                                    editable="false"
+                                    mouseTransparent="true"
+                                    focusTraversable="false"
+                                    maxWidth="Infinity"
+                                    style="-fx-background-color: #E4DFD7;
+                                          -fx-background-radius: 8;
+                                          -fx-opacity: 1;"/>
+                    </VBox>
+
+                    <!-- FECHA ENTREGA REAL (SOLO LECTURA) -->
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Entrega Real"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <DatePicker fx:id="dateFechaEntregaReal"
+                                    editable="false"
+                                    mouseTransparent="true"
+                                    focusTraversable="false"
+                                    maxWidth="Infinity"
+                                    style="-fx-background-color: #E4DFD7;
+                                          -fx-background-radius: 8;
+                                          -fx-opacity: 1;"/>
+                    </VBox>
+
+                </HBox>
+
+                <!-- COSTO ESTIMADO -->
+                <VBox spacing="8">
+                    <Label text="Costo Estimado *"
+                           style="-fx-font-size: 13px;
+                                  -fx-font-weight: 600;
+                                  -fx-text-fill: #181716;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    <TextField fx:id="txtCostoEstimado"
+                               style="-fx-background-color: #F5F5F5;
+                                     -fx-background-radius: 8;
+                                     -fx-font-size: 14px;
+                                     -fx-padding: 12 16;
+                                     -fx-max-width: 300;"/>
+                </VBox>
+
+            </VBox>
+
+            <!-- NOTA DE CAMPOS OBLIGATORIOS -->
+            <Label text="* Campos obligatorios"
+                   style="-fx-font-size: 12px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-style: italic;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <HBox spacing="12"
+          alignment="CENTER_RIGHT"
+          style="-fx-padding: 20 30 25 30;
+                 -fx-background-color: white;
+                 -fx-background-radius: 0 0 16 16;">
+
+        <!-- BOTÓN HISTORIAL DE ETAPAS (IZQUIERDA) -->
+        <HBox HBox.hgrow="ALWAYS">
+            <Button fx:id="btnHistorialEtapas"
+                    text="📋 Historial de Etapas"
+                    onAction="#handleHistorialEtapas"
+                    style="-fx-background-color: #A59B8F;
+                           -fx-text-fill: white;
+                           -fx-font-size: 14px;
+                           -fx-font-weight: 600;
+                           -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                           -fx-background-radius: 8;
+                           -fx-cursor: hand;
+                           -fx-padding: 12 24;
+                           -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                    onMouseEntered="#handleHistorialHover"
+                    onMouseExited="#handleHistorialExit"/>
+        </HBox>
+
+        <Button fx:id="btnCancelar"
+                text="Cancelar"
+                onAction="#handleCancelar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 24;
+                       -fx-border-color: #A59B8F;
+                       -fx-border-width: 1.5;
+                       -fx-border-radius: 8;"
+                onMouseEntered="#handleCancelarHover"
+                onMouseExited="#handleCancelarExit"/>
+
+        <Button fx:id="btnGuardar"
+                text="Guardar Cambios"
+                onAction="#handleGuardar"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                onMouseEntered="#handleGuardarHover"
+                onMouseExited="#handleGuardarExit"/>
+    </HBox>
+
+</VBox>

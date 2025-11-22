@@ -1,6 +1,7 @@
 package grupo.proyecto_aula_carpethome.controllers;
 
 import grupo.proyecto_aula_carpethome.config.ServiceFactory;
+import grupo.proyecto_aula_carpethome.entities.Cliente;
 import grupo.proyecto_aula_carpethome.entities.Proyecto;
 import grupo.proyecto_aula_carpethome.services.ClienteService;
 import grupo.proyecto_aula_carpethome.services.ProyectoService;
@@ -17,16 +18,25 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Optional;
 
-public class RegistrarProyectoController {
+public class DetalleProyectoController {
+
+    @FXML private Label lblTitulo;
+    @FXML private Label lblIdProyecto;
 
     @FXML private TextField txtNombre;
     @FXML private TextField txtCedulaCliente;
+    @FXML private TextField txtNombreCliente;
+    @FXML private TextField txtTelefonoCliente;
     @FXML private ComboBox<String> comboTipoProduccion;
+    @FXML private ComboBox<String> comboEstado;
     @FXML private DatePicker dateFechaInicio;
     @FXML private DatePicker dateFechaEntregaEstimada;
+    @FXML private DatePicker dateFechaEntregaReal;
     @FXML private TextField txtCostoEstimado;
 
+    @FXML private Button btnHistorialEtapas;
     @FXML private Button btnGuardar;
     @FXML private Button btnCancelar;
     @FXML private Button btnCerrar;
@@ -35,14 +45,15 @@ public class RegistrarProyectoController {
     @FXML private Label errorLabel;
 
     private ProyectoService proyectoService;
-    private GestionProyectosController parentController;
     private ClienteService clienteService;
+    private GestionProyectosController parentController;
+    private Proyecto proyectoActual;
 
     @FXML
     public void initialize() {
-        System.out.println("ModalProyectoController inicializado");
+        System.out.println("DetalleProyectoController inicializado");
 
-        // Inicializar servicio
+        // Inicializar servicios
         proyectoService = ServiceFactory.getProyectoService();
         clienteService = ServiceFactory.getClienteService();
 
@@ -50,11 +61,16 @@ public class RegistrarProyectoController {
         comboTipoProduccion.setItems(FXCollections.observableArrayList(
                 "A Medida",
                 "Por Lote",
-                "Reparacion"
+                "Reparación"
         ));
 
-        // Configurar fecha de inicio con la fecha actual por defecto
-        dateFechaInicio.setValue(LocalDate.now());
+        // Configurar ComboBox de Estado
+        comboEstado.setItems(FXCollections.observableArrayList(
+                "Pendiente",
+                "En Progreso",
+                "Completado",
+                "Cancelado"
+        ));
 
         // Validación de números en costo estimado
         txtCostoEstimado.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -63,133 +79,159 @@ public class RegistrarProyectoController {
             }
         });
 
-        // Validación de números en cédula
-        txtCedulaCliente.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*")) {
-                txtCedulaCliente.setText(oldVal);
-            }
-        });
-
         // Ocultar error al modificar campos
         txtNombre.textProperty().addListener((obs, oldVal, newVal) -> ocultarError());
-        txtCedulaCliente.textProperty().addListener((obs, oldVal, newVal) -> ocultarError());
         comboTipoProduccion.valueProperty().addListener((obs, oldVal, newVal) -> ocultarError());
-        dateFechaInicio.valueProperty().addListener((obs, oldVal, newVal) -> ocultarError());
-        dateFechaEntregaEstimada.valueProperty().addListener((obs, oldVal, newVal) -> ocultarError());
+        comboEstado.valueProperty().addListener((obs, oldVal, newVal) -> ocultarError());
         txtCostoEstimado.textProperty().addListener((obs, oldVal, newVal) -> ocultarError());
     }
 
     // ============================================
-    // MÉTODO PARA GUARDAR PROYECTO
+    // CARGAR DATOS DEL PROYECTO
+    // ============================================
+
+    public void cargarProyecto(Proyecto proyecto) {
+        this.proyectoActual = proyecto;
+
+        if (proyecto == null) {
+            mostrarError("Error: Proyecto no válido");
+            return;
+        }
+
+        try {
+            // Actualizar título
+            lblIdProyecto.setText(proyecto.getIdProyecto());
+
+            // Datos generales
+            txtNombre.setText(proyecto.getNombreProyecto());
+            comboTipoProduccion.setValue(proyecto.getTipoProduccion());
+            comboEstado.setValue(proyecto.getEstado());
+
+            // Fechas
+            dateFechaInicio.setValue(convertirDateALocalDate(proyecto.getFechaInicio()));
+            dateFechaEntregaEstimada.setValue(convertirDateALocalDate(proyecto.getFechaEntregaEstimada()));
+            dateFechaEntregaReal.setValue(convertirDateALocalDate(proyecto.getFechaEntregaReal()));
+
+            // Costo
+            txtCostoEstimado.setText(String.valueOf(proyecto.getCostoEstimado()));
+
+            // Cargar datos del cliente
+            cargarDatosCliente(proyecto.getIdCliente());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarError("Error al cargar los datos del proyecto");
+        }
+    }
+
+    private void cargarDatosCliente(String idCliente) {
+        try {
+            Optional<Cliente> clienteOpt = clienteService.buscarPorId(idCliente);
+
+            if (clienteOpt.isPresent()) {
+                Cliente cliente = clienteOpt.get();
+                txtCedulaCliente.setText(cliente.getCedula());
+                txtNombreCliente.setText(cliente.getPNombre() + " " + cliente.getPApellido());
+                txtTelefonoCliente.setText(String.valueOf(cliente.getPTelefono()));
+            } else {
+                txtCedulaCliente.setText(idCliente);
+                txtNombreCliente.setText("Cliente no encontrado");
+                txtTelefonoCliente.setText("-");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            txtCedulaCliente.setText(idCliente);
+            txtNombreCliente.setText("Error al cargar cliente");
+            txtTelefonoCliente.setText("-");
+        }
+    }
+
+    // ============================================
+    // GUARDAR CAMBIOS
     // ============================================
 
     @FXML
     private void handleGuardar() {
-        System.out.println("Intentando guardar proyecto...");
+        System.out.println("Guardando cambios del proyecto...");
 
-        // Deshabilitar botón para evitar múltiples clics
         btnGuardar.setDisable(true);
 
         try {
-            // 1. Validar campos vacíos
+            // Validar campos
             if (!validarCampos()) {
                 btnGuardar.setDisable(false);
                 return;
             }
 
-            // 2. Crear objeto Proyecto
-            Proyecto nuevoProyecto = construirProyecto();
+            // Actualizar el objeto proyecto
+            actualizarProyecto();
 
-            // 3. Registrar en la base de datos
-            Proyecto proyectoGuardado = proyectoService.registrarProyecto(nuevoProyecto);
+            // Guardar en la base de datos
+            proyectoService.actualizarProyecto(proyectoActual);
 
-            System.out.println("Proyecto guardado exitosamente: " + proyectoGuardado.getIdProyecto());
+            System.out.println("Proyecto actualizado exitosamente");
 
-            // 4. Recargar tabla en la vista padre
+            // Mostrar mensaje de éxito
+            mostrarExito("Cambios guardados exitosamente");
+
+            // Cerrar el modal
+            cerrarModal();
+
+            // Recargar tabla DESPUÉS de cerrar el modal
             if (parentController != null) {
                 parentController.cargarProyectos();
             }
 
-            // 5. Mostrar mensaje de éxito
-            mostrarExito("Proyecto creado exitosamente");
-
-            // 6. Cerrar el modal después de un breve delay
-            cerrarModalConDelay();
-
         } catch (IllegalArgumentException e) {
-            // Errores de validación del servicio
             System.err.println("Error de validación: " + e.getMessage());
             mostrarError(e.getMessage());
             btnGuardar.setDisable(false);
 
         } catch (SQLException e) {
-            // Errores de base de datos
             e.printStackTrace();
-            mostrarError("Error al guardar el proyecto en la base de datos");
+            mostrarError("Error al actualizar el proyecto en la base de datos");
             btnGuardar.setDisable(false);
 
         } catch (Exception e) {
-            // Otros errores
             e.printStackTrace();
             mostrarError("Error inesperado: " + e.getMessage());
             btnGuardar.setDisable(false);
         }
     }
 
+    private void actualizarProyecto() {
+        proyectoActual.setNombreProyecto(txtNombre.getText().trim());
+        proyectoActual.setTipoProduccion(comboTipoProduccion.getValue());
+        proyectoActual.setEstado(comboEstado.getValue());
+        proyectoActual.setCostoEstimado(Double.parseDouble(txtCostoEstimado.getText().trim()));
+
+        // Las fechas de solo lectura no se actualizan
+        // El cliente no se cambia
+    }
+
     // ============================================
-    // VALIDACIÓN DE CAMPOS
+    // VALIDACIÓN
     // ============================================
 
     private boolean validarCampos() {
-        // Nombre del proyecto
         if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) {
             mostrarError("El nombre del proyecto es obligatorio");
             txtNombre.requestFocus();
             return false;
         }
 
-        if (txtNombre.getText().trim().length() > 100) {
-            mostrarError("El nombre del proyecto no puede exceder 100 caracteres");
-            txtNombre.requestFocus();
-            return false;
-        }
-
-        // Cédula del cliente
-        if (txtCedulaCliente.getText() == null || txtCedulaCliente.getText().trim().isEmpty()) {
-            mostrarError("La cédula del cliente es obligatoria");
-            txtCedulaCliente.requestFocus();
-            return false;
-        }
-
-        // Tipo de producción
         if (comboTipoProduccion.getValue() == null) {
             mostrarError("Debe seleccionar un tipo de producción");
             comboTipoProduccion.requestFocus();
             return false;
         }
 
-        // Fecha de inicio
-        if (dateFechaInicio.getValue() == null) {
-            mostrarError("La fecha de inicio es obligatoria");
-            dateFechaInicio.requestFocus();
+        if (comboEstado.getValue() == null) {
+            mostrarError("Debe seleccionar un estado");
+            comboEstado.requestFocus();
             return false;
         }
 
-        // Fecha de entrega estimada
-        if (dateFechaEntregaEstimada.getValue() == null) {
-            mostrarError("La fecha de entrega estimada es obligatoria");
-            dateFechaEntregaEstimada.requestFocus();
-            return false;
-        }
-
-        // Validar que la fecha de entrega sea posterior a la de inicio
-        if (dateFechaEntregaEstimada.getValue().isBefore(dateFechaInicio.getValue())) {
-            mostrarError("La fecha de entrega debe ser posterior a la fecha de inicio");
-            dateFechaEntregaEstimada.requestFocus();
-            return false;
-        }
-
-        // Costo estimado
         if (txtCostoEstimado.getText() == null || txtCostoEstimado.getText().trim().isEmpty()) {
             mostrarError("El costo estimado es obligatorio");
             txtCostoEstimado.requestFocus();
@@ -213,52 +255,31 @@ public class RegistrarProyectoController {
     }
 
     // ============================================
-    // CONSTRUIR OBJETO PROYECTO
+    // HISTORIAL DE ETAPAS
     // ============================================
 
-    private Proyecto construirProyecto() {
-        Proyecto proyecto = new Proyecto();
-
-        // El ID se genera automáticamente en la BD
-        proyecto.setIdProyecto(null);
-
-        // Datos del formulario
-        proyecto.setNombreProyecto(txtNombre.getText().trim());
-        try {
-            proyecto.setIdCliente(clienteService.obtenerIdClientePorCedula(
-                    txtCedulaCliente.getText().trim()
-            ));
-        } catch (SQLException e) {
-            // Aquí puedes mostrar un alert o manejar el error como quieras
-            e.printStackTrace();
-            return null; // o lanza una excepción personalizada
-        }
-        proyecto.setTipoProduccion(comboTipoProduccion.getValue().toUpperCase());
-        proyecto.setEstado("Pendiente"); // Estado inicial
-
-        // Convertir LocalDate a Date
-        proyecto.setFechaInicio(convertirLocalDateADate(dateFechaInicio.getValue()));
-        proyecto.setFechaEntregaEstimada(convertirLocalDateADate(dateFechaEntregaEstimada.getValue()));
-        proyecto.setFechaEntregaReal(null); // No se establece al crear
-
-        // Costo
-        proyecto.setCostoEstimado(Double.parseDouble(txtCostoEstimado.getText().trim()));
-
-        return proyecto;
+    @FXML
+    private void handleHistorialEtapas() {
+        System.out.println("Abriendo historial de etapas del proyecto: " + proyectoActual.getIdProyecto());
+        // TODO: Abrir modal de historial de etapas
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Historial de Etapas");
+        alert.setHeaderText("Funcionalidad en desarrollo");
+        alert.setContentText("El historial de etapas se implementará próximamente.");
+        alert.show();
     }
 
     // ============================================
-    // MÉTODO PARA CANCELAR
+    // CANCELAR
     // ============================================
 
     @FXML
     private void handleCancelar() {
-        // Confirmar si hay datos en el formulario
-        if (hayDatosEnFormulario()) {
+        if (hayCambios()) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmar cancelación");
             alert.setHeaderText("¿Descartar cambios?");
-            alert.setContentText("Los datos ingresados se perderán.");
+            alert.setContentText("Los cambios no guardados se perderán.");
 
             alert.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
@@ -270,11 +291,23 @@ public class RegistrarProyectoController {
         }
     }
 
-    private boolean hayDatosEnFormulario() {
-        return (txtNombre.getText() != null && !txtNombre.getText().trim().isEmpty()) ||
-                (txtCedulaCliente.getText() != null && !txtCedulaCliente.getText().trim().isEmpty()) ||
-                (comboTipoProduccion.getValue() != null) ||
-                (txtCostoEstimado.getText() != null && !txtCostoEstimado.getText().trim().isEmpty());
+    private boolean hayCambios() {
+        if (proyectoActual == null) return false;
+
+        // Validar que los campos no estén vacíos antes de comparar
+        if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) return false;
+        if (comboTipoProduccion.getValue() == null) return false;
+        if (comboEstado.getValue() == null) return false;
+        if (txtCostoEstimado.getText() == null || txtCostoEstimado.getText().trim().isEmpty()) return false;
+
+        try {
+            return !txtNombre.getText().trim().equals(proyectoActual.getNombreProyecto()) ||
+                    !comboTipoProduccion.getValue().equals(proyectoActual.getTipoProduccion()) ||
+                    !comboEstado.getValue().equals(proyectoActual.getEstado()) ||
+                    Double.parseDouble(txtCostoEstimado.getText().trim()) != proyectoActual.getCostoEstimado();
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     // ============================================
@@ -286,7 +319,6 @@ public class RegistrarProyectoController {
         errorContainer.setVisible(true);
         errorContainer.setManaged(true);
 
-        // Animación de aparición
         errorContainer.setOpacity(0);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(200), errorContainer);
         fadeIn.setFromValue(0.0);
@@ -319,9 +351,13 @@ public class RegistrarProyectoController {
     // UTILIDADES
     // ============================================
 
-    private Date convertirLocalDateADate(LocalDate localDate) {
-        if (localDate == null) return null;
-        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    private LocalDate convertirDateALocalDate(Date fecha) {
+        if (fecha == null) return null;
+        // Convertir java.sql.Date o java.util.Date a LocalDate
+        if (fecha instanceof java.sql.Date) {
+            return ((java.sql.Date) fecha).toLocalDate();
+        }
+        return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
     private void cerrarModal() {
@@ -367,5 +403,16 @@ public class RegistrarProyectoController {
     private void handleCancelarExit(MouseEvent event) {
         btnCancelar.setStyle(btnCancelar.getStyle().replace("-fx-background-color: rgba(165, 155, 143, 0.1);",
                 "-fx-background-color: transparent;"));
+    }
+
+    @FXML
+    private void handleHistorialHover(MouseEvent event) {
+        btnHistorialEtapas.setStyle(btnHistorialEtapas.getStyle() + "-fx-background-color: #8a8179;");
+    }
+
+    @FXML
+    private void handleHistorialExit(MouseEvent event) {
+        btnHistorialEtapas.setStyle(btnHistorialEtapas.getStyle().replace("-fx-background-color: #8a8179;",
+                "-fx-background-color: #A59B8F;"));
     }
 }

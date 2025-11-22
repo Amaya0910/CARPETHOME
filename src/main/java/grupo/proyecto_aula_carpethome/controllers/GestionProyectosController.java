@@ -159,6 +159,7 @@ public class GestionProyectosController {
             tablaProyectos.setItems(filteredData);
 
             System.out.println("Proyectos cargados: " + proyectos.size());
+            tablaProyectos.refresh();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -339,7 +340,43 @@ public class GestionProyectosController {
 
     private void verProyecto(Proyecto proyecto) {
         System.out.println("Ver proyecto: " + proyecto.getIdProyecto());
-        // TODO: Mostrar detalles del proyecto
+        try {
+            // Cargar el FXML del modal
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/grupo/proyecto_aula_carpethome/DetalleProyecto.fxml"));
+            Parent root = loader.load();
+
+            // Obtener el controlador y pasar datos
+            DetalleProyectoController modalController = loader.getController();
+            modalController.setParentController(this);
+            modalController.cargarProyecto(proyecto);
+
+            // Crear el Stage del modal
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.setTitle("Detalle del Proyecto");
+
+            // Crear la escena con fondo semi-transparente
+            StackPane overlay = new StackPane();
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            overlay.getChildren().add(root);
+            overlay.setPadding(new javafx.geometry.Insets(40));
+
+            Scene scene = new Scene(overlay);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            modalStage.setScene(scene);
+
+            modalStage.centerOnScreen();
+            modalStage.showAndWait(); // ESPERA A QUE SE CIERRE
+
+            // RECARGAR LA TABLA DESPUÉS DE CERRAR EL MODAL
+            System.out.println("Modal cerrado, recargando proyectos...");
+            cargarProyectos();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "No se pudo abrir el detalle del proyecto");
+        }
     }
 
     private void editarProyecto(Proyecto proyecto) {

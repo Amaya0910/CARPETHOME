@@ -32,7 +32,7 @@ public class ClientesRepositoryImpl implements ClientesRepository {
 
     @Override
     public Optional<String> findIdClienteByCedula(String cedula) throws SQLException {
-        String sql = "SELECT id_cliente FROM CLIENTES WHERE cedula = ?;";
+        String sql = "SELECT id_cliente FROM CLIENTES WHERE cedula = ?";
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, cedula);
