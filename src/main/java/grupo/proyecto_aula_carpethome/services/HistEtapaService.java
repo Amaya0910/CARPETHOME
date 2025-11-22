@@ -6,7 +6,6 @@ import grupo.proyecto_aula_carpethome.repositories.HistEtapaRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ public class HistEtapaService {
         if (he == null) {
             throw new IllegalArgumentException("El historial de etapa no puede ser nulo");
         }
-        Validador.validarTexto(he.getIdProyecto(),"Id del proyecto: ", 10, true);
+        Validador.validarTexto(he.getIdPrenda(),"Id de la prenda: ", 10, true);
         Validador.validarTexto(he.getIdEtapa(),"Id del etapa: ", 10, true);
         if (he.getFechaInicio() == null) {
             throw new IllegalArgumentException("La fecha de inicio es obligatoria");
@@ -34,9 +33,9 @@ public class HistEtapaService {
 
     private void validarHistEtapaParaActualizar(HistEtapa he) {
         validarHistEtapa(he);
-        if (he.getIdProyecto() == null || he.getIdProyecto().trim().isEmpty() ||
+        if (he.getIdPrenda() == null || he.getIdPrenda().trim().isEmpty() ||
                 he.getIdEtapa() == null || he.getIdEtapa().trim().isEmpty()) {
-            throw new IllegalArgumentException("Tanto idProyecto como idEtapa son obligatorios para actualizar");
+            throw new IllegalArgumentException("Tanto idPrenda como idEtapa son obligatorios para actualizar");
         }
     }
 
@@ -62,7 +61,7 @@ public class HistEtapaService {
 
     public void eliminarHistEtapa(String idCompuesto) throws SQLException {
         if (idCompuesto == null || !idCompuesto.contains("-")) {
-            throw new IllegalArgumentException("El id debe tener el formato 'idProyecto-idEtapa'");
+            throw new IllegalArgumentException("El id debe tener el formato 'idPrenda-idEtapa'");
         }
         buscarPorId(idCompuesto).orElseThrow(
                 () -> new SQLException("No existe un historial con el id: " + idCompuesto)
@@ -80,7 +79,7 @@ public class HistEtapaService {
 
     public List<HistEtapa> listarPorProyecto(String idProyecto) throws SQLException {
         return listarTodos().stream()
-                .filter(h -> h.getIdProyecto().equalsIgnoreCase(idProyecto))
+                .filter(h -> h.getIdPrenda().equalsIgnoreCase(idProyecto))
                 .toList();
     }
 

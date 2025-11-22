@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class HistEtapa {
-    private String idProyecto;      // FK de proyectos
+    private String idPrenda;      // FK de proyectos
     private String idEtapa;         // FK de etapas
     private Date fechaInicio;
     private Date fechaFinal;

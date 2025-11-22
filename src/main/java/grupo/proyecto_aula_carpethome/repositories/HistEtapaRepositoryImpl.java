@@ -16,7 +16,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
     private HistEtapa mapResultSetToHistEtapa(ResultSet rs) throws SQLException {
         return HistEtapa.builder()
-                .idProyecto(rs.getString("id_proyecto"))
+                .idPrenda(rs.getString("id_prenda"))
                 .idEtapa(rs.getString("id_etapa"))
                 .fechaInicio(rs.getDate("fecha_inicio"))
                 .fechaFinal(rs.getDate("fecha_final"))
@@ -31,8 +31,8 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            Validador.validarTexto(entity.getIdEtapa(),"id de proyecto: ", 10,true);
-            stmt.setString(1, entity.getIdProyecto());
+            Validador.validarTexto(entity.getIdPrenda(),"id de prenda: ", 10,true);
+            stmt.setString(1, entity.getIdPrenda());
             Validador.validarTexto(entity.getIdEtapa(),"id de Etapa: ", 10,true);
             stmt.setString(2, entity.getIdEtapa());
             stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
@@ -47,7 +47,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
             stmt.execute();
 
             System.out.println("✓ Historial guardado entre: " +
-                    entity.getIdProyecto() + " y " + entity.getIdEtapa());
+                    entity.getIdPrenda() + " y " + entity.getIdEtapa());
             return entity;
 
         } catch (SQLException e) {
@@ -56,7 +56,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
             switch (e.getErrorCode()) {
                 case 20031:
-                    throw new SQLException("El proyecto no existe", e);
+                    throw new SQLException("La prenda no existe", e);
                 case 20021:
                     throw new SQLException("La etapa no existe", e);
                 case 20040:
@@ -70,7 +70,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
     @Override
     public Optional<HistEtapa> findById(String s) throws SQLException {
         String[] parts = s.split("-");
-        String idProyecto = parts[0].trim();
+        String idPrenda = parts[0].trim();
         String idEtapa = parts[1].trim();
 
 
@@ -79,7 +79,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, idProyecto);
+            stmt.setString(1, idPrenda);
             stmt.setString(2, idEtapa);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -98,7 +98,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
     @Override
     public List<HistEtapa> findAll() throws SQLException {
         List<HistEtapa> histEtapas = new ArrayList<>();
-        String sql = "SELECT * FROM HIST_ETAPA ORDER BY id_proyecto, id_etapa";
+        String sql = "SELECT id_prenda, id_etapa, fecha_incio, fecha_final, observaciones FROM HIST_ETAPA ORDER BY id_proyecto, id_etapa";
 
         try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();
@@ -126,7 +126,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            stmt.setString(1, entity.getIdProyecto());
+            stmt.setString(1, entity.getIdPrenda());
             stmt.setString(2, entity.getIdEtapa());
             stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
 
@@ -148,7 +148,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
             stmt.execute();
 
             System.out.println("  Historial de etapa actualizado");
-            System.out.println("  Proyecto: " + entity.getIdProyecto());
+            System.out.println("  Proyecto: " + entity.getIdPrenda());
             System.out.println("  Etapa: " + entity.getIdEtapa());
 
         } catch (SQLException e) {
@@ -171,7 +171,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
         String[] parts = s.split("-");
         if (parts.length != 2) {
             throw new IllegalArgumentException(
-                    "El ID debe tener el formato 'idProyecto-idEtapa'. Ejemplo: 'PRY001-ETA001'"
+                    "El ID debe tener el formato 'idPrenda-idEtapa'. Ejemplo: 'PRY001-ETA001'"
             );
         }
 
