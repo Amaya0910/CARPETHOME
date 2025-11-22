@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.FormularioPrendaController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 16;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 40, 0, 0, 8);"
+      spacing="0"
+      maxWidth="700"
+      prefWidth="700">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: #E4DFD7;
+                 -fx-background-radius: 16 16 0 0;
+                 -fx-padding: 25 30;">
+
+        <Label fx:id="lblTitulo" text="Nueva Prenda"
+               style="-fx-font-size: 24px;
+                      -fx-font-weight: 700;
+                      -fx-text-fill: #181716;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCancelar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 24px;
+                       -fx-cursor: hand;
+                       -fx-padding: 0;
+                       -fx-min-width: 30;
+                       -fx-min-height: 30;"/>
+    </HBox>
+
+    <!-- MENSAJE DE ERROR -->
+    <VBox fx:id="errorContainer"
+          managed="false"
+          visible="false"
+          style="-fx-padding: 20 30 0 30;">
+        <Label fx:id="errorLabel"
+               wrapText="true"
+               alignment="CENTER"
+               style="-fx-text-fill: #D32F2F;
+                      -fx-font-size: 13px;
+                      -fx-font-weight: 500;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                      -fx-padding: 10 15;
+                      -fx-background-color: rgba(211, 47, 47, 0.1);
+                      -fx-background-radius: 8;
+                      -fx-text-alignment: center;"/>
+    </VBox>
+
+    <!-- FORMULARIO -->
+    <ScrollPane fitToWidth="true"
+                style="-fx-background-color: transparent;
+                       -fx-background: transparent;"
+                VBox.vgrow="ALWAYS">
+        <VBox spacing="20" style="-fx-padding: 30;">
+
+            <!-- DATOS DE LA PRENDA -->
+            <VBox spacing="18">
+                <Label text="Datos de la Prenda"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #181716;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <Separator style="-fx-background-color: #E4DFD7;"/>
+
+                <!-- NOMBRE -->
+                <VBox spacing="8">
+                    <Label text="Nombre de la Prenda *"
+                           style="-fx-font-size: 13px;
+                                  -fx-font-weight: 600;
+                                  -fx-text-fill: #181716;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    <TextField fx:id="txtNombre"
+                               promptText="Ej: Vestido de Gala"
+                               style="-fx-background-color: #F5F5F5;
+                                     -fx-background-radius: 8;
+                                     -fx-font-size: 14px;
+                                     -fx-padding: 12 16;"/>
+                </VBox>
+
+                <!-- DESCRIPCIÓN -->
+                <VBox spacing="8">
+                    <Label text="Descripción"
+                           style="-fx-font-size: 13px;
+                                  -fx-font-weight: 600;
+                                  -fx-text-fill: #181716;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    <TextArea fx:id="txtDescripcion"
+                              promptText="Descripción detallada de la prenda..."
+                              wrapText="true"
+                              prefRowCount="3"
+                              style="-fx-background-color: #F5F5F5;
+                                    -fx-background-radius: 8;
+                                    -fx-font-size: 14px;
+                                    -fx-padding: 12 16;"/>
+                </VBox>
+
+                <!-- COSTO TOTAL ESTIMADO -->
+                <VBox spacing="8">
+                    <Label text="Costo Total Estimado *"
+                           style="-fx-font-size: 13px;
+                                  -fx-font-weight: 600;
+                                  -fx-text-fill: #181716;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    <TextField fx:id="txtCostoTotal"
+                               promptText="Ej: 150000"
+                               style="-fx-background-color: #F5F5F5;
+                                     -fx-background-radius: 8;
+                                     -fx-font-size: 14px;
+                                     -fx-padding: 12 16;
+                                     -fx-max-width: 250;"/>
+                </VBox>
+            </VBox>
+
+            <!-- SECCIÓN DE MEDIDAS -->
+            <VBox spacing="18">
+                <Label text="Medidas"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #181716;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <Separator style="-fx-background-color: #E4DFD7;"/>
+
+                <!-- OPCIONES DE MEDIDA -->
+                <VBox spacing="15">
+
+                    <!-- OPCIÓN 1: MEDIDA ESTÁNDAR -->
+                    <RadioButton fx:id="radioMedidaEstandar"
+                                 text="Usar Medida Estándar"
+                                 selected="true"
+                                 style="-fx-font-size: 14px;
+                                       -fx-font-weight: 600;
+                                       -fx-text-fill: #181716;
+                                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;">
+                        <toggleGroup>
+                            <ToggleGroup fx:id="grupoMedidas"/>
+                        </toggleGroup>
+                    </RadioButton>
+
+                    <ComboBox fx:id="comboMedidasEstandar"
+                              promptText="Seleccionar medida estándar"
+                              maxWidth="Infinity"
+                              disable="false"
+                              style="-fx-background-color: #F5F5F5;
+                                    -fx-background-radius: 8;
+                                    -fx-font-size: 14px;
+                                    -fx-padding: 8 16;"/>
+
+                    <!-- OPCIÓN 2: CREAR MEDIDA PERSONALIZADA -->
+                    <RadioButton fx:id="radioMedidaPersonalizada"
+                                 text="Crear Medida Personalizada"
+                                 toggleGroup="$grupoMedidas"
+                                 style="-fx-font-size: 14px;
+                                       -fx-font-weight: 600;
+                                       -fx-text-fill: #181716;
+                                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <!-- FORMULARIO DE MEDIDAS (SE DESPLIEGA) -->
+                    <VBox fx:id="formularioMedidas"
+                          spacing="15"
+                          visible="false"
+                          managed="false"
+                          style="-fx-background-color: #F9F9F9;
+                                 -fx-background-radius: 12;
+                                 -fx-padding: 20;">
+
+                        <!-- NOMBRE DE LA MEDIDA -->
+                        <VBox spacing="8">
+                            <Label text="Nombre de la Medida *"
+                                   style="-fx-font-size: 13px;
+                                          -fx-font-weight: 600;
+                                          -fx-text-fill: #181716;"/>
+                            <TextField fx:id="txtNombreMedida"
+                                       promptText="Ej: Medida Vestido Gala"
+                                       style="-fx-background-color: white;
+                                             -fx-background-radius: 8;
+                                             -fx-font-size: 14px;
+                                             -fx-padding: 12 16;"/>
+                        </VBox>
+
+                        <!-- GRID DE MEDIDAS -->
+                        <GridPane hgap="15" vgap="15">
+
+                            <!-- FILA 1 -->
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="C. Busto" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtCBusto" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="C. Cintura" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtCCintura" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <Label text="C. Cadera" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtCCadera" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <!-- FILA 2 -->
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Altura Busto" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtAlturaBusto" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Label text="Sep. Busto" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtSeparacionBusto" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                <Label text="Radio Busto" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtRadioBusto" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <!-- FILA 3 -->
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <Label text="Bajo Busto" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtBajoBusto" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <Label text="Largo Falda" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtLargoFalda" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                <Label text="Largo Cadera" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtLargoCadera" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <!-- FILA 4 -->
+                            <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                                <Label text="Largo Vestido" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtLargoVestido" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                <Label text="Largo Pantalón" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtLargoPantalon" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                            <VBox spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                <Label text="Largo Manga" style="-fx-font-size: 12px; -fx-font-weight: 600;"/>
+                                <TextField fx:id="txtLargoManga" promptText="0.0" style="-fx-background-color: white; -fx-background-radius: 6; -fx-font-size: 13px; -fx-padding: 8 12;"/>
+                            </VBox>
+
+                        </GridPane>
+
+                        <Label text="Nota: Todas las medidas son opcionales"
+                               style="-fx-font-size: 11px;
+                                      -fx-text-fill: #A59B8F;
+                                      -fx-font-style: italic;"/>
+
+                    </VBox>
+
+                </VBox>
+            </VBox>
+
+            <Label text="* Campos obligatorios"
+                   style="-fx-font-size: 12px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-style: italic;"/>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <HBox spacing="12"
+          alignment="CENTER_RIGHT"
+          style="-fx-padding: 20 30 25 30;
+                 -fx-background-color: white;
+                 -fx-background-radius: 0 0 16 16;">
+
+        <Button fx:id="btnCancelar"
+                text="Cancelar"
+                onAction="#handleCancelar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 24;
+                       -fx-border-color: #A59B8F;
+                       -fx-border-width: 1.5;
+                       -fx-border-radius: 8;"
+                onMouseEntered="#handleCancelarHover"
+                onMouseExited="#handleCancelarExit"/>
+
+        <Button fx:id="btnGuardar"
+                text="Guardar Prenda"
+                onAction="#handleGuardar"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                onMouseEntered="#handleGuardarHover"
+                onMouseExited="#handleGuardarExit"/>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionPrendasController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 16;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 40, 0, 0, 8);"
+      spacing="0"
+      maxWidth="800"
+      prefWidth="800"
+      maxHeight="700"
+      prefHeight="700">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: #E4DFD7;
+                 -fx-background-radius: 16 16 0 0;
+                 -fx-padding: 25 30;">
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Gestión de Prendas"
+                   style="-fx-font-size: 24px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label fx:id="lblProyecto" text="Proyecto: PRJ-001"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #61564A;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <Button fx:id="btnAgregarPrenda"
+                text="+ Agregar Prenda"
+                onAction="#handleAgregarPrenda"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 24;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                onMouseEntered="#handleAgregarHover"
+                onMouseExited="#handleAgregarExit"/>
+
+        <Region prefWidth="10"/>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCerrar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 24px;
+                       -fx-cursor: hand;
+                       -fx-padding: 0;
+                       -fx-min-width: 30;
+                       -fx-min-height: 30;"/>
+    </HBox>
+
+    <!-- CONTENEDOR DE PRENDAS -->
+    <ScrollPane fitToWidth="true"
+                style="-fx-background-color: transparent;
+                       -fx-background: transparent;"
+                VBox.vgrow="ALWAYS">
+        <VBox fx:id="contenedorPrendas"
+              spacing="15"
+              style="-fx-padding: 30;">
+
+            <!-- Las tarjetas de prendas se agregarán dinámicamente aquí -->
+
+            <!-- PLACEHOLDER cuando no hay prendas -->
+            <VBox fx:id="placeholderPrendas"
+                  alignment="CENTER"
+                  spacing="15"
+                  style="-fx-padding: 60;">
+                <Label text="👔" style="-fx-font-size: 48px;"/>
+                <Label text="No hay prendas registradas"
+                       style="-fx-font-size: 16px;
+                              -fx-text-fill: #A59B8F;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                <Label text="Comienza agregando una nueva prenda al proyecto"
+                       style="-fx-font-size: 13px;
+                              -fx-text-fill: #A59B8F;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- BOTÓN CERRAR -->
+    <HBox alignment="CENTER_RIGHT"
+          style="-fx-padding: 20 30 25 30;
+                 -fx-background-color: white;
+                 -fx-background-radius: 0 0 16 16;">
+
+        <Button text="Cerrar"
+                onAction="#handleCerrar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 24;
+                       -fx-border-color: #A59B8F;
+                       -fx-border-width: 1.5;
+                       -fx-border-radius: 8;"
+                onMouseEntered="#handleCerrarHover"
+                onMouseExited="#handleCerrarExit"/>
+    </HBox>
+
+</VBox>
