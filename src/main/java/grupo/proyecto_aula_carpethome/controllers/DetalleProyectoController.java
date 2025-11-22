@@ -1,6 +1,6 @@
 package grupo.proyecto_aula_carpethome.controllers;
 
-import grupo.proyecto_aula_carpethome.config.ServiceFactory;
+import grupo.proyecto_aula_carpethome.services.ServiceFactory;
 import grupo.proyecto_aula_carpethome.entities.Cliente;
 import grupo.proyecto_aula_carpethome.entities.Proyecto;
 import grupo.proyecto_aula_carpethome.services.ClienteService;

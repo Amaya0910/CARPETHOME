@@ -80,101 +80,85 @@
         </HBox>
     </HBox>
 
-    <!-- CONTENEDOR DE LA TABLA -->
-    <VBox style="-fx-padding: 0 40 40 40;" VBox.vgrow="ALWAYS">
+    <!-- CONTENEDOR DE TARJETAS CON SCROLL -->
+    <ScrollPane fx:id="scrollPane"
+                fitToWidth="true"
+                style="-fx-background-color: transparent;
+                       -fx-background: transparent;
+                       -fx-padding: 0 40 20 40;"
+                VBox.vgrow="ALWAYS">
 
-        <!-- TABLA DE PROYECTOS -->
-        <TableView fx:id="tablaProyectos"
-                   style="-fx-background-color: white;
-                         -fx-background-radius: 12;
-                         -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 12, 0, 0, 4);"
-                   VBox.vgrow="ALWAYS">
+        <VBox fx:id="tarjetasContainer"
+              spacing="20"
+              style="-fx-background-color: transparent;">
 
-            <columns>
-                <!-- ID -->
-                <TableColumn fx:id="colId"
-                             text="ID"
-                             prefWidth="80"
-                             style="-fx-font-weight: 600;"/>
+            <!-- Aquí se añadirán dinámicamente las tarjetas -->
 
-                <!-- NOMBRE -->
-                <TableColumn fx:id="colNombre"
-                             text="NOMBRE"
-                             prefWidth="150"
-                             style="-fx-font-weight: 600;"/>
+        </VBox>
+    </ScrollPane>
 
-                <!-- ESTADO -->
-                <TableColumn fx:id="colEstado"
-                             text="ESTADO"
-                             prefWidth="130"
-                             style="-fx-font-weight: 600;"/>
+    <!-- CONTROLES DE PAGINACIÓN -->
+    <HBox alignment="CENTER" spacing="15" style="-fx-padding: 0 40 30 40;">
 
-                <!-- ETAPA -->
-                <TableColumn fx:id="colEtapa"
-                             text="ETAPA"
-                             prefWidth="140"
-                             style="-fx-font-weight: 600;"/>
+        <!-- Botón Anterior -->
+        <Button fx:id="btnAnterior"
+                text="← Anterior"
+                onAction="#handleAnterior"
+                style="-fx-background-color: white;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 13px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 10 20;
+                       -fx-border-color: #61564A;
+                       -fx-border-width: 1.5;
+                       -fx-border-radius: 8;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);"/>
 
-                <!-- TIPO PRODUCCIÓN -->
-                <TableColumn fx:id="colTipoProduccion"
-                             text="TIPO PRODUCCIÓN"
-                             prefWidth="140"
-                             style="-fx-font-weight: 600;"/>
+        <!-- Indicador de página -->
+        <Label fx:id="lblPaginacion"
+               text="Página 1 de 1"
+               style="-fx-font-size: 14px;
+                      -fx-font-weight: 500;
+                      -fx-text-fill: #61564A;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                      -fx-padding: 0 20;"/>
 
-                <!-- FECHA INICIO -->
-                <TableColumn fx:id="colFechaInicio"
-                             text="FECHA INICIO"
-                             prefWidth="110"
-                             style="-fx-font-weight: 600;"/>
+        <!-- Botón Siguiente -->
+        <Button fx:id="btnSiguiente"
+                text="Siguiente →"
+                onAction="#handleSiguiente"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 13px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 10 20;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);"/>
+    </HBox>
 
-                <!-- ENTREGA ESTIMADA -->
-                <TableColumn fx:id="colEntregaEstimada"
-                             text="ENTREGA ESTIMADA"
-                             prefWidth="130"
-                             style="-fx-font-weight: 600;"/>
-
-                <!-- ENTREGA REAL -->
-                <TableColumn fx:id="colEntregaReal"
-                             text="ENTREGA REAL"
-                             prefWidth="120"
-                             style="-fx-font-weight: 600;"/>
-
-                <!-- COSTO ESTIMADO -->
-                <TableColumn fx:id="colCostoEstimado"
-                             text="COSTO ESTIMADO"
-                             prefWidth="130"
-                             style="-fx-font-weight: 600;"/>
-
-                <!-- CLIENTE -->
-                <TableColumn fx:id="colCliente"
-                             text="CLIENTE"
-                             prefWidth="150"
-                             style="-fx-font-weight: 600;"/>
-
-                <!-- ACCIONES -->
-                <TableColumn fx:id="colAcciones"
-                             text=""
-                             prefWidth="120"
-                             sortable="false"
-                             style="-fx-alignment: CENTER;"/>
-            </columns>
-
-            <placeholder>
-                <VBox alignment="CENTER" spacing="15" style="-fx-padding: 40;">
-                    <Label text="📋" style="-fx-font-size: 48px;"/>
-                    <Label text="No hay proyectos registrados"
-                           style="-fx-font-size: 16px;
-                                  -fx-text-fill: #A59B8F;
-                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-                    <Label text="Comienza agregando un nuevo proyecto"
-                           style="-fx-font-size: 13px;
-                                  -fx-text-fill: #A59B8F;
-                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-                </VBox>
-            </placeholder>
-
-        </TableView>
-
+    <!-- MENSAJE CUANDO NO HAY PROYECTOS -->
+    <VBox fx:id="emptyStateContainer"
+          alignment="CENTER"
+          spacing="15"
+          visible="false"
+          managed="false"
+          style="-fx-padding: 60;"
+          VBox.vgrow="ALWAYS">
+        <Label text="📋" style="-fx-font-size: 64px;"/>
+        <Label text="No hay proyectos registrados"
+               style="-fx-font-size: 18px;
+                      -fx-font-weight: 600;
+                      -fx-text-fill: #61564A;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        <Label text="Comienza agregando un nuevo proyecto usando el botón superior"
+               style="-fx-font-size: 14px;
+                      -fx-text-fill: #A59B8F;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
     </VBox>
 
 </VBox>

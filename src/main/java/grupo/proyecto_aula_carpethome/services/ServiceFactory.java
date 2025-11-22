@@ -1,7 +1,8 @@
-package grupo.proyecto_aula_carpethome.config;
+package grupo.proyecto_aula_carpethome.services;
 
+import grupo.proyecto_aula_carpethome.config.DatabaseConfig;
+import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.repositories.*;
-import grupo.proyecto_aula_carpethome.services.*;
 
 public class ServiceFactory {
     private static final DatabaseConfig config = DatabaseConfig.builder()

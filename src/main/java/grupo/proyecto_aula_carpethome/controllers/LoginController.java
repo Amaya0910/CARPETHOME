@@ -1,9 +1,7 @@
 package grupo.proyecto_aula_carpethome.controllers;
 
 import grupo.proyecto_aula_carpethome.HelloApplication;
-import grupo.proyecto_aula_carpethome.config.ServiceFactory;
-import grupo.proyecto_aula_carpethome.entities.Administrador;
-import grupo.proyecto_aula_carpethome.entities.Persona;
+import grupo.proyecto_aula_carpethome.services.ServiceFactory;
 import grupo.proyecto_aula_carpethome.entities.UsuarioLogueado;
 import grupo.proyecto_aula_carpethome.services.AdministradorService;
 import grupo.proyecto_aula_carpethome.services.EmpleadoService;
