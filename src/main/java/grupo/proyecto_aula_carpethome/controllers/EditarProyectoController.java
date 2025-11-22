@@ -9,7 +9,6 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.sql.SQLException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -71,16 +70,8 @@ public class EditarProyectoController {
             }
         });
 
-        // Validación de fechas
-        dpEntregaEstimada.valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null && dpFechaInicio.getValue() != null) {
-                if (newVal.isBefore(dpFechaInicio.getValue())) {
-                    mostrarError("Error de validación",
-                            "La fecha de entrega real no puede ser anterior a la fecha de inicio");
-                    dpEntregaReal.setValue(oldVal);
-                }
-            }
-        });
+        // NO configurar validaciones de fechas aquí
+        // Se validarán en el método validarFormulario() al guardar
     }
 
     // ============================================
@@ -265,9 +256,16 @@ public class EditarProyectoController {
     // ============================================
 
     private LocalDate convertirDateALocalDate(Date fecha) {
-        return fecha.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
+        if (fecha == null) return null;
+
+        // Convertir java.sql.Date o java.util.Date a LocalDate
+        if (fecha instanceof java.sql.Date) {
+            return ((java.sql.Date) fecha).toLocalDate();
+        } else {
+            return fecha.toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        }
     }
 
     private Date convertirLocalDateADate(LocalDate localDate) {
