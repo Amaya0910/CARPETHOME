@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.CambiarContrasenaController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 16;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 40, 0, 0, 8);"
+      spacing="0"
+      maxWidth="500"
+      prefWidth="500">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: #E4DFD7;
+                 -fx-background-radius: 16 16 0 0;
+                 -fx-padding: 25 30;">
+
+        <Label text="🔒" style="-fx-font-size: 24px; -fx-padding: 0 12 0 0;"/>
+
+        <Label text="Cambiar Contraseña"
+               style="-fx-font-size: 24px;
+                      -fx-font-weight: 700;
+                      -fx-text-fill: #181716;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCancelar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 24px;
+                       -fx-cursor: hand;
+                       -fx-padding: 0;
+                       -fx-min-width: 30;
+                       -fx-min-height: 30;"/>
+    </HBox>
+
+    <!-- MENSAJE DE ERROR -->
+    <VBox fx:id="errorContainer"
+          managed="false"
+          visible="false"
+          style="-fx-padding: 20 30 0 30;">
+        <Label fx:id="errorLabel"
+               wrapText="true"
+               alignment="CENTER"
+               style="-fx-text-fill: #D32F2F;
+                      -fx-font-size: 13px;
+                      -fx-font-weight: 500;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                      -fx-padding: 10 15;
+                      -fx-background-color: rgba(211, 47, 47, 0.1);
+                      -fx-background-radius: 8;
+                      -fx-text-alignment: center;"/>
+    </VBox>
+
+    <!-- FORMULARIO -->
+    <VBox spacing="20" style="-fx-padding: 30;">
+
+        <!-- CONTRASEÑA ACTUAL -->
+        <VBox spacing="8">
+            <Label text="Contraseña Actual *"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <PasswordField fx:id="txtContrasenaActual"
+                           promptText="Ingresa tu contraseña actual"
+                           style="-fx-background-color: #F5F5F5;
+                                  -fx-background-radius: 8;
+                                  -fx-font-size: 14px;
+                                  -fx-padding: 12 16;"/>
+        </VBox>
+
+        <Separator style="-fx-background-color: #E4DFD7;"/>
+
+        <!-- NUEVA CONTRASEÑA -->
+        <VBox spacing="8">
+            <Label text="Nueva Contraseña *"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <PasswordField fx:id="txtNuevaContrasena"
+                           promptText="Mínimo 6 caracteres"
+                           style="-fx-background-color: #F5F5F5;
+                                  -fx-background-radius: 8;
+                                  -fx-font-size: 14px;
+                                  -fx-padding: 12 16;"/>
+            <Label text="La contraseña debe tener al menos 6 caracteres"
+                   style="-fx-font-size: 11px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-style: italic;"/>
+        </VBox>
+
+        <!-- CONFIRMAR NUEVA CONTRASEÑA -->
+        <VBox spacing="8">
+            <Label text="Confirmar Nueva Contraseña *"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <PasswordField fx:id="txtConfirmarContrasena"
+                           promptText="Confirma tu nueva contraseña"
+                           style="-fx-background-color: #F5F5F5;
+                                  -fx-background-radius: 8;
+                                  -fx-font-size: 14px;
+                                  -fx-padding: 12 16;"/>
+        </VBox>
+
+        <Label text="* Campos obligatorios"
+               style="-fx-font-size: 12px;
+                      -fx-text-fill: #A59B8F;
+                      -fx-font-style: italic;"/>
+
+    </VBox>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <HBox spacing="12"
+          alignment="CENTER_RIGHT"
+          style="-fx-padding: 20 30 25 30;
+                 -fx-background-color: white;
+                 -fx-background-radius: 0 0 16 16;">
+
+        <Button fx:id="btnCancelar"
+                text="Cancelar"
+                onAction="#handleCancelar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 24;
+                       -fx-border-color: #A59B8F;
+                       -fx-border-width: 1.5;
+                       -fx-border-radius: 8;"
+                onMouseEntered="#handleCancelarHover"
+                onMouseExited="#handleCancelarExit"/>
+
+        <Button fx:id="btnCambiar"
+                text="Cambiar Contraseña"
+                onAction="#handleCambiar"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                onMouseEntered="#handleCambiarHover"
+                onMouseExited="#handleCambiarExit"/>
+    </HBox>
+
+</VBox>

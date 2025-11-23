@@ -3,57 +3,97 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.shape.SVGPath?>
 
 <VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionProyectosController"
+      fx:id="mainContainer"
       style="-fx-background-color: #E4DFD7;"
       spacing="0">
 
-    <!-- ENCABEZADO -->
-    <HBox alignment="CENTER_LEFT" style="-fx-background-color: #E4DFD7; -fx-padding: 30 40 20 40;">
-        <Label text="Gestión de Proyectos"
-               style="-fx-font-size: 32px;
-                      -fx-font-weight: 700;
-                      -fx-text-fill: #181716;
-                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+    <!-- ENCABEZADO CON DECORACIÓN -->
+    <VBox style="-fx-background-color: #E4DFD7; -fx-padding: 30 40 20 40;" spacing="10">
 
-        <Region HBox.hgrow="ALWAYS"/>
+        <!-- Título y Botón Principal -->
+        <HBox alignment="CENTER_LEFT" spacing="20">
 
-        <!-- BOTÓN AGREGAR PROYECTO -->
-        <Button fx:id="btnAgregarProyecto"
-                text="+ Agregar Proyecto"
-                onAction="#handleAgregarProyecto"
-                style="-fx-background-color: #61564A;
-                       -fx-text-fill: white;
-                       -fx-font-size: 14px;
-                       -fx-font-weight: 600;
-                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-                       -fx-background-radius: 8;
-                       -fx-cursor: hand;
-                       -fx-padding: 12 24;
-                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
-                onMouseEntered="#handleButtonHover"
-                onMouseExited="#handleButtonExit"/>
-    </HBox>
+            <!-- Icono de Proyecto -->
+            <StackPane style="-fx-background-color: white;
+                              -fx-background-radius: 15;
+                              -fx-padding: 15;
+                              -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0, 0, 2);">
+                <SVGPath content="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"
+                         fill="#61564A"
+                         scaleX="1.5"
+                         scaleY="1.5" />
+            </StackPane>
+
+            <!-- Título y Descripción -->
+            <VBox spacing="5">
+                <Label text="Gestión de Proyectos"
+                       style="-fx-font-size: 32px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #181716;
+                              -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;"/>
+                <Label text="Administra y supervisa todos tus proyectos de costura"
+                       style="-fx-font-size: 14px;
+                              -fx-text-fill: #61564A;
+                              -fx-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- BOTÓN AGREGAR PROYECTO -->
+            <Button fx:id="btnAgregarProyecto"
+                    onAction="#handleAgregarProyecto"
+                    style="-fx-background-color: #61564A;
+                           -fx-background-radius: 10;
+                           -fx-cursor: hand;
+                           -fx-padding: 14 24;
+                           -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 3);">
+                <graphic>
+                    <HBox alignment="CENTER" spacing="10">
+                        <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
+                                 fill="white"
+                                 scaleX="1"
+                                 scaleY="1" />
+                        <Label text="Nuevo Proyecto"
+                               style="-fx-text-fill: white;
+                                      -fx-font-size: 14px;
+                                      -fx-font-weight: 600;
+                                      -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;"/>
+                    </HBox>
+                </graphic>
+            </Button>
+        </HBox>
+
+        <!-- Estadísticas Rápidas -->
+        <HBox fx:id="statsContainer" spacing="15" style="-fx-padding: 15 0 0 0;">
+            <!-- Las estadísticas se agregarán dinámicamente desde el controlador -->
+        </HBox>
+    </VBox>
 
     <!-- BARRA DE BÚSQUEDA Y FILTROS -->
     <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 0 40 25 40;">
 
         <!-- CAMPO DE BÚSQUEDA -->
-        <HBox alignment="CENTER_LEFT" spacing="10"
+        <HBox alignment="CENTER_LEFT"
+              spacing="12"
               style="-fx-background-color: white;
-                     -fx-background-radius: 10;
-                     -fx-padding: 12 18;
+                     -fx-background-radius: 12;
+                     -fx-padding: 14 20;
                      -fx-min-width: 400;
-                     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);">
-            <Label text="🔍" style="-fx-font-size: 16px;"/>
+                     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);">
+            <SVGPath content="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                     fill="#A59B8F"
+                     scaleX="0.9"
+                     scaleY="0.9" />
             <TextField fx:id="searchField"
-                       promptText="Buscar por nombre o ID..."
+                       promptText="Buscar por nombre, ID o cliente..."
                        style="-fx-background-color: transparent;
                              -fx-border-width: 0;
                              -fx-font-size: 14px;
-                             -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                             -fx-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
                              -fx-text-fill: #181716;
                              -fx-prompt-text-fill: #A59B8F;"
                        HBox.hgrow="ALWAYS"/>
@@ -62,21 +102,29 @@
         <Region HBox.hgrow="ALWAYS"/>
 
         <!-- FILTRO POR ESTADO -->
-        <HBox alignment="CENTER_LEFT" spacing="12">
-            <Label text="Filtrar por Estado:"
+        <HBox alignment="CENTER_LEFT"
+              spacing="12"
+              style="-fx-background-color: white;
+                     -fx-background-radius: 12;
+                     -fx-padding: 14 20;
+                     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);">
+            <SVGPath content="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"
+                     fill="#61564A"
+                     scaleX="0.85"
+                     scaleY="0.85" />
+            <Label text="Estado:"
                    style="-fx-font-size: 14px;
-                          -fx-font-weight: 500;
+                          -fx-font-weight: 600;
                           -fx-text-fill: #61564A;
-                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                          -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;"/>
 
             <ComboBox fx:id="estadoFilter"
                       promptText="Todos"
-                      style="-fx-background-color: white;
-                            -fx-background-radius: 8;
+                      style="-fx-background-color: transparent;
+                            -fx-border-width: 0;
                             -fx-font-size: 14px;
-                            -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-                            -fx-min-width: 150;
-                            -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);"/>
+                            -fx-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+                            -fx-min-width: 150;"/>
         </HBox>
     </HBox>
 
@@ -89,7 +137,7 @@
                 VBox.vgrow="ALWAYS">
 
         <VBox fx:id="tarjetasContainer"
-              spacing="20"
+              spacing="18"
               style="-fx-background-color: transparent;">
 
             <!-- Aquí se añadirán dinámicamente las tarjetas -->
@@ -98,67 +146,123 @@
     </ScrollPane>
 
     <!-- CONTROLES DE PAGINACIÓN -->
-    <HBox alignment="CENTER" spacing="15" style="-fx-padding: 0 40 30 40;">
+    <HBox alignment="CENTER" spacing="20" style="-fx-padding: 0 40 30 40;">
 
         <!-- Botón Anterior -->
         <Button fx:id="btnAnterior"
-                text="← Anterior"
                 onAction="#handleAnterior"
                 style="-fx-background-color: white;
-                       -fx-text-fill: #61564A;
-                       -fx-font-size: 13px;
-                       -fx-font-weight: 600;
-                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-                       -fx-background-radius: 8;
+                       -fx-background-radius: 10;
                        -fx-cursor: hand;
-                       -fx-padding: 10 20;
-                       -fx-border-color: #61564A;
+                       -fx-padding: 12 20;
+                       -fx-border-color: #A59B8F;
                        -fx-border-width: 1.5;
-                       -fx-border-radius: 8;
-                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);"/>
+                       -fx-border-radius: 10;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);">
+            <graphic>
+                <HBox alignment="CENTER" spacing="8">
+                    <SVGPath content="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"
+                             fill="#61564A"
+                             scaleX="1"
+                             scaleY="1" />
+                    <Label text="Anterior"
+                           style="-fx-text-fill: #61564A;
+                                  -fx-font-size: 13px;
+                                  -fx-font-weight: 600;
+                                  -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;"/>
+                </HBox>
+            </graphic>
+        </Button>
 
         <!-- Indicador de página -->
-        <Label fx:id="lblPaginacion"
-               text="Página 1 de 1"
-               style="-fx-font-size: 14px;
-                      -fx-font-weight: 500;
-                      -fx-text-fill: #61564A;
-                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-                      -fx-padding: 0 20;"/>
+        <HBox alignment="CENTER"
+              spacing="10"
+              style="-fx-background-color: white;
+                     -fx-background-radius: 10;
+                     -fx-padding: 12 24;
+                     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);">
+            <SVGPath content="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"
+                     fill="#61564A"
+                     scaleX="0.8"
+                     scaleY="0.8" />
+            <Label fx:id="lblPaginacion"
+                   text="Página 1 de 1"
+                   style="-fx-font-size: 14px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #61564A;
+                          -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;"/>
+        </HBox>
 
         <!-- Botón Siguiente -->
         <Button fx:id="btnSiguiente"
-                text="Siguiente →"
                 onAction="#handleSiguiente"
                 style="-fx-background-color: #61564A;
-                       -fx-text-fill: white;
-                       -fx-font-size: 13px;
-                       -fx-font-weight: 600;
-                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-                       -fx-background-radius: 8;
+                       -fx-background-radius: 10;
                        -fx-cursor: hand;
-                       -fx-padding: 10 20;
-                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 6, 0, 0, 2);"/>
+                       -fx-padding: 12 20;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0, 0, 2);">
+            <graphic>
+                <HBox alignment="CENTER" spacing="8">
+                    <Label text="Siguiente"
+                           style="-fx-text-fill: white;
+                                  -fx-font-size: 13px;
+                                  -fx-font-weight: 600;
+                                  -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;"/>
+                    <SVGPath content="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"
+                             fill="white"
+                             scaleX="1"
+                             scaleY="1" />
+                </HBox>
+            </graphic>
+        </Button>
     </HBox>
 
     <!-- MENSAJE CUANDO NO HAY PROYECTOS -->
     <VBox fx:id="emptyStateContainer"
           alignment="CENTER"
-          spacing="15"
+          spacing="20"
           visible="false"
           managed="false"
-          style="-fx-padding: 60;"
+          style="-fx-padding: 80;
+                 -fx-background-color: white;
+                 -fx-background-radius: 20;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0, 0, 3);"
           VBox.vgrow="ALWAYS">
-        <Label text="📋" style="-fx-font-size: 64px;"/>
-        <Label text="No hay proyectos registrados"
-               style="-fx-font-size: 18px;
-                      -fx-font-weight: 600;
-                      -fx-text-fill: #61564A;
-                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-        <Label text="Comienza agregando un nuevo proyecto usando el botón superior"
-               style="-fx-font-size: 14px;
-                      -fx-text-fill: #A59B8F;
-                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+        <!-- Icono grande de carpeta vacía -->
+        <StackPane style="-fx-background-color: rgba(165, 155, 143, 0.1);
+                          -fx-background-radius: 50;
+                          -fx-padding: 30;">
+            <SVGPath content="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-1 12H5c-.55 0-1-.45-1-1V9c0-.55.45-1 1-1h14c.55 0 1 .45 1 1v8c0 .55-.45 1-1 1z"
+                     fill="#A59B8F"
+                     scaleX="3"
+                     scaleY="3" />
+        </StackPane>
+
+        <VBox alignment="CENTER" spacing="8">
+            <Label text="No hay proyectos registrados"
+                   style="-fx-font-size: 22px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;"/>
+            <Label text="Comienza creando tu primer proyecto de costura"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-family: 'Inter', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <!-- Botón CTA en estado vacío -->
+        <Button text="+ Crear Primer Proyecto"
+                onAction="#handleAgregarProyecto"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 15px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 14 28;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 10, 0, 0, 3);"/>
     </VBox>
 
 </VBox>

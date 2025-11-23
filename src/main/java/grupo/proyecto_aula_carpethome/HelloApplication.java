@@ -247,7 +247,7 @@ public class HelloApplication extends Application {
         // Obtener el controlador y pasar el usuario
         MenuController controller = loader.getController();
         if (controller != null) {
-            controller.setUserInfo(usuario.getNombreCompleto(), usuario.getRol());
+            controller.setUserInfo(usuario);
         } else {
             System.err.println("⚠ Advertencia: No se pudo obtener el MenuController");
         }
