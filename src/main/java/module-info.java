@@ -22,4 +22,5 @@ module grupo.proyecto_aula_carpethome {
     exports grupo.proyecto_aula_carpethome;
     exports grupo.proyecto_aula_carpethome.Pruebas;
     opens grupo.proyecto_aula_carpethome.Pruebas to javafx.fxml;
+    opens grupo.proyecto_aula_carpethome.services to javafx.fxml;
 }

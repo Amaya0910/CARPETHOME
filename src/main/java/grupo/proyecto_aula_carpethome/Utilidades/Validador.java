@@ -26,14 +26,16 @@ public class Validador {
 
     // Validar teléfono
     public static void validarTelefono(Long telefono) {
-        String telefonoStr = telefono.toString();
+        if(telefono != null){
+            String telefonoStr = telefono.toString();
 
-        if (telefonoStr.length() != 10) {
-            throw new IllegalArgumentException("El teléfono debe tener exactamente 10 dígitos. Actual: " + telefonoStr.length());
-        }
+            if (telefonoStr.length() != 10) {
+                throw new IllegalArgumentException("El teléfono debe tener exactamente 10 dígitos. Actual: " + telefonoStr.length());
+            }
 
-        if (telefono <= 0) {
-            throw new IllegalArgumentException("El teléfono debe ser un número positivo");
+            if (telefono <= 0) {
+                throw new IllegalArgumentException("El teléfono debe ser un número positivo");
+            }
         }
     }
 

@@ -2,7 +2,7 @@ package grupo.proyecto_aula_carpethome.controllers;
 
 import grupo.proyecto_aula_carpethome.config.DatabaseConfig;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
-import grupo.proyecto_aula_carpethome.controllers.ClaudeAIService;
+import grupo.proyecto_aula_carpethome.services.ClaudeAIService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import oracle.ucp.jdbc.ConnectionConnectionPool;
 
 import java.net.URL;
 import java.sql.Connection;

@@ -95,9 +95,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     @Override
     public Optional<Empleado> findById(String id) throws SQLException {
         String sql = """
-    SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, 
-           p.p_correo, p.s_correo, p.p_telefono, p.s_telefono,
-           e.id_empleado, e.cargo
+    SELECT p.cedula, p.p_nombre, p.s_nombre, p.p_apellido, p.s_apellido,p.p_correo, p.s_correo, p.p_telefono, p.s_telefono,e.id_empleado, e.cargo, e.contrasena
     FROM PERSONAS p
     INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
     WHERE p.cedula = ?
@@ -121,7 +119,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     public List<Empleado> findAll() throws SQLException {
         List<Empleado> empleados = new ArrayList<>();
         String sql = """
-                SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_empleado
+                SELECT p.cedula, p.p_nombre, p.s_nombre, p.p_apellido, p.s_apellido,p.p_correo, p.s_correo, p.p_telefono, p.s_telefono,e.id_empleado, e.cargo, e.contrasena
                 FROM PERSONAS p
                 INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
                 ORDER BY e.id_empleado
@@ -311,7 +309,7 @@ public class EmpleadoRepositoryImpl implements EmpleadoRepository {
     @Override
     public Optional<Empleado> findByCedula(String cedula) throws SQLException {
         String sql = """
-                SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_empleado, e.cargo
+                SELECT p.cedula, p.p_nombre, p.s_nombre, p.p_apellido, p.s_apellido,p.p_correo, p.s_correo, p.p_telefono, p.s_telefono,e.id_empleado, e.cargo, e.contrasena
                 FROM PERSONAS p
                 INNER JOIN EMPLEADOS e ON p.cedula = e.cedula
                 WHERE p.cedula = ?
