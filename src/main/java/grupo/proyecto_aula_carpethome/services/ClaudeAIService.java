@@ -1,10 +1,11 @@
-package grupo.proyecto_aula_carpethome.services;
+package grupo.proyecto_aula_carpethome.controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import okhttp3.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.sql.Connection;
 import java.util.*;
@@ -17,8 +18,8 @@ import java.util.*;
 public class ClaudeAIService {
 
     private static final String CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
-    private static final String CLAUDE_API_KEY = "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";
-    private static final String MODEL = "claude-3-haiku-20240307";
+    private static final String CLAUDE_API_KEY = "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";
+    private static final String MODEL = "claude-sonnet-4-5-20250929";
 
     private final OkHttpClient httpClient;
     private final Gson gson;
