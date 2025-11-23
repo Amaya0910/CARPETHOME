@@ -59,6 +59,12 @@ public class MenuController {
     public void setUserInfo(String userName, String userRole) {
         lblUserName.setText(userName);
         lblUserRole.setText(userRole);
+
+        // Ocultar Gestión de Usuarios si no es admin
+        if (!"Administrador".equals(userRole)) {
+            btnUsers.setVisible(false);
+            btnUsers.setManaged(false);
+        }
     }
 
     // ============================================
@@ -288,4 +294,13 @@ public class MenuController {
         contentArea.getChildren().clear();
         contentArea.getChildren().add(errorView);
     }
+
+    @FXML
+    private void handleGestionUsuarios() {
+        System.out.println("Cargando Gestión de Usuarios...");
+        selectButton(btnUsers);
+        loadView("GestionUsuarios.fxml");
+    }
+
+
 }
