@@ -12,6 +12,9 @@ module grupo.proyecto_aula_carpethome {
     requires java.sql;
     requires static lombok;
     requires ojdbc8;
+    requires ucp;
+    requires com.google.gson;
+    requires okhttp3;
 
 
     opens grupo.proyecto_aula_carpethome.controllers to javafx.fxml;

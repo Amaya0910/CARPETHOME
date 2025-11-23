@@ -90,7 +90,7 @@ public class MenuController {
     private void handleStatisticsClick() {
         System.out.println("Estadísticas seleccionada");
         selectButton(btnStatistics);
-        loadView("Estadisticas.fxml");
+        loadView("ChatBot.fxml");
     }
 
     @FXML
