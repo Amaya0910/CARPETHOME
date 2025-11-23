@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.RegistrarEmpleadoController"
+      style="-fx-background-color: white; -fx-background-radius: 20;"
+      spacing="0"
+      maxWidth="650"
+      maxHeight="750">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT" spacing="15"
+          style="-fx-background-color: #4CAF50;
+                 -fx-background-radius: 20 20 0 0;
+                 -fx-padding: 25 30;">
+        <Label text="👥"
+               style="-fx-font-size: 28px;"/>
+        <VBox spacing="2">
+            <Label text="Nuevo Empleado"
+                   style="-fx-font-size: 22px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: white;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label text="Completa el formulario para crear un empleado"
+                   style="-fx-font-size: 13px;
+                          -fx-text-fill: rgba(255, 255, 255, 0.9);
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+    </HBox>
+
+    <!-- CONTENIDO -->
+    <ScrollPane fitToWidth="true" style="-fx-background-color: white; -fx-background: white;">
+        <VBox spacing="25" style="-fx-padding: 30;">
+
+            <!-- INFORMACIÓN PERSONAL -->
+            <VBox spacing="15">
+                <Label text="📋 Información Personal"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #4CAF50;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <Separator style="-fx-background-color: #E0E0E0;"/>
+
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="290"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="290"/>
+                    </columnConstraints>
+
+                    <!-- Cédula -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Cédula *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtCedula"
+                                   promptText="Ej: 1234567890"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Primer Nombre -->
+                    <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Primer Nombre *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtPrimerNombre"
+                                   promptText="Ej: María"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Segundo Nombre -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="Segundo Nombre"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtSegundoNombre"
+                                   promptText="Opcional"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Primer Apellido -->
+                    <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="Primer Apellido *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtPrimerApellido"
+                                   promptText="Ej: González"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Segundo Apellido -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                        <Label text="Segundo Apellido"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtSegundoApellido"
+                                   promptText="Opcional"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Cargo -->
+                    <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label text="Cargo *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <ComboBox fx:id="comboCargo"
+                                  promptText="Seleccionar cargo"
+                                  style="-fx-background-color: #F5F5F5;
+                                         -fx-background-radius: 10;
+                                         -fx-font-size: 14px;
+                                         -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"
+                                  maxWidth="Infinity"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- INFORMACIÓN DE CONTACTO -->
+            <VBox spacing="15">
+                <Label text="📞 Información de Contacto"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #4CAF50;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <Separator style="-fx-background-color: #E0E0E0;"/>
+
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="290"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="290"/>
+                    </columnConstraints>
+
+                    <!-- Teléfono Principal -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Teléfono Principal *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtTelefonoPrincipal"
+                                   promptText="3001234567"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Teléfono Secundario -->
+                    <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Teléfono Secundario"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtTelefonoSecundario"
+                                   promptText="Opcional"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Correo Principal -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2">
+                        <Label text="Correo Principal *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtCorreoPrincipal"
+                                   promptText="empleado@carpethome.com"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Correo Secundario -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2">
+                        <Label text="Correo Secundario"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <TextField fx:id="txtCorreoSecundario"
+                                   promptText="Opcional"
+                                   style="-fx-background-color: #F5F5F5;
+                                          -fx-background-radius: 10;
+                                          -fx-padding: 12 16;
+                                          -fx-font-size: 14px;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                          -fx-border-color: transparent;
+                                          -fx-border-radius: 10;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <!-- CONTRASEÑA -->
+            <VBox spacing="15">
+                <Label text="🔒 Seguridad"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #4CAF50;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <Separator style="-fx-background-color: #E0E0E0;"/>
+
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="290"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="100" prefWidth="290"/>
+                    </columnConstraints>
+
+                    <!-- Contraseña -->
+                    <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Contraseña *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <PasswordField fx:id="txtContrasena"
+                                       promptText="Mínimo 6 caracteres"
+                                       style="-fx-background-color: #F5F5F5;
+                                              -fx-background-radius: 10;
+                                              -fx-padding: 12 16;
+                                              -fx-font-size: 14px;
+                                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                              -fx-border-color: transparent;
+                                              -fx-border-radius: 10;"/>
+                    </VBox>
+
+                    <!-- Confirmar Contraseña -->
+                    <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Confirmar Contraseña *"
+                               style="-fx-font-size: 13px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <PasswordField fx:id="txtConfirmarContrasena"
+                                       promptText="Repetir contraseña"
+                                       style="-fx-background-color: #F5F5F5;
+                                              -fx-background-radius: 10;
+                                              -fx-padding: 12 16;
+                                              -fx-font-size: 14px;
+                                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                              -fx-border-color: transparent;
+                                              -fx-border-radius: 10;"/>
+                    </VBox>
+                </GridPane>
+
+                <Label text="* La contraseña debe tener entre 6 y 15 caracteres"
+                       style="-fx-font-size: 12px;
+                              -fx-text-fill: #A59B8F;
+                              -fx-font-style: italic;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- BOTONES -->
+    <HBox alignment="CENTER" spacing="15"
+          style="-fx-background-color: #F5F5F5;
+                 -fx-padding: 20 30;
+                 -fx-background-radius: 0 0 20 20;">
+
+        <Button fx:id="btnCerrar"
+                text="Cancelar"
+                onAction="#handleCerrar"
+                style="-fx-background-color: white;
+                       -fx-text-fill: #4CAF50;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 14 40;
+                       -fx-border-color: #E0E0E0;
+                       -fx-border-width: 1;
+                       -fx-border-radius: 10;"/>
+
+        <Button fx:id="btnGuardar"
+                text="✓ Crear Empleado"
+                onAction="#handleGuardar"
+                style="-fx-background-color: #4CAF50;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 14 40;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0, 0, 2);"/>
+    </HBox>
+
+</VBox>

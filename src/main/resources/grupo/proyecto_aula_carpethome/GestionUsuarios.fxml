@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionUsuariosController"
+      style="-fx-background-color: #E4DFD7;"
+      spacing="0">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT" spacing="20"
+          style="-fx-background-color: white;
+                 -fx-padding: 30 40;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 8, 0, 0, 2);">
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Gestión de Usuarios"
+                   style="-fx-font-size: 28px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label text="Administra administradores y empleados del sistema"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+    </HBox>
+
+    <!-- TABS -->
+    <TabPane fx:id="tabPane" VBox.vgrow="ALWAYS"
+             style="-fx-background-color: #E4DFD7;">
+
+        <!-- TAB ADMINISTRADORES -->
+        <Tab fx:id="tabAdministradores" text="👤 Administradores" closable="false">
+            <VBox spacing="0">
+                <!-- Barra de búsqueda y acciones -->
+                <HBox alignment="CENTER_LEFT" spacing="15"
+                      style="-fx-background-color: white;
+                             -fx-padding: 20 40;
+                             -fx-border-color: #E0E0E0;
+                             -fx-border-width: 0 0 1 0;">
+
+                    <TextField fx:id="searchAdmins"
+                               promptText="🔍 Buscar administrador..."
+                               style="-fx-background-color: #F5F5F5;
+                                      -fx-background-radius: 10;
+                                      -fx-border-color: transparent;
+                                      -fx-border-radius: 10;
+                                      -fx-padding: 12 16;
+                                      -fx-font-size: 14px;
+                                      -fx-pref-width: 350;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label fx:id="lblContadorAdmins" text="0 administradores"
+                           style="-fx-font-size: 13px;
+                                  -fx-text-fill: #61564A;
+                                  -fx-font-weight: 600;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <Button fx:id="btnAgregarAdmin"
+                            text="+ Agregar Administrador"
+                            onAction="#handleAgregarAdmin"
+                            style="-fx-background-color: #61564A;
+                                   -fx-text-fill: white;
+                                   -fx-font-size: 14px;
+                                   -fx-font-weight: 600;
+                                   -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                   -fx-background-radius: 10;
+                                   -fx-cursor: hand;
+                                   -fx-padding: 14 28;
+                                   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"/>
+                </HBox>
+
+                <!-- Contenido -->
+                <StackPane VBox.vgrow="ALWAYS" style="-fx-padding: 30 40;">
+                    <ScrollPane fx:id="scrollAdmins"
+                                fitToWidth="true"
+                                fitToHeight="true"
+                                style="-fx-background-color: transparent;
+                                       -fx-background: transparent;">
+                        <VBox fx:id="tarjetasAdminsContainer" spacing="15" style="-fx-padding: 5;"/>
+                    </ScrollPane>
+
+                    <VBox fx:id="emptyStateAdmins"
+                          alignment="CENTER"
+                          spacing="20"
+                          visible="false"
+                          managed="false"
+                          style="-fx-padding: 60;">
+                        <Label text="👤"
+                               style="-fx-font-size: 80px;"/>
+                        <Label text="No hay administradores registrados"
+                               style="-fx-font-size: 20px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Label text="Comienza agregando un administrador"
+                               style="-fx-font-size: 14px;
+                                      -fx-text-fill: #A59B8F;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Button text="+ Agregar Administrador"
+                                onAction="#handleAgregarAdmin"
+                                style="-fx-background-color: #61564A;
+                                       -fx-text-fill: white;
+                                       -fx-font-size: 14px;
+                                       -fx-font-weight: 600;
+                                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                       -fx-background-radius: 10;
+                                       -fx-cursor: hand;
+                                       -fx-padding: 14 32;"/>
+                    </VBox>
+                </StackPane>
+            </VBox>
+        </Tab>
+
+        <!-- TAB EMPLEADOS -->
+        <Tab fx:id="tabEmpleados" text="👥 Empleados" closable="false">
+            <VBox spacing="0">
+                <!-- Barra de búsqueda y filtros -->
+                <HBox alignment="CENTER_LEFT" spacing="15"
+                      style="-fx-background-color: white;
+                             -fx-padding: 20 40;
+                             -fx-border-color: #E0E0E0;
+                             -fx-border-width: 0 0 1 0;">
+
+                    <TextField fx:id="searchEmpleados"
+                               promptText="🔍 Buscar empleado..."
+                               style="-fx-background-color: #F5F5F5;
+                                      -fx-background-radius: 10;
+                                      -fx-border-color: transparent;
+                                      -fx-border-radius: 10;
+                                      -fx-padding: 12 16;
+                                      -fx-font-size: 14px;
+                                      -fx-pref-width: 300;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <ComboBox fx:id="filtroCargoEmpleados"
+                              promptText="Cargo"
+                              style="-fx-background-color: #F5F5F5;
+                                     -fx-background-radius: 10;
+                                     -fx-font-size: 14px;
+                                     -fx-pref-width: 150;
+                                     -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label fx:id="lblContadorEmpleados" text="0 empleados"
+                           style="-fx-font-size: 13px;
+                                  -fx-text-fill: #61564A;
+                                  -fx-font-weight: 600;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                    <Button fx:id="btnAgregarEmpleado"
+                            text="+ Agregar Empleado"
+                            onAction="#handleAgregarEmpleado"
+                            style="-fx-background-color: #4CAF50;
+                                   -fx-text-fill: white;
+                                   -fx-font-size: 14px;
+                                   -fx-font-weight: 600;
+                                   -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                   -fx-background-radius: 10;
+                                   -fx-cursor: hand;
+                                   -fx-padding: 14 28;
+                                   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"/>
+                </HBox>
+
+                <!-- Contenido -->
+                <StackPane VBox.vgrow="ALWAYS" style="-fx-padding: 30 40;">
+                    <ScrollPane fx:id="scrollEmpleados"
+                                fitToWidth="true"
+                                fitToHeight="true"
+                                style="-fx-background-color: transparent;
+                                       -fx-background: transparent;">
+                        <VBox fx:id="tarjetasEmpleadosContainer" spacing="15" style="-fx-padding: 5;"/>
+                    </ScrollPane>
+
+                    <VBox fx:id="emptyStateEmpleados"
+                          alignment="CENTER"
+                          spacing="20"
+                          visible="false"
+                          managed="false"
+                          style="-fx-padding: 60;">
+                        <Label text="👥"
+                               style="-fx-font-size: 80px;"/>
+                        <Label text="No hay empleados registrados"
+                               style="-fx-font-size: 20px;
+                                      -fx-font-weight: 600;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Label text="Comienza agregando un empleado"
+                               style="-fx-font-size: 14px;
+                                      -fx-text-fill: #A59B8F;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Button text="+ Agregar Empleado"
+                                onAction="#handleAgregarEmpleado"
+                                style="-fx-background-color: #4CAF50;
+                                       -fx-text-fill: white;
+                                       -fx-font-size: 14px;
+                                       -fx-font-weight: 600;
+                                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                                       -fx-background-radius: 10;
+                                       -fx-cursor: hand;
+                                       -fx-padding: 14 32;"/>
+                    </VBox>
+                </StackPane>
+            </VBox>
+        </Tab>
+
+    </TabPane>
+
+</VBox>
