@@ -18,7 +18,7 @@ import java.util.*;
 public class ClaudeAIService {
 
     private static final String CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
-    private static final String CLAUDE_API_KEY = "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";
+    private static final String CLAUDE_API_KEY = "PON TU APIKEY AQUÍ";
     private static final String MODEL = "claude-sonnet-4-5-20250929";
 
     private final OkHttpClient httpClient;
