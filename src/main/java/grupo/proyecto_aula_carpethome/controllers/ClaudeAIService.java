@@ -18,8 +18,8 @@ import java.util.*;
 public class ClaudeAIService {
 
     private static final String CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
-    private static final String CLAUDE_API_KEY = "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"; // Configurar desde archivo de propiedades
-    private static final String MODEL = "claude-3-haiku-20240307";
+    private static final String CLAUDE_API_KEY = "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";
+    private static final String MODEL = "claude-sonnet-4-5-20250929";
 
     private final OkHttpClient httpClient;
     private final Gson gson;
