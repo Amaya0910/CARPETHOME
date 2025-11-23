@@ -140,7 +140,7 @@ public class FormularioPrendaController {
     private void cargarMedidasEstandar() {
         try {
             List<Medida> medidasEstandar = medidaService.listarTodos().stream()
-                    .filter(m -> "Estándar".equalsIgnoreCase(m.getTipoMedida()))
+                    .filter(m -> "ESTANDAR".equalsIgnoreCase(m.getTipoMedida()))
                     .toList();
 
             comboMedidasEstandar.getItems().setAll(medidasEstandar);
@@ -232,23 +232,57 @@ public class FormularioPrendaController {
         txtCostoTotal.setText(String.valueOf(prenda.getCostoTotalEstimado()));
 
         // Cargar la medida asociada
-        try {
-            var medidaOpt = medidaService.buscarPorId(prenda.getIdMedida());
+        if (prenda.getIdMedida() != null && !prenda.getIdMedida().isEmpty()) {
+            try {
+                var medidaOpt = medidaService.buscarPorId(prenda.getIdMedida());
 
-            if (medidaOpt.isPresent()) {
-                Medida medida = medidaOpt.get();
+                if (medidaOpt.isPresent()) {
+                    Medida medida = medidaOpt.get();
 
-                // Verificar si es estándar o personalizada
-                if ("Estándar".equalsIgnoreCase(medida.getTipoMedida())) {
-                    radioMedidaEstandar.setSelected(true);
-                    comboMedidasEstandar.setValue(medida);
+                    // PRIMERO verificar el tipo de medida ANTES de seleccionar el radio button
+                    if ("ESTANDAR".equalsIgnoreCase(medida.getTipoMedida())) {
+                        // Es una medida estándar
+                        radioMedidaEstandar.setSelected(true);
+
+                        // Buscar y seleccionar en el ComboBox
+                        for (Medida m : comboMedidasEstandar.getItems()) {
+                            if (m.getIdMedida().equals(medida.getIdMedida())) {
+                                comboMedidasEstandar.setValue(m);
+                                break;
+                            }
+                        }
+
+                        // Asegurar que el formulario personalizado esté oculto
+                        formularioMedidas.setVisible(false);
+                        formularioMedidas.setManaged(false);
+                        comboMedidasEstandar.setDisable(false);
+
+                    } else if ("PERSONALIZADA".equalsIgnoreCase(medida.getTipoMedida())) {
+                        // Es una medida personalizada
+                        radioMedidaPersonalizada.setSelected(true);
+
+                        // Mostrar el formulario y cargar los datos
+                        formularioMedidas.setVisible(true);
+                        formularioMedidas.setManaged(true);
+                        comboMedidasEstandar.setDisable(true);
+
+                        // Cargar los datos de la medida en los campos
+                        cargarDatosMedida(medida);
+                    }
                 } else {
+                    // Si no se encuentra la medida, mostrar advertencia
+                    mostrarError("Advertencia: No se encontró la medida asociada a esta prenda");
                     radioMedidaPersonalizada.setSelected(true);
-                    cargarDatosMedida(medida);
                 }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                mostrarError("Error al cargar la medida asociada: " + e.getMessage());
+                radioMedidaPersonalizada.setSelected(true);
             }
-        } catch (SQLException e) {
-            mostrarError("Error al cargar la medida asociada: " + e.getMessage());
+        } else {
+            // Si la prenda no tiene medida asociada
+            radioMedidaPersonalizada.setSelected(true);
         }
     }
 
@@ -383,21 +417,29 @@ public class FormularioPrendaController {
             // Usar medida estándar existente
             return comboMedidasEstandar.getValue();
         } else {
-            // Crear nueva medida personalizada
+            // Crear o actualizar medida personalizada
             Medida nuevaMedida = construirMedida();
 
-            // Si estamos editando y la medida anterior era personalizada, actualizarla
-            if (prendaEditar != null) {
+            // ✅ Si estamos editando y la medida anterior era personalizada, actualizarla
+            if (prendaEditar != null && prendaEditar.getIdMedida() != null) {
                 var medidaAnteriorOpt = medidaService.buscarPorId(prendaEditar.getIdMedida());
                 if (medidaAnteriorOpt.isPresent() &&
-                        "Personalizada".equalsIgnoreCase(medidaAnteriorOpt.get().getTipoMedida())) {
+                        "PERSONALIZADA".equalsIgnoreCase(medidaAnteriorOpt.get().getTipoMedida())) {
+
+                    // ✅ IMPORTANTE: Asignar el ID antes de actualizar
                     nuevaMedida.setIdMedida(prendaEditar.getIdMedida());
+
+                    System.out.println("=== Actualizando medida existente ===");
+                    System.out.println("ID Medida: " + nuevaMedida.getIdMedida());
+                    System.out.println("Nombre: " + nuevaMedida.getNombreMedida());
+
                     medidaService.actualizarMedida(nuevaMedida);
                     return nuevaMedida;
                 }
             }
 
-            // Registrar nueva medida
+            // Registrar nueva medida personalizada
+            System.out.println("=== Creando nueva medida ===");
             return medidaService.registrarMedida(nuevaMedida);
         }
     }
@@ -408,7 +450,7 @@ public class FormularioPrendaController {
     private Medida construirMedida() {
         Medida medida = new Medida();
         medida.setNombreMedida(txtNombreMedida.getText().trim());
-        medida.setTipoMedida("Personalizada");
+        medida.setTipoMedida("PERSONALIZADA");
 
         medida.setCBusto(parsearDecimal(txtCBusto.getText()));
         medida.setCCintura(parsearDecimal(txtCCintura.getText()));

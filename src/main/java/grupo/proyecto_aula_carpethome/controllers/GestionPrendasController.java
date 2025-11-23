@@ -208,6 +208,11 @@ public class GestionPrendasController {
             scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
             modalStage.setScene(scene);
 
+            modalStage.setScene(scene);
+            modalStage.setMaxWidth(900);  // Ancho máximo
+            modalStage.setMaxHeight(800); // Alto máximo
+            modalStage.setResizable(false);
+
             modalStage.centerOnScreen();
             modalStage.showAndWait();
 

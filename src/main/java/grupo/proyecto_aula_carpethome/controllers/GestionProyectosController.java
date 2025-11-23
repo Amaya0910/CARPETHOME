@@ -292,10 +292,13 @@ public class GestionProyectosController {
         Button btnEditar = crearBotonAccion("✏️ Editar", "#E4DFD7", "#61564A");
         btnEditar.setOnAction(e -> editarProyecto(proyecto));
 
+        Button btnPrendas = crearBotonAccion("👗 Gestionar Prendas", "#8B7355", "white");
+        btnPrendas.setOnAction(e -> gestionarPrendas(proyecto));
+
         Button btnEliminar = crearBotonAccion("🗑️ Eliminar", "#FFE5E5", "#D32F2F");
         btnEliminar.setOnAction(e -> eliminarProyecto(proyecto));
 
-        acciones.getChildren().addAll(btnVer, btnEditar, btnEliminar);
+        acciones.getChildren().addAll(btnVer, btnEditar, btnPrendas, btnEliminar);
 
         // Separador
         Separator separator = new Separator();
@@ -497,6 +500,41 @@ public class GestionProyectosController {
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initStyle(StageStyle.TRANSPARENT);
             modalStage.setTitle("Detalle del Proyecto");
+
+            StackPane overlay = new StackPane();
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            overlay.getChildren().add(root);
+            overlay.setPadding(new Insets(40));
+
+            Scene scene = new Scene(overlay);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            modalStage.setScene(scene);
+
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+
+            System.out.println("Modal cerrado, recargando proyectos...");
+            cargarProyectos();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "No se pudo abrir el detalle del proyecto");
+        }
+    }
+
+    private void gestionarPrendas(Proyecto proyecto) {
+        System.out.println("Gestionar Prendas: " + proyecto.getIdProyecto());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/grupo/proyecto_aula_carpethome/GestionPrendas.fxml"));
+            Parent root = loader.load();
+
+            GestionPrendasController modalController = loader.getController();
+            modalController.cargarProyecto(proyecto);
+
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.setTitle("Gestion de Prendas");
 
             StackPane overlay = new StackPane();
             overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");

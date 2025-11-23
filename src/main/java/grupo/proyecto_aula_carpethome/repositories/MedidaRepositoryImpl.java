@@ -152,7 +152,7 @@ public class MedidaRepositoryImpl implements MedidaRepository{
         String sql = """
                 SELECT id_medida, nombre_medida, tipo_medida, c_busto,c_cintura,c_cadera,Altura_busto,separacion_busto,radio_busto,bajo_busto,largo_falda,largo_cadera,largo_vestido,largo_pantalon,largo_manga
                 FROM MEDIDAS
-                WHERE id_medida = ?;
+                WHERE id_medida = ?
                 """;
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -190,103 +190,63 @@ public class MedidaRepositoryImpl implements MedidaRepository{
 
     @Override
     public void update(Medida entity) throws SQLException {
+        // Verificar que tenga ID
+        if (entity.getIdMedida() == null || entity.getIdMedida().trim().isEmpty()) {
+            throw new IllegalArgumentException("El ID de la medida es obligatorio para actualizar");
+        }
 
-
+        // ✅ 14 parámetros (sin tipo_medida)
         String sql = "{CALL PKG_MEDIDAS.sp_actualizar_medida(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
-            if (entity.getNombreMedida() != null && !entity.getNombreMedida().trim().isEmpty()) {
-                stmt.setString(1, entity.getNombreMedida());
-            } else {
-                stmt.setNull(1, Types.VARCHAR);
-            }
 
-            if (entity.getTipoMedida() != null && !entity.getTipoMedida().trim().isEmpty()) {
-                stmt.setString(2, entity.getTipoMedida());
+            System.out.println("=== Actualizando Medida ===");
+            System.out.println("ID: " + entity.getIdMedida());
+            System.out.println("Nombre: " + entity.getNombreMedida());
+
+            // PARÁMETRO 1: ID de la medida
+            stmt.setString(1, entity.getIdMedida());
+
+            // PARÁMETRO 2: Nombre
+            if (entity.getNombreMedida() != null && !entity.getNombreMedida().trim().isEmpty()) {
+                stmt.setString(2, entity.getNombreMedida());
             } else {
                 stmt.setNull(2, Types.VARCHAR);
             }
 
-            if (entity.getCBusto() != 0.0) {
-                stmt.setDouble(3, entity.getCBusto());
-            } else {
-                stmt.setNull(3, Types.NUMERIC);
-            }
+            // PARÁMETROS 3-14: Medidas (sin tipo_medida)
+            setDoubleOrNull(stmt, 3, entity.getCBusto());
+            setDoubleOrNull(stmt, 4, entity.getCCintura());
+            setDoubleOrNull(stmt, 5, entity.getCCadera());
+            setDoubleOrNull(stmt, 6, entity.getAlturaBusto());
+            setDoubleOrNull(stmt, 7, entity.getSeparacionBusto());
+            setDoubleOrNull(stmt, 8, entity.getRadioBusto());
+            setDoubleOrNull(stmt, 9, entity.getBajoBusto());
+            setDoubleOrNull(stmt, 10, entity.getLargoFalda());
+            setDoubleOrNull(stmt, 11, entity.getLargoCadera());
+            setDoubleOrNull(stmt, 12, entity.getLargoVestido());
+            setDoubleOrNull(stmt, 13, entity.getLargoPantalon());
+            setDoubleOrNull(stmt, 14, entity.getLargoManga());
 
-            if (entity.getCCintura() != 0.0) {
-                stmt.setDouble(4, entity.getCCintura());
-            } else {
-                stmt.setNull(4, Types.NUMERIC);
-            }
+            stmt.execute();
 
-            if (entity.getCCadera() != 0.0) {
-                stmt.setDouble(5, entity.getCCadera());
-            } else {
-                stmt.setNull(5, Types.NUMERIC);
-            }
+            System.out.println("✓ Medida actualizada: " + entity.getIdMedida() + " - " + entity.getNombreMedida());
 
-            if (entity.getAlturaBusto() != 0.0) {
-                stmt.setDouble(6, entity.getAlturaBusto());
-            } else {
-                stmt.setNull(6, Types.NUMERIC);
-            }
+        } catch (SQLException e) {
+            System.err.println("✗ Error al actualizar medida: " + e.getMessage());
+            System.err.println("✗ ID que se intentó actualizar: " + entity.getIdMedida());
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
-            if (entity.getSeparacionBusto() != 0.0) {
-                stmt.setDouble(7, entity.getSeparacionBusto());
-            } else {
-                stmt.setNull(7, Types.NUMERIC);
-            }
-
-            if (entity.getRadioBusto() != 0.0) {
-                stmt.setDouble(8, entity.getRadioBusto());
-            } else {
-                stmt.setNull(8, Types.NUMERIC);
-            }
-
-            if (entity.getBajoBusto() != 0.0) {
-                stmt.setDouble(9, entity.getBajoBusto());
-            } else {
-                stmt.setNull(9, Types.NUMERIC);
-            }
-
-            if (entity.getLargoFalda() != 0.0) {
-                stmt.setDouble(10, entity.getLargoFalda());
-            } else {
-                stmt.setNull(10, Types.NUMERIC);
-            }
-
-            if (entity.getLargoCadera() != 0.0) {
-                stmt.setDouble(11, entity.getLargoCadera());
-            } else {
-                stmt.setNull(11, Types.NUMERIC);
-            }
-
-            if (entity.getLargoVestido() != 0.0) {
-                stmt.setDouble(12, entity.getLargoVestido());
-            } else {
-                stmt.setNull(12, Types.NUMERIC);
-            }
-
-            if (entity.getLargoPantalon() != 0.0) {
-                stmt.setDouble(13, entity.getLargoPantalon());
-            } else {
-                stmt.setNull(13, Types.NUMERIC);
-            }
-
-            if (entity.getLargoManga() != 0.0) {
-                stmt.setDouble(14, entity.getLargoManga());
-            } else {
-                stmt.setNull(14, Types.NUMERIC);
-            }
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected == 0) {
-                throw new SQLException("No se encontró la medida con id: " + entity.getNombreMedida());
-            }
-
-            conn.commit();
-            System.out.println("Medida actualizada actualizado: " + entity.getNombreMedida() +" - "+ entity.getNombreMedida());
-
-
+    // Método auxiliar
+    private void setDoubleOrNull(CallableStatement stmt, int index, double value) throws SQLException {
+        if (value > 0) {
+            stmt.setDouble(index, value);
+        } else {
+            stmt.setNull(index, Types.NUMERIC);
         }
     }
 

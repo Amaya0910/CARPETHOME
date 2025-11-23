@@ -29,23 +29,20 @@ public class PrendaRepositoryImpl implements PrendaRepository{
 
     @Override
     public Prenda save(Prenda entity) throws SQLException {
-        double costoMateriales;
-
-        if(entity.getCostoMateriales() != 0.0){
-            costoMateriales = entity.getCostoMateriales();
-        }else { costoMateriales = 0.0;}
-
-        double costoTotalEstimado = costoMateriales * (1 + ganancia);
-
         String sql = "{CALL PKG_PRENDAS.sp_crear_prenda(?,?,?,?,?,?,?)}";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
+            // Usar los valores que vienen del formulario
+            double costoMateriales = entity.getCostoMateriales();
+            double costoTotalEstimado = entity.getCostoTotalEstimado();
             Validador.validarTexto(entity.getNombrePrenda(), "Nombre de la prenda: ", 15, true);
             stmt.setString(1, entity.getNombrePrenda());
+
             Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 15, false);
             stmt.setString(2, entity.getDescripcionPrenda());
+
             stmt.setDouble(3, costoMateriales);
             stmt.setDouble(4, costoTotalEstimado);
             stmt.setString(5, entity.getIdProyecto());
@@ -57,7 +54,6 @@ public class PrendaRepositoryImpl implements PrendaRepository{
             }
 
             stmt.registerOutParameter(7, Types.VARCHAR);
-
             stmt.execute();
 
             String idGenerado = stmt.getString(7);
@@ -65,11 +61,12 @@ public class PrendaRepositoryImpl implements PrendaRepository{
             entity.setCostoMateriales(costoMateriales);
             entity.setCostoTotalEstimado(costoTotalEstimado);
 
-            System.out.println(" Prenda guardada con ID: " + idGenerado);
+            System.out.println("✓ Prenda guardada con ID: " + idGenerado);
+            System.out.println("  Costo Total: " + costoTotalEstimado);
             return entity;
 
         } catch (SQLException e) {
-            System.err.println("Error al guardar prenda: " + e.getMessage());
+            System.err.println("✗ Error al guardar prenda: " + e.getMessage());
             throw e;
         }
     }
@@ -115,25 +112,35 @@ public class PrendaRepositoryImpl implements PrendaRepository{
 
     @Override
     public void update(Prenda entity) throws SQLException {
-        double costoMateriales;
-
-        if(entity.getCostoMateriales() != 0.0){
-            costoMateriales = entity.getCostoMateriales();
-        }else { costoMateriales = 0.0;}
-
-        double costoTotalEstimado = costoMateriales * (1 + ganancia);
-
         String sql = "{CALL PKG_PRENDAS.sp_actualizar_prenda(?,?,?,?,?,?)}";
+
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
+
+            // Usar los valores que vienen del formulario
+            double costoMateriales = entity.getCostoMateriales();
+            double costoTotalEstimado = entity.getCostoTotalEstimado(); // ✅ Usar el valor del formulario
+
             stmt.setString(1, entity.getIdPrenda());
+
             Validador.validarTexto(entity.getNombrePrenda(), "Nombre de la prenda: ", 15, true);
             stmt.setString(2, entity.getNombrePrenda());
+
             Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 15, false);
             stmt.setString(3, entity.getDescripcionPrenda());
+
             stmt.setDouble(4, costoMateriales);
-            stmt.setDouble(5, costoTotalEstimado);
-            stmt.setString(6, entity.getIdProyecto());
+            stmt.setDouble(5, costoTotalEstimado); // ✅ Ahora actualizará el valor correcto
+            stmt.setString(6, entity.getIdPrenda());
+
+            stmt.execute();
+
+            System.out.println("✓ Prenda actualizada con ID: " + entity.getIdPrenda());
+            System.out.println("  Costo Total: " + costoTotalEstimado);
+
+        } catch (SQLException e) {
+            System.err.println("✗ Error al actualizar prenda: " + e.getMessage());
+            throw e;
         }
     }
 
