@@ -14,6 +14,7 @@ import javafx.util.StringConverter;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class FormularioPrendaController {
@@ -74,9 +75,6 @@ public class FormularioPrendaController {
         cargarMedidasEstandar();
     }
 
-    /**
-     * Configura las validaciones de campos numéricos
-     */
     private void configurarValidaciones() {
         // Solo números decimales en costo total
         txtCostoTotal.textProperty().addListener((obs, oldVal, newVal) -> {
@@ -85,7 +83,7 @@ public class FormularioPrendaController {
             }
         });
 
-        // Solo números decimales en todos los campos de medidas
+        // Solo números decimales en campos de medidas
         TextField[] camposMedidas = {
                 txtCBusto, txtCCintura, txtCCadera, txtAlturaBusto,
                 txtSeparacionBusto, txtRadioBusto, txtBajoBusto,
@@ -102,9 +100,6 @@ public class FormularioPrendaController {
         }
     }
 
-    /**
-     * Configura el comportamiento de las opciones de medida
-     */
     private void configurarOpcionesMedidas() {
         // Listener para mostrar/ocultar el formulario de medidas
         grupoMedidas.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
@@ -120,37 +115,52 @@ public class FormularioPrendaController {
             }
         });
 
-        // Configurar el ComboBox para mostrar el nombre de la medida
+        // Configurar el ComboBox
         comboMedidasEstandar.setConverter(new StringConverter<Medida>() {
             @Override
             public String toString(Medida medida) {
-                return medida == null ? "" : medida.getNombreMedida();
+                if (medida == null) return "";
+                return String.format("%s (Busto: %.0f, Cintura: %.0f, Cadera: %.0f)",
+                        medida.getNombreMedida(),
+                        medida.getCBusto(),
+                        medida.getCCintura(),
+                        medida.getCCadera()
+                );
             }
 
             @Override
             public Medida fromString(String string) {
-                return null; // No se usa
+                return null;
             }
         });
     }
 
-    /**
-     * Carga las medidas estándar desde la BD
-     */
     private void cargarMedidasEstandar() {
         try {
-            List<Medida> medidasEstandar = medidaService.listarTodos().stream()
-                    .filter(m -> "ESTANDAR".equalsIgnoreCase(m.getTipoMedida()))
-                    .toList();
+            // ✅ Obtener medidas estándar y crear lista MUTABLE
+            List<Medida> medidasEstandar = new java.util.ArrayList<>(
+                    medidaService.listarMedidasEstandar()
+            );
+
+            // Ordenar las tallas
+            medidasEstandar.sort((m1, m2) -> {
+                String[] orden = {"XXS", "XS", "S", "M", "L", "XL", "XXL"};
+                int idx1 = java.util.Arrays.asList(orden).indexOf(m1.getNombreMedida());
+                int idx2 = java.util.Arrays.asList(orden).indexOf(m2.getNombreMedida());
+                return Integer.compare(idx1, idx2);
+            });
 
             comboMedidasEstandar.getItems().setAll(medidasEstandar);
 
-            // Si no hay medidas estándar, sugerir crear una personalizada
+            System.out.println("✓ Medidas estándar cargadas: " + medidasEstandar.size());
+
             if (medidasEstandar.isEmpty()) {
+                System.out.println("⚠️ No hay medidas estándar, cambiando a personalizada");
                 radioMedidaPersonalizada.setSelected(true);
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             mostrarError("Error al cargar medidas estándar: " + e.getMessage());
             radioMedidaPersonalizada.setSelected(true);
         }
@@ -158,16 +168,10 @@ public class FormularioPrendaController {
 
     // ==================== MÉTODOS PÚBLICOS ====================
 
-    /**
-     * Establece el controlador padre (usado por GestionPrendasController)
-     */
     public void setParentController(GestionPrendasController controller) {
         this.parentController = controller;
     }
 
-    /**
-     * Establece el proyecto actual
-     */
     public void setProyecto(Proyecto proyecto) {
         this.proyectoActual = proyecto;
         lblTitulo.setText("Nueva Prenda - " + proyecto.getNombreProyecto());
@@ -175,9 +179,6 @@ public class FormularioPrendaController {
         limpiarFormulario();
     }
 
-    /**
-     * Carga una prenda para editar
-     */
     public void cargarPrenda(Prenda prenda) {
         this.prendaEditar = prenda;
         lblTitulo.setText("Editar Prenda - " + proyectoActual.getNombreProyecto());
@@ -185,110 +186,75 @@ public class FormularioPrendaController {
         cargarDatosPrenda(prenda);
     }
 
-    /**
-     * Inicializa el modal en modo AGREGAR
-     */
-    public void inicializarAgregar(Proyecto proyecto, Consumer<Boolean> callback) {
-        this.proyectoActual = proyecto;
-        this.prendaEditar = null;
-        this.onGuardar = callback;
-
-        lblTitulo.setText("Nueva Prenda - " + proyecto.getNombreProyecto());
-        btnGuardar.setText("Guardar Prenda");
-
-        limpiarFormulario();
-    }
-
-    /**
-     * Inicializa el modal en modo EDITAR
-     */
-    public void inicializarEditar(Prenda prenda, Proyecto proyecto, Consumer<Boolean> callback) {
-        this.proyectoActual = proyecto;
-        this.prendaEditar = prenda;
-        this.onGuardar = callback;
-
-        lblTitulo.setText("Editar Prenda - " + proyecto.getNombreProyecto());
-        btnGuardar.setText("Guardar Cambios");
-
-        cargarDatosPrenda(prenda);
-    }
-
-    /**
-     * Establece el Stage del modal
-     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
     // ==================== CARGAR DATOS ====================
 
-    /**
-     * Carga los datos de una prenda existente para editar
-     */
     private void cargarDatosPrenda(Prenda prenda) {
-        // Datos básicos de la prenda
+        System.out.println("=== Cargando prenda para editar ===");
+        System.out.println("ID Prenda: " + prenda.getIdPrenda());
+        System.out.println("ID Medida: " + prenda.getIdMedida());
+
+        // Datos básicos
         txtNombre.setText(prenda.getNombrePrenda());
         txtDescripcion.setText(prenda.getDescripcionPrenda());
         txtCostoTotal.setText(String.valueOf(prenda.getCostoTotalEstimado()));
 
-        // Cargar la medida asociada
+        // Cargar medida
         if (prenda.getIdMedida() != null && !prenda.getIdMedida().isEmpty()) {
             try {
-                var medidaOpt = medidaService.buscarPorId(prenda.getIdMedida());
+                Optional<Medida> medidaOpt = medidaService.buscarPorId(prenda.getIdMedida());
 
                 if (medidaOpt.isPresent()) {
                     Medida medida = medidaOpt.get();
+                    System.out.println("Medida encontrada: " + medida.getNombreMedida());
+                    System.out.println("Tipo: " + medida.getTipoMedida());
 
-                    // PRIMERO verificar el tipo de medida ANTES de seleccionar el radio button
-                    if ("ESTANDAR".equalsIgnoreCase(medida.getTipoMedida())) {
-                        // Es una medida estándar
+                    // ✅ Usar equalsIgnoreCase para comparar tipos
+                    if (MedidaService.TIPO_ESTANDAR.equalsIgnoreCase(medida.getTipoMedida())) {
+                        System.out.println("→ Es medida ESTÁNDAR");
+
+                        // Seleccionar radio button PRIMERO
                         radioMedidaEstandar.setSelected(true);
 
-                        // Buscar y seleccionar en el ComboBox
+                        // Buscar en el ComboBox
                         for (Medida m : comboMedidasEstandar.getItems()) {
                             if (m.getIdMedida().equals(medida.getIdMedida())) {
                                 comboMedidasEstandar.setValue(m);
+                                System.out.println("✓ Medida seleccionada en combo");
                                 break;
                             }
                         }
 
-                        // Asegurar que el formulario personalizado esté oculto
-                        formularioMedidas.setVisible(false);
-                        formularioMedidas.setManaged(false);
-                        comboMedidasEstandar.setDisable(false);
+                    } else if (MedidaService.TIPO_PERSONALIZADA.equalsIgnoreCase(medida.getTipoMedida())) {
+                        System.out.println("→ Es medida PERSONALIZADA");
 
-                    } else if ("PERSONALIZADA".equalsIgnoreCase(medida.getTipoMedida())) {
-                        // Es una medida personalizada
+                        // Seleccionar radio button
                         radioMedidaPersonalizada.setSelected(true);
 
-                        // Mostrar el formulario y cargar los datos
-                        formularioMedidas.setVisible(true);
-                        formularioMedidas.setManaged(true);
-                        comboMedidasEstandar.setDisable(true);
-
-                        // Cargar los datos de la medida en los campos
+                        // Cargar datos en formulario
                         cargarDatosMedida(medida);
+                        System.out.println("✓ Datos de medida cargados");
                     }
                 } else {
-                    // Si no se encuentra la medida, mostrar advertencia
-                    mostrarError("Advertencia: No se encontró la medida asociada a esta prenda");
+                    System.out.println("⚠️ Medida no encontrada");
+                    mostrarError("Advertencia: No se encontró la medida asociada");
                     radioMedidaPersonalizada.setSelected(true);
                 }
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                mostrarError("Error al cargar la medida asociada: " + e.getMessage());
+                mostrarError("Error al cargar medida: " + e.getMessage());
                 radioMedidaPersonalizada.setSelected(true);
             }
         } else {
-            // Si la prenda no tiene medida asociada
+            System.out.println("→ Prenda sin medida asociada");
             radioMedidaPersonalizada.setSelected(true);
         }
     }
 
-    /**
-     * Carga los datos de una medida en el formulario
-     */
     private void cargarDatosMedida(Medida medida) {
         txtNombreMedida.setText(medida.getNombreMedida());
         txtCBusto.setText(formatearDecimal(medida.getCBusto()));
@@ -311,18 +277,13 @@ public class FormularioPrendaController {
 
     // ==================== VALIDACIONES ====================
 
-    /**
-     * Valida el formulario completo
-     */
     private boolean validarFormulario() {
         StringBuilder errores = new StringBuilder();
 
-        // Validar nombre
         if (txtNombre.getText().trim().isEmpty()) {
             errores.append("• El nombre de la prenda es obligatorio\n");
         }
 
-        // Validar costo total
         if (txtCostoTotal.getText().trim().isEmpty()) {
             errores.append("• El costo total estimado es obligatorio\n");
         } else {
@@ -336,7 +297,6 @@ public class FormularioPrendaController {
             }
         }
 
-        // Validar medida
         if (radioMedidaEstandar.isSelected()) {
             if (comboMedidasEstandar.getValue() == null) {
                 errores.append("• Debe seleccionar una medida estándar\n");
@@ -357,9 +317,6 @@ public class FormularioPrendaController {
 
     // ==================== ACCIONES ====================
 
-    /**
-     * Guarda la prenda (agregar o editar)
-     */
     @FXML
     private void handleGuardar() {
         if (!validarFormulario()) {
@@ -370,13 +327,9 @@ public class FormularioPrendaController {
         btnGuardar.setDisable(true);
 
         try {
-            // 1. Obtener o crear la medida
             Medida medida = obtenerMedida();
-
-            // 2. Crear o actualizar la prenda
             Prenda prenda = construirPrenda(medida);
 
-            // 3. Guardar en la BD
             if (prendaEditar == null) {
                 // MODO AGREGAR
                 prendaService.registrarPrenda(prenda);
@@ -384,16 +337,21 @@ public class FormularioPrendaController {
             } else {
                 // MODO EDITAR
                 prenda.setIdPrenda(prendaEditar.getIdPrenda());
+
+                // ✅ PRIMERO actualizar la prenda
                 prendaService.actualizarPrenda(prenda);
+
+                // ✅ DESPUÉS actualizar la medida (si es personalizada y cambió)
+                if (radioMedidaPersonalizada.isSelected() &&
+                        medida.getIdMedida() != null) {
+
+                    System.out.println("=== Actualizando medida después de la prenda ===");
+                    medidaService.actualizarMedida(medida);
+                }
+
                 mostrarExito("Prenda actualizada exitosamente");
             }
 
-            // 4. Notificar al callback y cerrar
-            if (onGuardar != null) {
-                onGuardar.accept(true);
-            }
-
-            // Si hay un parentController, notificarlo también
             if (parentController != null) {
                 parentController.cargarPrendas();
             }
@@ -401,56 +359,52 @@ public class FormularioPrendaController {
             cerrarModal();
 
         } catch (SQLException e) {
-            mostrarError("Error al guardar la prenda: " + e.getMessage());
+            e.printStackTrace();
+            mostrarError("Error al guardar: " + e.getMessage());
             btnGuardar.setDisable(false);
         } catch (Exception e) {
+            e.printStackTrace();
             mostrarError("Error inesperado: " + e.getMessage());
             btnGuardar.setDisable(false);
         }
     }
 
-    /**
-     * Obtiene o crea la medida según la opción seleccionada
-     */
     private Medida obtenerMedida() throws SQLException {
         if (radioMedidaEstandar.isSelected()) {
-            // Usar medida estándar existente
             return comboMedidasEstandar.getValue();
         } else {
-            // Crear o actualizar medida personalizada
             Medida nuevaMedida = construirMedida();
 
-            // ✅ Si estamos editando y la medida anterior era personalizada, actualizarla
+            // ✅ Si estamos editando y la medida era personalizada
             if (prendaEditar != null && prendaEditar.getIdMedida() != null) {
-                var medidaAnteriorOpt = medidaService.buscarPorId(prendaEditar.getIdMedida());
-                if (medidaAnteriorOpt.isPresent() &&
-                        "PERSONALIZADA".equalsIgnoreCase(medidaAnteriorOpt.get().getTipoMedida())) {
+                Optional<Medida> medidaAnteriorOpt = medidaService.buscarPorId(prendaEditar.getIdMedida());
 
-                    // ✅ IMPORTANTE: Asignar el ID antes de actualizar
+                if (medidaAnteriorOpt.isPresent() &&
+                        MedidaService.TIPO_PERSONALIZADA.equalsIgnoreCase(
+                                medidaAnteriorOpt.get().getTipoMedida())) {
+
+                    // ✅ Asignar el ID de la medida existente
                     nuevaMedida.setIdMedida(prendaEditar.getIdMedida());
 
-                    System.out.println("=== Actualizando medida existente ===");
-                    System.out.println("ID Medida: " + nuevaMedida.getIdMedida());
+                    System.out.println("=== Medida personalizada a actualizar ===");
+                    System.out.println("ID: " + nuevaMedida.getIdMedida());
                     System.out.println("Nombre: " + nuevaMedida.getNombreMedida());
 
-                    medidaService.actualizarMedida(nuevaMedida);
+                    // ⚠️ NO actualizar aquí, retornar para actualizar DESPUÉS
                     return nuevaMedida;
                 }
             }
 
-            // Registrar nueva medida personalizada
-            System.out.println("=== Creando nueva medida ===");
+            // Crear nueva medida
+            System.out.println("=== Creando nueva medida personalizada ===");
             return medidaService.registrarMedida(nuevaMedida);
         }
     }
 
-    /**
-     * Construye el objeto Medida desde el formulario
-     */
     private Medida construirMedida() {
         Medida medida = new Medida();
         medida.setNombreMedida(txtNombreMedida.getText().trim());
-        medida.setTipoMedida("PERSONALIZADA");
+        medida.setTipoMedida(MedidaService.TIPO_PERSONALIZADA); // ✅ Usar constante
 
         medida.setCBusto(parsearDecimal(txtCBusto.getText()));
         medida.setCCintura(parsearDecimal(txtCCintura.getText()));
@@ -468,15 +422,12 @@ public class FormularioPrendaController {
         return medida;
     }
 
-    /**
-     * Construye el objeto Prenda desde el formulario
-     */
     private Prenda construirPrenda(Medida medida) {
         Prenda prenda = new Prenda();
         prenda.setNombrePrenda(txtNombre.getText().trim());
         prenda.setDescripcionPrenda(txtDescripcion.getText().trim());
         prenda.setCostoTotalEstimado(Double.parseDouble(txtCostoTotal.getText().trim()));
-        prenda.setCostoMateriales(0.0); // Se actualiza automáticamente
+        prenda.setCostoMateriales(0.0);
         prenda.setIdProyecto(proyectoActual.getIdProyecto());
         prenda.setIdMedida(medida.getIdMedida());
 
@@ -494,9 +445,6 @@ public class FormularioPrendaController {
         }
     }
 
-    /**
-     * Cancela la operación
-     */
     @FXML
     private void handleCancelar() {
         if (confirmarCancelacion()) {
@@ -563,7 +511,6 @@ public class FormularioPrendaController {
         if (stage != null) {
             stage.close();
         } else {
-            // Buscar el stage desde cualquier nodo
             Stage currentStage = (Stage) btnCerrar.getScene().getWindow();
             if (currentStage != null) {
                 currentStage.close();

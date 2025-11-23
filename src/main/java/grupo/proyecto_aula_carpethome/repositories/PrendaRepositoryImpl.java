@@ -76,7 +76,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
         String sql = """
                 SELECT id_prenda, nombre_prenda, descripcion, costo_materiales, costo_total_estimado, id_proyecto, id_medida
                 FROM prendas
-                WHERE id_prenda = ?;""";
+                WHERE id_prenda = ?""";
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -119,27 +119,41 @@ public class PrendaRepositoryImpl implements PrendaRepository{
 
             // Usar los valores que vienen del formulario
             double costoMateriales = entity.getCostoMateriales();
-            double costoTotalEstimado = entity.getCostoTotalEstimado(); // ✅ Usar el valor del formulario
+            double costoTotalEstimado = entity.getCostoTotalEstimado();
 
+            // Parámetro 1: ID de la prenda
             stmt.setString(1, entity.getIdPrenda());
 
+            // Parámetro 2: Nombre
             Validador.validarTexto(entity.getNombrePrenda(), "Nombre de la prenda: ", 15, true);
             stmt.setString(2, entity.getNombrePrenda());
 
+            // Parámetro 3: Descripción
             Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 15, false);
             stmt.setString(3, entity.getDescripcionPrenda());
 
+            // Parámetro 4: Costo materiales
             stmt.setDouble(4, costoMateriales);
-            stmt.setDouble(5, costoTotalEstimado); // ✅ Ahora actualizará el valor correcto
-            stmt.setString(6, entity.getIdPrenda());
+
+            // Parámetro 5: Costo total estimado
+            stmt.setDouble(5, costoTotalEstimado);
+
+            // Parámetro 6: ID de la MEDIDA (NO de la prenda) ← ✅ CORREGIDO
+            if (entity.getIdMedida() != null && !entity.getIdMedida().isBlank()) {
+                stmt.setString(6, entity.getIdMedida());
+            } else {
+                stmt.setNull(6, Types.VARCHAR);
+            }
 
             stmt.execute();
 
             System.out.println("✓ Prenda actualizada con ID: " + entity.getIdPrenda());
+            System.out.println("  ID Medida: " + entity.getIdMedida());
             System.out.println("  Costo Total: " + costoTotalEstimado);
 
         } catch (SQLException e) {
             System.err.println("✗ Error al actualizar prenda: " + e.getMessage());
+            e.printStackTrace();
             throw e;
         }
     }

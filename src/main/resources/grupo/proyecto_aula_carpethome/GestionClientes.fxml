@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionClientesController"
+      style="-fx-background-color: #E4DFD7;"
+      spacing="0">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT" spacing="20"
+          style="-fx-background-color: white;
+                 -fx-padding: 30 40;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 8, 0, 0, 2);">
+
+        <!-- Título y descripción -->
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="Gestión de Clientes"
+                   style="-fx-font-size: 28px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label text="Administra la información de tus clientes"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <!-- Botón agregar cliente -->
+        <Button fx:id="btnAgregarCliente"
+                text="+ Agregar Cliente"
+                onAction="#handleAgregarCliente"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 14 28;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                onMouseEntered="#handleAgregarHover"
+                onMouseExited="#handleAgregarExit"/>
+    </HBox>
+
+    <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+    <HBox alignment="CENTER_LEFT" spacing="15"
+          style="-fx-background-color: white;
+                 -fx-padding: 20 40;
+                 -fx-border-color: #E0E0E0;
+                 -fx-border-width: 0 0 1 0;">
+
+        <!-- Campo de búsqueda -->
+        <TextField fx:id="searchField"
+                   promptText="🔍 Buscar por nombre, cédula o correo..."
+                   style="-fx-background-color: #F5F5F5;
+                          -fx-background-radius: 10;
+                          -fx-border-color: transparent;
+                          -fx-border-radius: 10;
+                          -fx-padding: 12 16;
+                          -fx-font-size: 14px;
+                          -fx-pref-width: 350;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+        <!-- Filtro por estado -->
+        <ComboBox fx:id="filtroEstado"
+                  promptText="Estado"
+                  style="-fx-background-color: #F5F5F5;
+                         -fx-background-radius: 10;
+                         -fx-font-size: 14px;
+                         -fx-pref-width: 150;
+                         -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- Contador de clientes -->
+        <Label fx:id="lblContador" text="0 clientes"
+               style="-fx-font-size: 13px;
+                      -fx-text-fill: #61564A;
+                      -fx-font-weight: 600;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+    </HBox>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <StackPane VBox.vgrow="ALWAYS" style="-fx-padding: 30 40;">
+
+        <!-- Lista de clientes -->
+        <VBox fx:id="contenedorPrincipal" spacing="20" VBox.vgrow="ALWAYS">
+
+            <!-- ScrollPane con las tarjetas -->
+            <ScrollPane fx:id="scrollPane"
+                        fitToWidth="true"
+                        fitToHeight="true"
+                        style="-fx-background-color: transparent;
+                               -fx-background: transparent;"
+                        VBox.vgrow="ALWAYS">
+                <VBox fx:id="tarjetasContainer" spacing="15" style="-fx-padding: 5;"/>
+            </ScrollPane>
+
+            <!-- Controles de paginación -->
+            <HBox alignment="CENTER" spacing="15" style="-fx-padding: 10 0;">
+                <Button fx:id="btnAnterior"
+                        text="← Anterior"
+                        onAction="#handleAnterior"
+                        style="-fx-background-color: #61564A;
+                               -fx-text-fill: white;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: 600;
+                               -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                               -fx-background-radius: 8;
+                               -fx-cursor: hand;
+                               -fx-padding: 10 20;"/>
+
+                <Label fx:id="lblPaginacion" text="Página 1 de 1"
+                       style="-fx-font-size: 13px;
+                              -fx-text-fill: #61564A;
+                              -fx-font-weight: 600;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <Button fx:id="btnSiguiente"
+                        text="Siguiente →"
+                        onAction="#handleSiguiente"
+                        style="-fx-background-color: #61564A;
+                               -fx-text-fill: white;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: 600;
+                               -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                               -fx-background-radius: 8;
+                               -fx-cursor: hand;
+                               -fx-padding: 10 20;"/>
+            </HBox>
+        </VBox>
+
+        <!-- Estado vacío -->
+        <VBox fx:id="emptyStateContainer"
+              alignment="CENTER"
+              spacing="20"
+              visible="false"
+              managed="false"
+              style="-fx-padding: 60;">
+
+            <Label text="📋"
+                   style="-fx-font-size: 80px;"/>
+
+            <Label text="No hay clientes registrados"
+                   style="-fx-font-size: 20px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+            <Label text="Comienza agregando tu primer cliente"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+            <Button text="+ Agregar Cliente"
+                    onAction="#handleAgregarCliente"
+                    style="-fx-background-color: #61564A;
+                           -fx-text-fill: white;
+                           -fx-font-size: 14px;
+                           -fx-font-weight: 600;
+                           -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                           -fx-background-radius: 10;
+                           -fx-cursor: hand;
+                           -fx-padding: 14 32;"/>
+        </VBox>
+
+    </StackPane>
+
+</VBox>

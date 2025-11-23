@@ -1,6 +1,5 @@
 package grupo.proyecto_aula_carpethome.repositories;
 
-import com.almasb.fxgl.net.Client;
 import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.Cliente;
@@ -52,7 +51,7 @@ public class ClientesRepositoryImpl implements ClientesRepository {
                 SELECT p.cedula, p.p_nombre,p.s_nombre, p.p_apellido, p.s_apellido, p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, e.id_cliente
                 FROM PERSONAS p
                 INNER JOIN CLIENTES e ON p.cedula = e.cedula
-                WHERE p.cedula = ?;
+                WHERE p.cedula = ?
                 """;
 
         try (Connection conn = dbConnection.connect();
@@ -301,4 +300,113 @@ public class ClientesRepositoryImpl implements ClientesRepository {
             if (conn != null) conn.setAutoCommit(true);
         }
     }
+
+    @Override
+    public int contarProyectosPorCliente(String idCliente) throws SQLException {
+        String sql = "SELECT COUNT(*) as total FROM PROYECTOS WHERE id_cliente = ?";
+
+        try (Connection conn = dbConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idCliente);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public int contarProyectosActivosPorCliente(String idCliente) throws SQLException {
+        String sql = "SELECT COUNT(*) as total FROM PROYECTOS WHERE id_cliente = ? AND estado = 'En Progreso'";
+
+        try (Connection conn = dbConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idCliente);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public int contarProyectosCompletadosPorCliente(String idCliente) throws SQLException {
+        String sql = "SELECT COUNT(*) as total FROM PROYECTOS WHERE id_cliente = ? AND estado = 'Completado'";
+
+        try (Connection conn = dbConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idCliente);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public List<Cliente> findClientesConProyectosActivos() throws SQLException {
+        List<Cliente> clientes = new ArrayList<>();
+
+        String sql = """
+            SELECT DISTINCT p.cedula, p.p_nombre, p.s_nombre, p.p_apellido, p.s_apellido, 
+                   p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, c.id_cliente
+            FROM PERSONAS p
+            INNER JOIN CLIENTES c ON p.cedula = c.cedula
+            INNER JOIN PROYECTOS pr ON c.id_cliente = pr.id_cliente
+            WHERE pr.estado = 'En Pogreso'
+            ORDER BY c.id_cliente
+            """;
+
+        try (Connection conn = dbConnection.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                clientes.add(mapResultSetToCliente(rs));
+            }
+        }
+
+        return clientes;
+    }
+
+    @Override
+    public List<Cliente> findClientesSinProyectos() throws SQLException {
+        List<Cliente> clientes = new ArrayList<>();
+
+        String sql = """
+            SELECT p.cedula, p.p_nombre, p.s_nombre, p.p_apellido, p.s_apellido, 
+                   p.p_correo, p.s_correo, p.p_telefono, p.s_telefono, c.id_cliente
+            FROM PERSONAS p
+            INNER JOIN CLIENTES c ON p.cedula = c.cedula
+            WHERE NOT EXISTS (
+                SELECT 1 FROM PROYECTOS pr WHERE pr.id_cliente = c.id_cliente
+            )
+            ORDER BY c.id_cliente
+            """;
+
+        try (Connection conn = dbConnection.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                clientes.add(mapResultSetToCliente(rs));
+            }
+        }
+
+        return clientes;
+    }
+
+
 }

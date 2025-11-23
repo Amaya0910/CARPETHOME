@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.DetalleClienteController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 20;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 20, 0, 0, 5);"
+      spacing="0"
+      maxWidth="700"
+      prefWidth="700">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                 -fx-background-radius: 20 20 0 0;
+                 -fx-padding: 30;">
+
+        <!-- Avatar -->
+        <StackPane fx:id="avatarContainer"
+                   style="-fx-background-color: white;
+                          -fx-background-radius: 50%;"
+                   prefWidth="80" prefHeight="80"
+                   minWidth="80" minHeight="80"
+                   maxWidth="80" maxHeight="80">
+            <Label fx:id="lblIniciales"
+                   text="JD"
+                   style="-fx-font-size: 28px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: #667eea;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </StackPane>
+
+        <!-- Info del cliente -->
+        <VBox spacing="5" HBox.hgrow="ALWAYS" style="-fx-padding: 0 0 0 20;">
+            <Label fx:id="lblNombreCompleto"
+                   text="Juan Pérez Gómez"
+                   style="-fx-font-size: 26px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: white;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <HBox spacing="15">
+                <Label fx:id="lblIdCliente"
+                       text="ID: CLI-001"
+                       style="-fx-font-size: 13px;
+                              -fx-text-fill: white;
+                              -fx-background-color: rgba(255,255,255,0.2);
+                              -fx-padding: 4 12;
+                              -fx-background-radius: 8;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                <Label fx:id="lblCedula"
+                       text="CC: 1098765432"
+                       style="-fx-font-size: 13px;
+                              -fx-text-fill: white;
+                              -fx-background-color: rgba(255,255,255,0.2);
+                              -fx-padding: 4 12;
+                              -fx-background-radius: 8;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            </HBox>
+        </VBox>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCerrar"
+                style="-fx-background-color: rgba(255,255,255,0.2);
+                       -fx-text-fill: white;
+                       -fx-font-size: 20px;
+                       -fx-font-weight: 700;
+                       -fx-cursor: hand;
+                       -fx-padding: 8;
+                       -fx-min-width: 35;
+                       -fx-min-height: 35;
+                       -fx-background-radius: 50%;"/>
+    </HBox>
+
+    <!-- CONTENIDO -->
+    <ScrollPane fitToWidth="true"
+                style="-fx-background-color: white;
+                       -fx-background: white;"
+                VBox.vgrow="ALWAYS">
+        <VBox spacing="25" style="-fx-padding: 30;">
+
+            <!-- INFORMACIÓN DE CONTACTO -->
+            <VBox spacing="15">
+                <Label text="📞 Información de Contacto"
+                       style="-fx-font-size: 18px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #61564A;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <!-- Teléfonos -->
+                <VBox spacing="12">
+                    <!-- Teléfono Principal -->
+                    <HBox spacing="15" alignment="CENTER_LEFT"
+                          style="-fx-background-color: #F5F5F5;
+                                 -fx-padding: 15;
+                                 -fx-background-radius: 12;">
+                        <Label text="📱"
+                               style="-fx-font-size: 24px;"/>
+                        <VBox spacing="3">
+                            <Label text="Teléfono Principal"
+                                   style="-fx-font-size: 12px;
+                                          -fx-text-fill: #A59B8F;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                            <Label fx:id="lblTelefonoPrincipal"
+                                   text="300 123 4567"
+                                   style="-fx-font-size: 16px;
+                                          -fx-font-weight: 600;
+                                          -fx-text-fill: #181716;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Teléfono Secundario -->
+                    <HBox fx:id="boxTelefonoSecundario"
+                          spacing="15" alignment="CENTER_LEFT"
+                          style="-fx-background-color: #F5F5F5;
+                                 -fx-padding: 15;
+                                 -fx-background-radius: 12;">
+                        <Label text="☎️"
+                               style="-fx-font-size: 24px;"/>
+                        <VBox spacing="3">
+                            <Label text="Teléfono Secundario"
+                                   style="-fx-font-size: 12px;
+                                          -fx-text-fill: #A59B8F;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                            <Label fx:id="lblTelefonoSecundario"
+                                   text="310 987 6543"
+                                   style="-fx-font-size: 16px;
+                                          -fx-font-weight: 600;
+                                          -fx-text-fill: #181716;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Correos -->
+                <VBox spacing="12">
+                    <!-- Correo Principal -->
+                    <HBox spacing="15" alignment="CENTER_LEFT"
+                          style="-fx-background-color: #F5F5F5;
+                                 -fx-padding: 15;
+                                 -fx-background-radius: 12;">
+                        <Label text="📧"
+                               style="-fx-font-size: 24px;"/>
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label text="Correo Principal"
+                                   style="-fx-font-size: 12px;
+                                          -fx-text-fill: #A59B8F;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                            <Label fx:id="lblCorreoPrincipal"
+                                   text="juan.perez@example.com"
+                                   style="-fx-font-size: 16px;
+                                          -fx-font-weight: 600;
+                                          -fx-text-fill: #181716;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"
+                                   wrapText="true"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Correo Secundario -->
+                    <HBox fx:id="boxCorreoSecundario"
+                          spacing="15" alignment="CENTER_LEFT"
+                          style="-fx-background-color: #F5F5F5;
+                                 -fx-padding: 15;
+                                 -fx-background-radius: 12;">
+                        <Label text="📨"
+                               style="-fx-font-size: 24px;"/>
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label text="Correo Secundario"
+                                   style="-fx-font-size: 12px;
+                                          -fx-text-fill: #A59B8F;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                            <Label fx:id="lblCorreoSecundario"
+                                   text="juan.p.alternativo@example.com"
+                                   style="-fx-font-size: 16px;
+                                          -fx-font-weight: 600;
+                                          -fx-text-fill: #181716;
+                                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"
+                                   wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <Separator style="-fx-background-color: #E0E0E0;"/>
+
+            <!-- ESTADÍSTICAS (Opcional - para futuras mejoras) -->
+            <VBox spacing="15">
+                <Label text="📊 Estadísticas"
+                       style="-fx-font-size: 18px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #61564A;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <GridPane hgap="15" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                    </columnConstraints>
+
+                    <!-- Proyectos Totales -->
+                    <VBox spacing="8" alignment="CENTER"
+                          style="-fx-background-color: #E3F2FD;
+                                 -fx-padding: 20;
+                                 -fx-background-radius: 12;"
+                          GridPane.columnIndex="0">
+                        <Label fx:id="lblProyectosTotales"
+                               text="0"
+                               style="-fx-font-size: 28px;
+                                      -fx-font-weight: 700;
+                                      -fx-text-fill: #1976D2;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Label text="Proyectos"
+                               style="-fx-font-size: 12px;
+                                      -fx-text-fill: #1976D2;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    </VBox>
+
+                    <!-- Proyectos Activos -->
+                    <VBox spacing="8" alignment="CENTER"
+                          style="-fx-background-color: #C8E6C9;
+                                 -fx-padding: 20;
+                                 -fx-background-radius: 12;"
+                          GridPane.columnIndex="1">
+                        <Label fx:id="lblProyectosActivos"
+                               text="0"
+                               style="-fx-font-size: 28px;
+                                      -fx-font-weight: 700;
+                                      -fx-text-fill: #388E3C;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Label text="Activos"
+                               style="-fx-font-size: 12px;
+                                      -fx-text-fill: #388E3C;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    </VBox>
+
+                    <!-- Proyectos Completados -->
+                    <VBox spacing="8" alignment="CENTER"
+                          style="-fx-background-color: #FFF9C4;
+                                 -fx-padding: 20;
+                                 -fx-background-radius: 12;"
+                          GridPane.columnIndex="2">
+                        <Label fx:id="lblProyectosCompletados"
+                               text="0"
+                               style="-fx-font-size: 28px;
+                                      -fx-font-weight: 700;
+                                      -fx-text-fill: #F57F17;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Label text="Completados"
+                               style="-fx-font-size: 12px;
+                                      -fx-text-fill: #F57F17;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <HBox spacing="15" alignment="CENTER"
+          style="-fx-padding: 20 30 30 30;
+                 -fx-background-color: white;
+                 -fx-background-radius: 0 0 20 20;">
+
+        <Button text="✏️ Editar Cliente"
+                onAction="#handleEditar"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"/>
+
+        <Button text="Cerrar"
+                onAction="#handleCerrar"
+                style="-fx-background-color: #E4DFD7;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);"/>
+    </HBox>
+
+</VBox>

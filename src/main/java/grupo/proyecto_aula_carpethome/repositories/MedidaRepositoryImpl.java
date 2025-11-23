@@ -253,7 +253,7 @@ public class MedidaRepositoryImpl implements MedidaRepository{
     @Override
     public void delete(String s) throws SQLException {
         String sql = """
-                DELETE FROM MEDIDAS WHERE  id_medida = ?;
+                DELETE FROM MEDIDAS WHERE  id_medida = ?
         """;
         try (Connection conn = dbConnection.connect();
         PreparedStatement stmt = conn.prepareStatement(sql)){
