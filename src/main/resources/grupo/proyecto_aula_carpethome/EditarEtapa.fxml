@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.EditarEtapaController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 20;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 20, 0, 0, 5);"
+      spacing="0"
+      maxWidth="550"
+      prefWidth="550">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: #61564A;
+                 -fx-background-radius: 20 20 0 0;
+                 -fx-padding: 24 30;">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="✏️ Editar Etapa"
+                   style="-fx-font-size: 24px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: white;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label fx:id="lblIdEtapa"
+                   text="ID: ETA-001"
+                   style="-fx-font-size: 13px;
+                          -fx-text-fill: #E4DFD7;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCerrar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: white;
+                       -fx-font-size: 24px;
+                       -fx-font-weight: 700;
+                       -fx-cursor: hand;
+                       -fx-padding: 0;
+                       -fx-min-width: 30;
+                       -fx-min-height: 30;"/>
+    </HBox>
+
+    <!-- CONTENIDO DEL FORMULARIO -->
+    <VBox spacing="25" style="-fx-padding: 30;">
+
+        <!-- NOMBRE DE LA ETAPA -->
+        <VBox spacing="8">
+            <Label text="Nombre de la Etapa *"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #61564A;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <TextField fx:id="txtNombre"
+                       promptText="Ej: Corte de Tela, Confección, Control de Calidad..."
+                       style="-fx-background-color: #F5F5F5;
+                              -fx-background-radius: 10;
+                              -fx-border-color: transparent;
+                              -fx-border-radius: 10;
+                              -fx-padding: 12 16;
+                              -fx-font-size: 14px;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <!-- DESCRIPCIÓN -->
+        <VBox spacing="8">
+            <Label text="Descripción *"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #61564A;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <TextArea fx:id="txtDescripcion"
+                      promptText="Describe brevemente las actividades que se realizan en esta etapa..."
+                      wrapText="true"
+                      prefRowCount="4"
+                      style="-fx-background-color: #F5F5F5;
+                             -fx-background-radius: 10;
+                             -fx-border-color: transparent;
+                             -fx-border-radius: 10;
+                             -fx-padding: 12 16;
+                             -fx-font-size: 14px;
+                             -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                             -fx-text-fill: #181716;
+                             -fx-prompt-text-fill: #A59B8F;"/>
+        </VBox>
+
+        <!-- NOTA DE ADVERTENCIA -->
+        <HBox alignment="CENTER_LEFT"
+              spacing="12"
+              style="-fx-background-color: #FFF3E0;
+                     -fx-background-radius: 10;
+                     -fx-padding: 14 18;">
+            <Label text="⚠️"
+                   style="-fx-font-size: 18px;"/>
+            <Label text="Los cambios afectarán a todas las prendas que tengan asignada esta etapa."
+                   wrapText="true"
+                   style="-fx-font-size: 12px;
+                          -fx-text-fill: #E65100;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"
+                   HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+    </VBox>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <HBox spacing="15" alignment="CENTER_RIGHT"
+          style="-fx-padding: 20 30 30 30;
+                 -fx-background-color: white;
+                 -fx-background-radius: 0 0 20 20;">
+
+        <Button text="Cancelar"
+                onAction="#handleCerrar"
+                style="-fx-background-color: #E4DFD7;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);"/>
+
+        <Button fx:id="btnGuardar"
+                text="💾 Guardar Cambios"
+                onAction="#handleGuardar"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"/>
+    </HBox>
+
+</VBox>

@@ -1,4 +1,4 @@
-package grupo.proyecto_aula_carpethome.controllers;
+package grupo.proyecto_aula_carpethome.services;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -18,7 +18,7 @@ import java.util.*;
 public class ClaudeAIService {
 
     private static final String CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
-    private static final String CLAUDE_API_KEY = "PON TU APIKEY AQUÍ";
+    private static final String CLAUDE_API_KEY = "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";
     private static final String MODEL = "claude-sonnet-4-5-20250929";
 
     private final OkHttpClient httpClient;

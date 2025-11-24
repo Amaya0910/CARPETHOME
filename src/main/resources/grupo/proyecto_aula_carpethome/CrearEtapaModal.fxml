@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.CambiarEtapaController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 16;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 20, 0, 0, 5);"
+      spacing="0"
+      maxWidth="500"
+      prefWidth="500">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: #61564A;
+                 -fx-background-radius: 16 16 0 0;
+                 -fx-padding: 24 30;">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="🔄 Cambiar Etapa"
+                   style="-fx-font-size: 22px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: white;"/>
+            <Label fx:id="lblPrenda"
+                   text="Prenda: Vestido de Gala"
+                   style="-fx-font-size: 13px;
+                          -fx-text-fill: #E4DFD7;"/>
+        </VBox>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCerrar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: white;
+                       -fx-font-size: 20px;
+                       -fx-cursor: hand;"/>
+    </HBox>
+
+    <!-- CONTENIDO -->
+    <VBox spacing="20" style="-fx-padding: 30;">
+
+        <!-- Etapa Actual -->
+        <VBox spacing="8">
+            <Label text="Etapa Actual"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #61564A;"/>
+            <Label fx:id="lblEtapaActual"
+                   text="Corte"
+                   style="-fx-background-color: #E3F2FD;
+                          -fx-text-fill: #1565C0;
+                          -fx-font-size: 16px;
+                          -fx-font-weight: 700;
+                          -fx-padding: 12 16;
+                          -fx-background-radius: 8;"/>
+        </VBox>
+
+        <!-- Nueva Etapa -->
+        <VBox spacing="8">
+            <Label text="Nueva Etapa *"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #61564A;"/>
+            <ComboBox fx:id="comboNuevaEtapa"
+                      promptText="Seleccionar etapa..."
+                      style="-fx-background-color: #F5F5F5;
+                             -fx-background-radius: 8;
+                             -fx-font-size: 14px;
+                             -fx-padding: 10;"
+                      maxWidth="Infinity"/>
+        </VBox>
+
+        <!-- Observaciones -->
+        <VBox spacing="8">
+            <Label text="Observaciones"
+                   style="-fx-font-size: 13px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #61564A;"/>
+            <TextArea fx:id="txtObservaciones"
+                      promptText="Notas sobre el cambio de etapa..."
+                      wrapText="true"
+                      prefRowCount="3"
+                      style="-fx-background-color: #F5F5F5;
+                             -fx-background-radius: 8;
+                             -fx-font-size: 14px;
+                             -fx-padding: 12;"/>
+        </VBox>
+
+    </VBox>
+
+    <!-- BOTONES -->
+    <HBox spacing="12" alignment="CENTER_RIGHT"
+          style="-fx-padding: 20 30 30 30;">
+        <Button text="Cancelar"
+                onAction="#handleCerrar"
+                style="-fx-background-color: #E4DFD7;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-background-radius: 8;
+                       -fx-padding: 12 24;"/>
+
+        <Button fx:id="btnConfirmar"
+                text="✓ Confirmar Cambio"
+                onAction="#handleConfirmar"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-background-radius: 8;
+                       -fx-padding: 12 32;"/>
+    </HBox>
+
+</VBox>

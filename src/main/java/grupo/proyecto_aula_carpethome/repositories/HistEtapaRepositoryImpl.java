@@ -21,33 +21,45 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
                 .fechaInicio(rs.getDate("fecha_inicio"))
                 .fechaFinal(rs.getDate("fecha_final"))
                 .observaciones(rs.getString("observaciones"))
+                .idEmpleado(rs.getString("id_empleado"))  // ✅ NUEVO
                 .build();
     }
 
     @Override
     public HistEtapa save(HistEtapa entity) throws SQLException {
-        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_iniciar_etapa_proyecto(?, ?, ?, ?)}";
+        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_iniciar_etapa_proyecto(?, ?, ?, ?, ?)}";  // ✅ 5 parámetros
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            Validador.validarTexto(entity.getIdPrenda(),"id de prenda: ", 10,true);
+            Validador.validarTexto(entity.getIdPrenda(), "id de prenda", 10, true);
             stmt.setString(1, entity.getIdPrenda());
-            Validador.validarTexto(entity.getIdEtapa(),"id de Etapa: ", 10,true);
+
+            Validador.validarTexto(entity.getIdEtapa(), "id de Etapa", 10, true);
             stmt.setString(2, entity.getIdEtapa());
+
             stmt.setDate(3, new java.sql.Date(entity.getFechaInicio().getTime()));
 
-            if (entity.getObservaciones() != null) {
-                Validador.validarTexto(entity.getObservaciones(),"observaciones: ", 10,true);
+            if (entity.getObservaciones() != null && !entity.getObservaciones().trim().isEmpty()) {
+                Validador.validarTexto(entity.getObservaciones(), "observaciones", 150, false);
                 stmt.setString(4, entity.getObservaciones());
             } else {
                 stmt.setNull(4, Types.VARCHAR);
             }
 
+            // ✅ NUEVO: ID Empleado
+            if (entity.getIdEmpleado() != null && !entity.getIdEmpleado().trim().isEmpty()) {
+                Validador.validarTexto(entity.getIdEmpleado(), "id de empleado", 10, true);
+                stmt.setString(5, entity.getIdEmpleado());
+            } else {
+                throw new IllegalArgumentException("El ID del empleado es obligatorio");
+            }
+
             stmt.execute();
 
-            System.out.println("✓ Historial guardado entre: " +
-                    entity.getIdPrenda() + " y " + entity.getIdEtapa());
+            System.out.println("✓ Historial guardado - Prenda: " + entity.getIdPrenda() +
+                    ", Etapa: " + entity.getIdEtapa() +
+                    ", Empleado: " + entity.getIdEmpleado());
             return entity;
 
         } catch (SQLException e) {
@@ -60,7 +72,9 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
                 case 20021:
                     throw new SQLException("La etapa no existe", e);
                 case 20040:
-                    throw new SQLException("Esta etapa ya fue iniciada para este proyecto", e);
+                    throw new SQLException("Esta etapa ya fue iniciada para esta prenda", e);
+                case 20045:
+                    throw new SQLException("El empleado no existe", e);
                 default:
                     throw e;
             }
@@ -70,11 +84,18 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
     @Override
     public Optional<HistEtapa> findById(String s) throws SQLException {
         String[] parts = s.split("-");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("El ID debe tener el formato 'idPrenda-idEtapa'");
+        }
+
         String idPrenda = parts[0].trim();
         String idEtapa = parts[1].trim();
 
-
-        String sql = "SELECT id_proyecto, id_etapa, fecha_inicio, fecha_final FROM HIST_ETAPA WHERE id_proyecto = ? AND id_etapa = ?";
+        String sql = """
+            SELECT id_prenda, id_etapa, fecha_inicio, fecha_final, observaciones, id_empleado
+            FROM HIST_ETAPA 
+            WHERE id_prenda = ? AND id_etapa = ?
+            """;
 
         try (Connection conn = dbConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -98,7 +119,11 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
     @Override
     public List<HistEtapa> findAll() throws SQLException {
         List<HistEtapa> histEtapas = new ArrayList<>();
-        String sql = "SELECT id_prenda, id_etapa, fecha_incio, fecha_final, observaciones FROM HIST_ETAPA ORDER BY id_proyecto, id_etapa";
+        String sql = """
+            SELECT id_prenda, id_etapa, fecha_inicio, fecha_final, observaciones, id_empleado
+            FROM HIST_ETAPA 
+            ORDER BY id_prenda, id_etapa
+            """;
 
         try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();
@@ -108,7 +133,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
                 histEtapas.add(mapResultSetToHistEtapa(rs));
             }
 
-            System.out.println("✓ Se encontraron " + histEtapas.size() + " registros");
+            System.out.println("✓ Se encontraron " + histEtapas.size() + " registros de historial");
 
         } catch (SQLException e) {
             System.err.println("✗ Error al obtener todos los historiales: " + e.getMessage());
@@ -120,8 +145,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
     @Override
     public void update(HistEtapa entity) throws SQLException {
-
-        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_actualizar_hist_etapa(?, ?, ?, ?, ?)}";
+        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_actualizar_hist_etapa(?, ?, ?, ?, ?, ?)}";  // ✅ 6 parámetros
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
@@ -132,10 +156,10 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
             if (entity.getFechaFinal() != null) {
                 stmt.setDate(4, new java.sql.Date(entity.getFechaFinal().getTime()));
+                Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaFinal());
             } else {
                 stmt.setNull(4, Types.DATE);
             }
-            Validador.validarRangoFechas(entity.getFechaInicio(), entity.getFechaFinal());
 
             if (entity.getObservaciones() != null && !entity.getObservaciones().trim().isEmpty()) {
                 stmt.setString(5, entity.getObservaciones());
@@ -143,64 +167,67 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
                 stmt.setNull(5, Types.VARCHAR);
             }
 
-
+            // ✅ NUEVO: ID Empleado
+            if (entity.getIdEmpleado() != null && !entity.getIdEmpleado().trim().isEmpty()) {
+                stmt.setString(6, entity.getIdEmpleado());
+            } else {
+                throw new IllegalArgumentException("El ID del empleado es obligatorio");
+            }
 
             stmt.execute();
 
-            System.out.println("  Historial de etapa actualizado");
-            System.out.println("  Proyecto: " + entity.getIdPrenda());
-            System.out.println("  Etapa: " + entity.getIdEtapa());
+            System.out.println("✓ Historial actualizado - Prenda: " + entity.getIdPrenda() +
+                    ", Etapa: " + entity.getIdEtapa());
 
         } catch (SQLException e) {
-            System.err.println("  Error al actualizar historial de etapa: " + e.getMessage());
+            System.err.println("✗ Error al actualizar historial de etapa: " + e.getMessage());
             System.err.println("  Código: " + e.getErrorCode());
 
-            if (e.getErrorCode() == 20042) {
-                throw new SQLException("No existe registro de historial para esa etapa y proyecto", e);
-            } else if (e.getErrorCode() == 20043) {
-                throw new SQLException("La fecha final no puede ser menor que la fecha de inicio", e);
+            switch (e.getErrorCode()) {
+                case 20042:
+                    throw new SQLException("No existe registro de historial para esa etapa y prenda", e);
+                case 20043:
+                    throw new SQLException("La fecha final no puede ser menor que la fecha de inicio", e);
+                case 20045:
+                    throw new SQLException("El empleado no existe", e);
+                default:
+                    throw e;
             }
-
-            throw e;
         }
     }
 
     @Override
     public void delete(String s) throws SQLException {
-
         String[] parts = s.split("-");
         if (parts.length != 2) {
             throw new IllegalArgumentException(
-                    "El ID debe tener el formato 'idPrenda-idEtapa'. Ejemplo: 'PRY001-ETA001'"
+                    "El ID debe tener el formato 'idPrenda-idEtapa'. Ejemplo: 'PRE001-ETA001'"
             );
         }
 
-        String idProyecto = parts[0].trim();
+        String idPrenda = parts[0].trim();
         String idEtapa = parts[1].trim();
-
 
         String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_eliminar_hist_etapa(?, ?)}";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
 
-            stmt.setString(1, idProyecto);
+            stmt.setString(1, idPrenda);
             stmt.setString(2, idEtapa);
 
             stmt.execute();
 
-            System.out.println("  Historial de etapa eliminado exitosamente");
-            System.out.println("  Proyecto: " + idProyecto);
-            System.out.println("  Etapa: " + idEtapa);
+            System.out.println("✓ Historial eliminado - Prenda: " + idPrenda + ", Etapa: " + idEtapa);
 
         } catch (SQLException e) {
-            System.err.println("  Error al eliminar historial: " + e.getMessage());
+            System.err.println("✗ Error al eliminar historial: " + e.getMessage());
             System.err.println("  Código: " + e.getErrorCode());
 
             if (e.getErrorCode() == 20044) {
                 throw new SQLException(
-                        "No existe registro de historial para el proyecto '" +
-                                idProyecto + "' y la etapa '" + idEtapa + "'", e
+                        "No existe registro de historial para la prenda '" +
+                                idPrenda + "' y la etapa '" + idEtapa + "'", e
                 );
             }
 

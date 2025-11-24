@@ -6,18 +6,6 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
-
-import java.io.IOException;
-
-import javafx.animation.*;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -36,6 +24,7 @@ public class MenuController {
     @FXML private Label lblUserName;
     @FXML private Label lblUserRole;
     @FXML private Button btnProjects;
+    @FXML private Button btnEtapas;  // ✨ NUEVO
     @FXML private Button btnClients;
     @FXML private Button btnUsers;
     @FXML private Button btnStatistics;
@@ -44,8 +33,6 @@ public class MenuController {
     @FXML private StackPane contentArea;
 
     private Button currentSelectedButton = null;
-
-    // ✅ IMPORTANTE: Variable para almacenar el usuario logueado
     private UsuarioLogueado usuarioLogueado;
 
     @FXML
@@ -59,10 +46,6 @@ public class MenuController {
     // MÉTODOS PARA ESTABLECER INFO DEL USUARIO
     // ============================================
 
-    /**
-     * Establece la información del usuario en el menú
-     * ✅ NUEVO: Ahora también guarda el objeto UsuarioLogueado completo
-     */
     public void setUserInfo(UsuarioLogueado usuario) {
         this.usuarioLogueado = usuario;
         lblUserName.setText(usuario.getNombreCompleto());
@@ -80,9 +63,7 @@ public class MenuController {
         }
     }
 
-    /**
-     * ⚠️ DEPRECATED: Mantener por compatibilidad pero usar setUserInfo(UsuarioLogueado)
-     */
+    @Deprecated
     public void setUserInfo(String userName, String userRole) {
         lblUserName.setText(userName);
         lblUserRole.setText(userRole);
@@ -101,14 +82,22 @@ public class MenuController {
 
     @FXML
     private void handleProjectsClick() {
-        System.out.println("Gestión de Proyecto seleccionada");
+        System.out.println("Gestión de Proyectos seleccionada");
         selectButton(btnProjects);
         loadView("GestionProyectos.fxml");
     }
 
+    // ✨ NUEVO: Handler para Gestión de Etapas
+    @FXML
+    private void handleEtapasClick() {
+        System.out.println("Gestión de Etapas seleccionada");
+        selectButton(btnEtapas);
+        loadView("GestionEtapas.fxml");
+    }
+
     @FXML
     private void handleClientsClick() {
-        System.out.println("Gestión de Cliente seleccionada");
+        System.out.println("Gestión de Clientes seleccionada");
         selectButton(btnClients);
         loadView("GestionClientes.fxml");
     }
@@ -132,7 +121,6 @@ public class MenuController {
         System.out.println("Settings seleccionado");
         selectButton(btnSettings);
 
-        // Validar que hay usuario logueado
         if (usuarioLogueado == null) {
             System.err.println("❌ ERROR: No hay usuario logueado");
             mostrarError("Error: No hay información del usuario. Por favor, inicia sesión nuevamente.");
@@ -150,11 +138,9 @@ public class MenuController {
                     "/grupo/proyecto_aula_carpethome/Configuracion.fxml"));
             Parent root = loader.load();
 
-            // Obtener el controlador y pasarle el usuario
             ConfiguracionController controller = loader.getController();
             controller.cargarDatosUsuario(usuarioLogueado);
 
-            // Animación de fade para el cambio de vista
             FadeTransition fadeOut = new FadeTransition(Duration.millis(150), contentArea);
             fadeOut.setFromValue(1.0);
             fadeOut.setToValue(0.0);
@@ -170,7 +156,6 @@ public class MenuController {
             });
 
             fadeOut.play();
-
             System.out.println("✓ Vista de Configuración cargada exitosamente");
 
         } catch (IOException e) {
@@ -202,13 +187,6 @@ public class MenuController {
             e.printStackTrace();
             System.err.println("Error al cargar el login: " + e.getMessage());
         }
-    }
-
-    @FXML
-    private void handleGestionUsuarios() {
-        System.out.println("Cargando Gestión de Usuarios...");
-        selectButton(btnUsers);
-        loadView("GestionUsuarios.fxml");
     }
 
     // ============================================
@@ -327,7 +305,6 @@ public class MenuController {
 
             System.out.println("Vista cargada exitosamente: " + fxmlFile);
 
-            // Animación de fade para el cambio de vista
             FadeTransition fadeOut = new FadeTransition(Duration.millis(150), contentArea);
             fadeOut.setFromValue(1.0);
             fadeOut.setToValue(0.0);

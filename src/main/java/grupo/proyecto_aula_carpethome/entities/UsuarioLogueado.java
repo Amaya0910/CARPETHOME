@@ -44,6 +44,7 @@ public class UsuarioLogueado {
     public void setCedula(String cedula) {
         this.cedula = cedula;
     }
-// Getters y Setters
+
+
 }
 

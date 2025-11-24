@@ -1,7 +1,11 @@
 package grupo.proyecto_aula_carpethome.controllers;
 
+import grupo.proyecto_aula_carpethome.entities.Etapa;
+import grupo.proyecto_aula_carpethome.entities.HistEtapa;
 import grupo.proyecto_aula_carpethome.entities.Prenda;
 import grupo.proyecto_aula_carpethome.entities.Proyecto;
+import grupo.proyecto_aula_carpethome.services.EtapaService;
+import grupo.proyecto_aula_carpethome.services.HistEtapaService;
 import grupo.proyecto_aula_carpethome.services.PrendaService;
 import grupo.proyecto_aula_carpethome.services.ServiceFactory;
 import javafx.fxml.FXML;
@@ -22,14 +26,20 @@ import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 public class GestionPrendasController {
 
-    @FXML private Label lblProyecto;
-    @FXML private VBox contenedorPrendas;
-    @FXML private VBox placeholderPrendas;
-    @FXML private Button btnAgregarPrenda;
-    @FXML private Button btnCerrar;
+    @FXML
+    private Label lblProyecto;
+    @FXML
+    private VBox contenedorPrendas;
+    @FXML
+    private VBox placeholderPrendas;
+    @FXML
+    private Button btnAgregarPrenda;
+    @FXML
+    private Button btnCerrar;
 
     private PrendaService prendaService;
     private Proyecto proyectoActual;
@@ -72,6 +82,52 @@ public class GestionPrendasController {
         }
     }
 
+    /**
+     * Abre el modal para cambiar la etapa de una prenda
+     */
+    private void cambiarEtapaPrenda(Prenda prenda) {
+        try {
+            // Cargar el FXML del modal
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/grupo/proyecto_aula_carpethome/CambiarEtapa.fxml")
+            );
+            Parent root = loader.load();
+
+            // Obtener el controlador y configurarlo
+            CambiarEtapaController controller = loader.getController();
+            controller.setParentController(this);
+            controller.cargarPrenda(prenda);
+
+            // Crear el Stage modal
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initStyle(StageStyle.DECORATED);
+            modalStage.setTitle("Cambiar Etapa - " + prenda.getNombrePrenda());
+
+            // Crear la escena
+            Scene scene = new Scene(root);
+            modalStage.setScene(scene);
+
+            // Configurar tamaño
+            modalStage.setMinWidth(500);
+            modalStage.setMinHeight(450);
+            modalStage.setResizable(false);
+
+            // Centrar y mostrar
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+
+            // Después de cerrar el modal, recargar las prendas
+            cargarPrendas();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "No se pudo abrir el formulario para cambiar etapa: " + e.getMessage());
+        }
+    }
+
+
+
     private VBox crearTarjetaPrenda(Prenda prenda) {
         VBox card = new VBox(12);
         card.setStyle(
@@ -98,10 +154,11 @@ public class GestionPrendasController {
         HBox acciones = new HBox(8);
         acciones.setAlignment(Pos.CENTER_RIGHT);
 
+        Button btnCambiarEtapa = crearBotonAccion("📋", () -> cambiarEtapaPrenda(prenda));
         Button btnEditar = crearBotonAccion("✏️", () -> editarPrenda(prenda));
         Button btnEliminar = crearBotonAccion("🗑️", () -> eliminarPrenda(prenda));
 
-        acciones.getChildren().addAll(btnEditar, btnEliminar);
+        acciones.getChildren().addAll(btnCambiarEtapa, btnEditar, btnEliminar);
         header.getChildren().addAll(lblNombre, acciones);
 
         // Descripción
@@ -128,6 +185,43 @@ public class GestionPrendasController {
         costos.getChildren().addAll(costoMateriales, costoTotal);
 
         card.getChildren().addAll(header, lblDescripcion, separator, costos);
+
+        // Cargar y mostrar etapa actual
+        try {
+            HistEtapaService histEtapaService = ServiceFactory.getHistEtapaService();
+            Optional<HistEtapa> etapaActualOpt = histEtapaService.obtenerEtapaActual(prenda.getIdPrenda());
+
+            if (etapaActualOpt.isPresent()) {
+                EtapaService etapaService = ServiceFactory.getEtapaService();
+                Optional<Etapa> etapaOpt = etapaService.buscarPorId(etapaActualOpt.get().getIdEtapa());
+
+                if (etapaOpt.isPresent()) {
+                    Label badgeEtapa = new Label("📍 " + etapaOpt.get().getNombreEtapa());
+                    badgeEtapa.setStyle(
+                            "-fx-background-color: #BBDEFB;" +
+                                    "-fx-text-fill: #1565C0;" +
+                                    "-fx-font-size: 11px;" +
+                                    "-fx-font-weight: 700;" +
+                                    "-fx-padding: 4 10;" +
+                                    "-fx-background-radius: 8;"
+                    );
+                    header.getChildren().add(1, badgeEtapa);
+                }
+            } else {
+                Label sinEtapa = new Label("Sin etapa");
+                sinEtapa.setStyle(
+                        "-fx-background-color: #FFE082;" +
+                                "-fx-text-fill: #F57F17;" +
+                                "-fx-font-size: 11px;" +
+                                "-fx-font-weight: 700;" +
+                                "-fx-padding: 4 10;" +
+                                "-fx-background-radius: 8;"
+                );
+                header.getChildren().add(1, sinEtapa);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return card;
     }

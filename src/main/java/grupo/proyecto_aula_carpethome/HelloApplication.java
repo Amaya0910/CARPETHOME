@@ -121,6 +121,9 @@ public class HelloApplication extends Application {
         return HelloApplication.user_logged;
     }
 
+
+
+
     /**
      * Verifica si hay un usuario logueado
      * @return true si hay sesión activa, false en caso contrario

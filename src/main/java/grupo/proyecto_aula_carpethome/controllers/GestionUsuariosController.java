@@ -512,13 +512,71 @@ public class GestionUsuariosController {
     }
 
     private void editarAdministrador(Administrador admin) {
-        // TODO: Implementar modal de edición
-        System.out.println("Editar administrador: " + admin.getIdAdmin());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/grupo/proyecto_aula_carpethome/EditarAdministrador.fxml"));
+            Parent root = loader.load();
+
+            EditarAdministradorController controller = loader.getController();
+            controller.setParentController(this);
+            controller.setAdministrador(admin);
+
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.setTitle("Editar Administrador");
+
+            StackPane overlay = new StackPane();
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            overlay.getChildren().add(root);
+            overlay.setPadding(new Insets(40));
+
+            Scene scene = new Scene(overlay);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            modalStage.setScene(scene);
+
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+
+            cargarAdministradores();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "No se pudo abrir el formulario: " + e.getMessage());
+        }
     }
 
     private void editarEmpleado(Empleado empleado) {
-        // TODO: Implementar modal de edición
-        System.out.println("Editar empleado: " + empleado.getIdEmpleado());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/grupo/proyecto_aula_carpethome/EditarEmpleado.fxml"));
+            Parent root = loader.load();
+
+            EditarEmpleadoController controller = loader.getController();
+            controller.setParentController(this);
+            controller.setEmpleado(empleado);
+
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.setTitle("Editar Empleado");
+
+            StackPane overlay = new StackPane();
+            overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+            overlay.getChildren().add(root);
+            overlay.setPadding(new Insets(40));
+
+            Scene scene = new Scene(overlay);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+            modalStage.setScene(scene);
+
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+
+            cargarEmpleados();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "No se pudo abrir el formulario: " + e.getMessage());
+        }
     }
 
     private void eliminarAdministrador(Administrador admin) {

@@ -39,7 +39,7 @@ public class ChatBotController implements Initializable {
     @FXML
     private Button btnEnviar;
 
-    private ClaudeAIService claudeService;
+    private ClaudeAIService ClaudeAIService;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -68,8 +68,13 @@ public class ChatBotController implements Initializable {
             // Obtener Connection de JDBC
             Connection conn = dbConnection.connect();
 
-            // Inicializar servicio de Claude AI
-            claudeService = new ClaudeAIService(conn);
+            // ✅ CORRECCIÓN: Asignar al campo de instancia, no crear variable local
+            ClaudeAIService = new ClaudeAIService(conn);
+
+            // Opcional: Mostrar mensaje de bienvenida
+            Platform.runLater(() -> {
+                agregarMensajeIA("¡Hola! Soy tu asistente de CarpetHome. Puedo ayudarte a consultar información sobre proyectos, clientes, empleados y más. ¿En qué puedo ayudarte?");
+            });
 
         } catch (SQLException e) {
             mostrarError("Error al conectar con la base de datos: " + e.getMessage());
@@ -103,7 +108,7 @@ public class ChatBotController implements Initializable {
         // Procesar en segundo plano para no bloquear la UI
         new Thread(() -> {
             try {
-                String respuesta = claudeService.procesarConsulta(pregunta);
+                String respuesta = ClaudeAIService.procesarConsulta(pregunta);
 
                 // Actualizar UI en el hilo de JavaFX
                 Platform.runLater(() -> {

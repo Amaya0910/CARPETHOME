@@ -59,7 +59,7 @@ public class GastosRepositoryImpl implements GastosRepository {
     @Override
     public Optional<Gasto> findById(String id) throws SQLException {
         String sql = """
-                SELECT id_gasto, nombre_gasto, id_prenda, gasto, descripcion FROM gastos WHERE id_gasto = ?;
+                SELECT id_gasto, nombre_gasto, id_prenda, gasto, descripcion FROM gastos WHERE id_gasto = ?
                 """;
 
         try(Connection conn = dbConnection.connect();
@@ -80,7 +80,7 @@ public class GastosRepositoryImpl implements GastosRepository {
     public List<Gasto> findAll() throws SQLException {
         List<Gasto> gastos = new ArrayList<>();
         String sql = """
-                SELECT id_gasto, nombre_gasto, id_prenda, gasto, descripcion FROM gastos;
+                SELECT id_gasto, nombre_gasto, id_prenda, gasto, descripcion FROM gastos
         """;
         try (Connection conn = dbConnection.connect();
              Statement stmt = conn.createStatement();

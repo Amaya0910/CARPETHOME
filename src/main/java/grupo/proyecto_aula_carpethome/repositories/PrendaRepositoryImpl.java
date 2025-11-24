@@ -40,7 +40,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
             Validador.validarTexto(entity.getNombrePrenda(), "Nombre de la prenda: ", 15, true);
             stmt.setString(1, entity.getNombrePrenda());
 
-            Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 15, false);
+            Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 150, false);
             stmt.setString(2, entity.getDescripcionPrenda());
 
             stmt.setDouble(3, costoMateriales);
@@ -129,7 +129,7 @@ public class PrendaRepositoryImpl implements PrendaRepository{
             stmt.setString(2, entity.getNombrePrenda());
 
             // Parámetro 3: Descripción
-            Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 15, false);
+            Validador.validarTexto(entity.getDescripcionPrenda(), "Descripcion de la prenda: ", 150, false);
             stmt.setString(3, entity.getDescripcionPrenda());
 
             // Parámetro 4: Costo materiales

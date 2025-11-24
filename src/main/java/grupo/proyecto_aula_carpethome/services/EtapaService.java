@@ -42,7 +42,7 @@ public class EtapaService {
         return etapasRepository.findById(id);
     }
 
-    public List<Etapa> listarTodos() throws SQLException {
+    public List<Etapa> listarTodas() throws SQLException {
         return etapasRepository.findAll();
     }
 
@@ -73,15 +73,6 @@ public class EtapaService {
         return etapasRepository.findById(id).isPresent();
     }
 
-    public Optional<Etapa> buscarPorNombre(String nombre) throws SQLException {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo o vacío");
-        }
-        return listarTodos().stream()
-                .filter(etapa -> etapa.getNombreEtapa().equalsIgnoreCase(nombre))
-                .findFirst();
-    }
-
 
     public int contarEtapas() throws SQLException {
         return etapasRepository.findAll().size();
@@ -93,5 +84,15 @@ public class EtapaService {
             throw new SQLException("No existe una etapa con el ID: " + id);
         }
         return etapaOpt.get().getDescripcionEtapa();
+    }
+
+
+    public Optional<Etapa> buscarPorNombre(String nombre) throws SQLException {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la etapa no puede ser nulo o vacío");
+        }
+        return listarTodas().stream()
+                .filter(e -> nombre.equalsIgnoreCase(e.getNombreEtapa()))
+                .findFirst();
     }
 }
