@@ -16,11 +16,9 @@ public class ServiceFactory {
     private static final OracleDatabaseConnection dbConnection =
             new OracleDatabaseConnection(config);
 
-    // Solo instancias para dependencias circulares
     private static ProyectoService proyectoServiceInstance;
     private static PrendaService prendaServiceInstance;
 
-    // Servicios SIN dependencias circulares (creación directa)
     public static AdministradorService getAdministradorService() {
         var adminRepo = new AdministradorRepositoryImpl(dbConnection);
         return new AdministradorService(adminRepo);
@@ -41,7 +39,6 @@ public class ServiceFactory {
         return new EtapaService(etapaRepo);
     }
 
-    // GastoService tiene dependencia simple (NO circular)
     public static GastoService getGastoService() {
         var gastoRepo = new GastosRepositoryImpl(dbConnection);
         return new GastoService(gastoRepo, getPrendaService()); // ← Dependencia simple
@@ -49,7 +46,7 @@ public class ServiceFactory {
 
     public static HistEtapaService getHistEtapaService() {
         var histEtapaRepo = new HistEtapaRepositoryImpl(dbConnection);
-        return new HistEtapaService(histEtapaRepo);
+        return new HistEtapaService(histEtapaRepo, histEtapaRepo);
     }
 
     public static MedidaService getMedidaService() {
@@ -70,7 +67,7 @@ public class ServiceFactory {
     public static ProyectoService getProyectoService() {
         if (proyectoServiceInstance == null) {
             var proyectoRepo = new ProyectoRepositoryImpl(dbConnection);
-            proyectoServiceInstance = new ProyectoService(proyectoRepo );
+            proyectoServiceInstance = new ProyectoService(proyectoRepo);
             proyectoServiceInstance.setPrendaService(getPrendaService()); // ← Setter
         }
         return proyectoServiceInstance;

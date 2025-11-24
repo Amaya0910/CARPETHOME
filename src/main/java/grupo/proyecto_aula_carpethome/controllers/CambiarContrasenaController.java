@@ -16,12 +16,9 @@ import javafx.stage.Stage;
 import java.sql.SQLException;
 
 public class CambiarContrasenaController {
-
-    // ==================== SERVICIOS ====================
     private final AdministradorService administradorService = ServiceFactory.getAdministradorService();
     private final EmpleadoService empleadoService = ServiceFactory.getEmpleadoService();
 
-    // ==================== COMPONENTES FXML ====================
     @FXML private VBox errorContainer;
     @FXML private Label errorLabel;
     @FXML private PasswordField txtContrasenaActual;
@@ -31,12 +28,10 @@ public class CambiarContrasenaController {
     @FXML private Button btnCambiar;
     @FXML private Button btnCerrar;
 
-    // ==================== VARIABLES DE INSTANCIA ====================
     private UsuarioLogueado usuarioLogueado;
     private boolean esAdministrador;
     private Stage stage;
 
-    // ==================== INICIALIZACIÓN ====================
     @FXML
     private void initialize() {
         ocultarError();
@@ -50,18 +45,10 @@ public class CambiarContrasenaController {
         this.esAdministrador = esAdmin;
     }
 
-    /**
-     * Establece el Stage del modal
-     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
-    // ==================== VALIDACIONES ====================
-
-    /**
-     * Valida el formulario de cambio de contraseña
-     */
     private boolean validarFormulario() {
         StringBuilder errores = new StringBuilder();
 
@@ -99,9 +86,7 @@ public class CambiarContrasenaController {
         return true;
     }
 
-    /**
-     * Valida que la contraseña actual sea correcta
-     */
+
     private boolean validarContrasenaActual() throws SQLException {
         String contrasenaActual = txtContrasenaActual.getText().trim();
         String contrasenaAlmacenada = null;
@@ -124,7 +109,7 @@ public class CambiarContrasenaController {
             return false;
         }
 
-        // Comparar contraseñas (asumiendo que están encriptadas con SHA-256)
+        // Comparar contraseñas
         String contrasenaActualEncriptada = PasswordUtils.hashPassword(contrasenaActual);
 
         if (!contrasenaActual.equals(contrasenaAlmacenada)) {
@@ -135,11 +120,8 @@ public class CambiarContrasenaController {
         return true;
     }
 
-    // ==================== ACCIONES ====================
 
-    /**
-     * Cambia la contraseña del usuario
-     */
+
     @FXML
     private void handleCambiar() {
         if (!validarFormulario()) {

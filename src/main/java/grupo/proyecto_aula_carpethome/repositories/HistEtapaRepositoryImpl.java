@@ -3,7 +3,7 @@ package grupo.proyecto_aula_carpethome.repositories;
 import grupo.proyecto_aula_carpethome.Utilidades.Validador;
 import grupo.proyecto_aula_carpethome.config.OracleDatabaseConnection;
 import grupo.proyecto_aula_carpethome.entities.HistEtapa;
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,13 +21,16 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
                 .fechaInicio(rs.getDate("fecha_inicio"))
                 .fechaFinal(rs.getDate("fecha_final"))
                 .observaciones(rs.getString("observaciones"))
-                .idEmpleado(rs.getString("id_empleado"))  // ✅ NUEVO
+                .idEmpleado(rs.getString("id_empleado"))
+                // ✅ NUEVAS COLUMNAS
+                .urlImagen(rs.getString("url_imagen"))
+                .descripcionImagen(rs.getString("descripcion_imagen"))
                 .build();
     }
 
     @Override
     public HistEtapa save(HistEtapa entity) throws SQLException {
-        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_iniciar_etapa_proyecto(?, ?, ?, ?, ?)}";  // ✅ 5 parámetros
+        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_iniciar_etapa_proyecto(?, ?, ?, ?, ?)}";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
@@ -47,7 +50,6 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
                 stmt.setNull(4, Types.VARCHAR);
             }
 
-            // ✅ NUEVO: ID Empleado
             if (entity.getIdEmpleado() != null && !entity.getIdEmpleado().trim().isEmpty()) {
                 Validador.validarTexto(entity.getIdEmpleado(), "id de empleado", 10, true);
                 stmt.setString(5, entity.getIdEmpleado());
@@ -64,20 +66,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
         } catch (SQLException e) {
             System.err.println("✗ Error al guardar historial de etapas: " + e.getMessage());
-            System.err.println("  Código: " + e.getErrorCode());
-
-            switch (e.getErrorCode()) {
-                case 20031:
-                    throw new SQLException("La prenda no existe", e);
-                case 20021:
-                    throw new SQLException("La etapa no existe", e);
-                case 20040:
-                    throw new SQLException("Esta etapa ya fue iniciada para esta prenda", e);
-                case 20045:
-                    throw new SQLException("El empleado no existe", e);
-                default:
-                    throw e;
-            }
+            throw e;
         }
     }
 
@@ -92,7 +81,8 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
         String idEtapa = parts[1].trim();
 
         String sql = """
-            SELECT id_prenda, id_etapa, fecha_inicio, fecha_final, observaciones, id_empleado
+            SELECT id_prenda, id_etapa, fecha_inicio, fecha_final, observaciones, id_empleado,
+                   url_imagen, descripcion_imagen
             FROM HIST_ETAPA 
             WHERE id_prenda = ? AND id_etapa = ?
             """;
@@ -120,7 +110,8 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
     public List<HistEtapa> findAll() throws SQLException {
         List<HistEtapa> histEtapas = new ArrayList<>();
         String sql = """
-            SELECT id_prenda, id_etapa, fecha_inicio, fecha_final, observaciones, id_empleado
+            SELECT id_prenda, id_etapa, fecha_inicio, fecha_final, observaciones, id_empleado,
+                   url_imagen, descripcion_imagen
             FROM HIST_ETAPA 
             ORDER BY id_prenda, id_etapa
             """;
@@ -145,7 +136,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
     @Override
     public void update(HistEtapa entity) throws SQLException {
-        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_actualizar_hist_etapa(?, ?, ?, ?, ?, ?)}";  // ✅ 6 parámetros
+        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_actualizar_hist_etapa(?, ?, ?, ?, ?, ?)}";
 
         try (Connection conn = dbConnection.connect();
              CallableStatement stmt = conn.prepareCall(sql)) {
@@ -167,7 +158,6 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
                 stmt.setNull(5, Types.VARCHAR);
             }
 
-            // ✅ NUEVO: ID Empleado
             if (entity.getIdEmpleado() != null && !entity.getIdEmpleado().trim().isEmpty()) {
                 stmt.setString(6, entity.getIdEmpleado());
             } else {
@@ -181,18 +171,7 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
         } catch (SQLException e) {
             System.err.println("✗ Error al actualizar historial de etapa: " + e.getMessage());
-            System.err.println("  Código: " + e.getErrorCode());
-
-            switch (e.getErrorCode()) {
-                case 20042:
-                    throw new SQLException("No existe registro de historial para esa etapa y prenda", e);
-                case 20043:
-                    throw new SQLException("La fecha final no puede ser menor que la fecha de inicio", e);
-                case 20045:
-                    throw new SQLException("El empleado no existe", e);
-                default:
-                    throw e;
-            }
+            throw e;
         }
     }
 
@@ -222,15 +201,38 @@ public class HistEtapaRepositoryImpl implements HistEtapaRepository {
 
         } catch (SQLException e) {
             System.err.println("✗ Error al eliminar historial: " + e.getMessage());
-            System.err.println("  Código: " + e.getErrorCode());
+            throw e;
+        }
+    }
 
-            if (e.getErrorCode() == 20044) {
-                throw new SQLException(
-                        "No existe registro de historial para la prenda '" +
-                                idPrenda + "' y la etapa '" + idEtapa + "'", e
-                );
+    // ✅ NUEVO: Actualizar imagen de etapa
+    public void actualizarImagen(String idPrenda, String idEtapa, String urlImagen, String descripcionImagen) throws SQLException {
+        String sql = "{CALL PKG_HISTORIAL_ETAPAS.sp_actualizar_imagen_etapa(?, ?, ?, ?)}";
+
+        try (Connection conn = dbConnection.connect();
+             CallableStatement stmt = conn.prepareCall(sql)) {
+
+            stmt.setString(1, idPrenda);
+            stmt.setString(2, idEtapa);
+
+            if (urlImagen != null && !urlImagen.trim().isEmpty()) {
+                stmt.setString(3, urlImagen);
+            } else {
+                stmt.setNull(3, Types.VARCHAR);
             }
 
+            if (descripcionImagen != null && !descripcionImagen.trim().isEmpty()) {
+                stmt.setString(4, descripcionImagen);
+            } else {
+                stmt.setNull(4, Types.VARCHAR);
+            }
+
+            stmt.execute();
+
+            System.out.println("✓ Imagen actualizada para prenda: " + idPrenda + ", etapa: " + idEtapa);
+
+        } catch (SQLException e) {
+            System.err.println("✗ Error al actualizar imagen: " + e.getMessage());
             throw e;
         }
     }

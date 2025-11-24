@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.HistorialEtapasController"
+      style="-fx-background-color: white; -fx-background-radius: 12;"
+      prefWidth="700" prefHeight="600">
+
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <!-- Encabezado -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="📜 Historial de Etapas"
+               style="-fx-font-family: 'Poppins', 'Segoe UI', Arial; -fx-font-size: 20px; -fx-font-weight: 700; -fx-text-fill: #181716;"/>
+    </HBox>
+
+    <!-- Información de la prenda -->
+    <VBox spacing="5">
+        <VBox.margin>
+            <Insets top="10" bottom="10"/>
+        </VBox.margin>
+        <Label fx:id="lblPrenda" text="Prenda: Cargando..."
+               style="-fx-font-family: 'Poppins', 'Segoe UI', Arial; -fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+    </VBox>
+
+    <Separator style="-fx-background-color: #E4DFD7;">
+        <VBox.margin>
+            <Insets bottom="15"/>
+        </VBox.margin>
+    </Separator>
+
+    <!-- ScrollPane con Timeline -->
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: transparent; -fx-background: transparent;">
+        <VBox>
+            <!-- Contenedor del Timeline -->
+            <VBox fx:id="timelineContainer" spacing="0">
+                <padding>
+                    <Insets right="10"/>
+                </padding>
+            </VBox>
+
+            <!-- Placeholder cuando no hay historial -->
+            <VBox fx:id="lblSinHistorial" alignment="CENTER" spacing="15"
+                  visible="false" managed="false"
+                  style="-fx-background-color: #F5F5F5; -fx-background-radius: 12; -fx-padding: 40;">
+                <Label text="📋" style="-fx-font-size: 48px;"/>
+                <Label text="No hay historial de etapas"
+                       style="-fx-font-family: 'Poppins', 'Segoe UI', Arial; -fx-font-size: 16px; -fx-font-weight: 600; -fx-text-fill: #9E9E9E;"/>
+                <Label text="Esta prenda aún no tiene etapas asignadas"
+                       style="-fx-font-size: 12px; -fx-text-fill: #BDBDBD;"/>
+            </VBox>
+        </VBox>
+    </ScrollPane>
+
+    <!-- Botón Cerrar -->
+    <HBox alignment="CENTER_RIGHT">
+        <VBox.margin>
+            <Insets top="15"/>
+        </VBox.margin>
+        <Button fx:id="btnCerrar" text="Cerrar"
+                onAction="#handleCerrar"
+                style="-fx-background-color: #61564A; -fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: 600; -fx-background-radius: 8; -fx-padding: 10 30; -fx-cursor: hand;"/>
+    </HBox>
+
+</VBox>

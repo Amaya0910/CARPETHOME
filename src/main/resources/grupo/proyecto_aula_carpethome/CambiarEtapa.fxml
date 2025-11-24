@@ -2,16 +2,19 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
       fx:controller="grupo.proyecto_aula_carpethome.controllers.CambiarEtapaController"
       style="-fx-background-color: white;
              -fx-background-radius: 20;
              -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 20, 0, 0, 5);"
       spacing="0"
       maxWidth="600"
-      prefWidth="600">
+      prefWidth="600"
+      maxHeight="700">
 
     <!-- ENCABEZADO -->
     <HBox alignment="CENTER_LEFT"
@@ -19,13 +22,12 @@
                  -fx-background-radius: 20 20 0 0;
                  -fx-padding: 24 30;">
         <VBox spacing="5" HBox.hgrow="ALWAYS">
-            <Label text="🔄 Cambiar Etapa de Producción"
+            <Label text="📋 Cambiar Etapa"
                    style="-fx-font-size: 24px;
                           -fx-font-weight: 700;
                           -fx-text-fill: white;
                           -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-            <Label fx:id="lblPrenda"
-                   text="Prenda"
+            <Label text="Actualiza la etapa de producción de la prenda"
                    style="-fx-font-size: 13px;
                           -fx-text-fill: #E4DFD7;
                           -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
@@ -44,106 +46,205 @@
                        -fx-min-height: 30;"/>
     </HBox>
 
-    <!-- CONTENIDO DEL FORMULARIO -->
-    <VBox spacing="25" style="-fx-padding: 30;">
+    <!-- CONTENIDO CON SCROLL -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                style="-fx-background-color: white; -fx-background: white;"
+                hbarPolicy="NEVER" vbarPolicy="AS_NEEDED">
 
-        <!-- ETAPA ACTUAL -->
-        <VBox spacing="15">
-            <Label text="📍 Etapa Actual"
-                   style="-fx-font-size: 16px;
-                          -fx-font-weight: 700;
-                          -fx-text-fill: #61564A;
-                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        <VBox spacing="20" style="-fx-padding: 30;">
 
-            <HBox alignment="CENTER_LEFT"
-                  spacing="15"
-                  style="-fx-background-color: #F5F5F5;
-                         -fx-background-radius: 12;
-                         -fx-padding: 18 20;
-                         -fx-border-color: #E0E0E0;
-                         -fx-border-width: 1.5;
-                         -fx-border-radius: 12;">
-                <Label text="📌"
-                       style="-fx-font-size: 20px;"/>
-                <VBox spacing="3">
-                    <Label text="Estado actual del proceso:"
-                           style="-fx-font-size: 11px;
-                                  -fx-text-fill: #A59B8F;
-                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-                    <Label fx:id="lblEtapaActual"
-                           text="Etapa"
-                           style="-fx-font-size: 16px;
-                                  -fx-font-weight: 700;
-                                  -fx-text-fill: #61564A;
-                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-                </VBox>
-            </HBox>
-        </VBox>
-
-        <Separator style="-fx-background-color: #E0E0E0;"/>
-
-        <!-- NUEVA ETAPA -->
-        <VBox spacing="15">
-            <Label text="🎯 Nueva Etapa"
-                   style="-fx-font-size: 16px;
-                          -fx-font-weight: 700;
-                          -fx-text-fill: #61564A;
-                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-
+            <!-- INFORMACIÓN DE LA PRENDA -->
             <VBox spacing="8">
-                <Label text="Seleccione la siguiente etapa del proceso *"
+                <Label text="Prenda"
+                       style="-fx-font-size: 12px;
+                              -fx-font-weight: 600;
+                              -fx-text-fill: #666;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                <Label fx:id="lblPrenda" text="Cargando..."
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #181716;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            </VBox>
+
+            <Separator style="-fx-background-color: #E4DFD7;"/>
+
+            <!-- ETAPA ACTUAL -->
+            <VBox fx:id="containerEtapaActual" spacing="12"
+                  style="-fx-background-color: #F5F5F5;
+                         -fx-background-radius: 10;
+                         -fx-padding: 20;">
+
+                <Label text="Etapa Actual"
                        style="-fx-font-size: 13px;
                               -fx-font-weight: 600;
                               -fx-text-fill: #61564A;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <HBox spacing="15" alignment="TOP_LEFT">
+                    <!-- Imagen de la etapa actual -->
+                    <VBox spacing="5" alignment="CENTER">
+                        <StackPane style="-fx-background-color: white;
+                                          -fx-background-radius: 8;
+                                          -fx-padding: 8;
+                                          -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);">
+                            <ImageView fx:id="imgEtapaActual"
+                                       fitWidth="120" fitHeight="120"
+                                       preserveRatio="true" smooth="true"/>
+                        </StackPane>
+                        <Label fx:id="lblDescripcionImagenActual" text="Sin imagen"
+                               wrapText="true" maxWidth="120" textAlignment="CENTER"
+                               style="-fx-font-size: 10px;
+                                      -fx-text-fill: #757575;"/>
+                    </VBox>
+
+                    <!-- Info de etapa actual -->
+                    <VBox spacing="8" VBox.vgrow="ALWAYS">
+                        <Label fx:id="lblEtapaActual" text="Cargando..."
+                               style="-fx-font-size: 16px;
+                                      -fx-font-weight: 700;
+                                      -fx-text-fill: #181716;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                        <Label fx:id="lblDescripcionEtapaActual" text=""
+                               wrapText="true"
+                               style="-fx-font-size: 12px;
+                                      -fx-text-fill: #666;"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <Separator style="-fx-background-color: #E4DFD7;"/>
+
+            <!-- NUEVA ETAPA -->
+            <VBox spacing="10">
+                <Label text="Nueva Etapa *"
+                       style="-fx-font-size: 14px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #181716;
                               -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
                 <ComboBox fx:id="comboNuevaEtapa"
-                          promptText="Seleccione una etapa"
-                          style="-fx-background-color: #F5F5F5;
-                                 -fx-background-radius: 10;
-                                 -fx-font-size: 14px;
-                                 -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-                                 -fx-padding: 12 16;"
                           maxWidth="Infinity"
-                          prefHeight="45"/>
-            </VBox>
-        </VBox>
-
-        <Separator style="-fx-background-color: #E0E0E0;"/>
-
-        <!-- OBSERVACIONES -->
-        <VBox spacing="15">
-            <Label text="📝 Observaciones"
-                   style="-fx-font-size: 16px;
-                          -fx-font-weight: 700;
-                          -fx-text-fill: #61564A;
-                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-
-            <VBox spacing="8">
-                <Label text="Comentarios adicionales sobre el cambio (opcional)"
-                       style="-fx-font-size: 13px;
-                              -fx-font-weight: 600;
-                              -fx-text-fill: #61564A;
-                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
-                <TextArea fx:id="txtObservaciones"
-                          promptText="Ej: Se completó el corte de tela según las especificaciones..."
-                          wrapText="true"
-                          prefRowCount="4"
+                          promptText="Seleccione una etapa"
                           style="-fx-background-color: #F5F5F5;
                                  -fx-background-radius: 10;
                                  -fx-border-color: transparent;
                                  -fx-border-radius: 10;
                                  -fx-padding: 12 16;
                                  -fx-font-size: 14px;
-                                 -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
-                                 -fx-text-fill: #181716;
-                                 -fx-prompt-text-fill: #A59B8F;"/>
+                                 -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                <Label fx:id="lblDescripcionNuevaEtapa" text=""
+                       wrapText="true"
+                       style="-fx-font-size: 11px;
+                              -fx-text-fill: #757575;
+                              -fx-font-style: italic;"/>
             </VBox>
-        </VBox>
 
-    </VBox>
+            <!-- OBSERVACIONES DE CIERRE -->
+            <VBox spacing="10">
+                <Label text="Observaciones de Cierre *"
+                       style="-fx-font-size: 14px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #181716;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                <TextArea fx:id="txtObservaciones"
+                          promptText="Ingrese observaciones sobre el cierre de la etapa actual..."
+                          wrapText="true"
+                          prefRowCount="3"
+                          style="-fx-background-color: #F5F5F5;
+                                 -fx-background-radius: 10;
+                                 -fx-border-color: transparent;
+                                 -fx-border-radius: 10;
+                                 -fx-padding: 12 16;
+                                 -fx-font-size: 13px;
+                                 -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                <Label text="* Requerido al cambiar de etapa"
+                       style="-fx-font-size: 10px;
+                              -fx-text-fill: #D32F2F;"/>
+            </VBox>
+
+            <!-- SECCIÓN DE IMAGEN PARA NUEVA ETAPA -->
+            <VBox spacing="12"
+                  style="-fx-background-color: #E3F2FD;
+                         -fx-background-radius: 10;
+                         -fx-padding: 20;">
+
+                <Label text="🖼️ Imagen de Referencia (Opcional)"
+                       style="-fx-font-size: 13px;
+                              -fx-font-weight: 600;
+                              -fx-text-fill: #1565C0;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Button fx:id="btnSeleccionarImagen"
+                            text="📁 Seleccionar"
+                            onAction="#handleSeleccionarImagen"
+                            style="-fx-background-color: #61564A;
+                                   -fx-text-fill: white;
+                                   -fx-font-size: 12px;
+                                   -fx-font-weight: 600;
+                                   -fx-background-radius: 8;
+                                   -fx-padding: 10 20;
+                                   -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);"/>
+
+                    <VBox spacing="3" HBox.hgrow="ALWAYS">
+                        <Label fx:id="lblNombreArchivo"
+                               text="No se ha seleccionado ninguna imagen"
+                               style="-fx-font-size: 11px;
+                                      -fx-text-fill: #666;"/>
+                        <Label text="Formatos: JPG, PNG, GIF | Máx: 5MB"
+                               style="-fx-font-size: 9px;
+                                      -fx-text-fill: #999;"/>
+                    </VBox>
+
+                    <Button fx:id="btnQuitarImagen"
+                            text="✕"
+                            onAction="#handleQuitarImagen"
+                            visible="false"
+                            style="-fx-background-color: #F44336;
+                                   -fx-text-fill: white;
+                                   -fx-font-size: 14px;
+                                   -fx-font-weight: 700;
+                                   -fx-background-radius: 50%;
+                                   -fx-min-width: 28;
+                                   -fx-min-height: 28;
+                                   -fx-cursor: hand;"/>
+                </HBox>
+
+                <!-- Preview de imagen -->
+                <VBox spacing="8" alignment="CENTER">
+                    <StackPane style="-fx-background-color: white;
+                                      -fx-background-radius: 8;
+                                      -fx-padding: 8;">
+                        <ImageView fx:id="imgPreview"
+                                   fitWidth="180" fitHeight="180"
+                                   preserveRatio="true" smooth="true"/>
+                    </StackPane>
+                </VBox>
+
+                <!-- Descripción de imagen -->
+                <VBox spacing="8">
+                    <Label text="Descripción de la Imagen"
+                           style="-fx-font-size: 11px;
+                                  -fx-font-weight: 600;
+                                  -fx-text-fill: #1565C0;"/>
+                    <TextField fx:id="txtDescripcionImagen"
+                               promptText="Ej: Patrón base de corte..."
+                               style="-fx-background-color: white;
+                                      -fx-background-radius: 8;
+                                      -fx-border-color: #BBDEFB;
+                                      -fx-border-radius: 8;
+                                      -fx-padding: 10 14;
+                                      -fx-font-size: 12px;"/>
+                </VBox>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
 
     <!-- BOTONES DE ACCIÓN -->
-    <HBox spacing="15" alignment="CENTER_RIGHT"
+    <HBox spacing="15"
+          alignment="CENTER_RIGHT"
           style="-fx-padding: 20 30 30 30;
                  -fx-background-color: white;
                  -fx-background-radius: 0 0 20 20;">

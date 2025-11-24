@@ -30,16 +30,11 @@ import java.util.Optional;
 
 public class GestionPrendasController {
 
-    @FXML
-    private Label lblProyecto;
-    @FXML
-    private VBox contenedorPrendas;
-    @FXML
-    private VBox placeholderPrendas;
-    @FXML
-    private Button btnAgregarPrenda;
-    @FXML
-    private Button btnCerrar;
+    @FXML private Label lblProyecto;
+    @FXML private VBox contenedorPrendas;
+    @FXML private VBox placeholderPrendas;
+    @FXML private Button btnAgregarPrenda;
+    @FXML private Button btnCerrar;
 
     private PrendaService prendaService;
     private Proyecto proyectoActual;
@@ -87,37 +82,30 @@ public class GestionPrendasController {
      */
     private void cambiarEtapaPrenda(Prenda prenda) {
         try {
-            // Cargar el FXML del modal
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/grupo/proyecto_aula_carpethome/CambiarEtapa.fxml")
             );
             Parent root = loader.load();
 
-            // Obtener el controlador y configurarlo
             CambiarEtapaController controller = loader.getController();
             controller.setParentController(this);
             controller.cargarPrenda(prenda);
 
-            // Crear el Stage modal
             Stage modalStage = new Stage();
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initStyle(StageStyle.DECORATED);
             modalStage.setTitle("Cambiar Etapa - " + prenda.getNombrePrenda());
 
-            // Crear la escena
             Scene scene = new Scene(root);
             modalStage.setScene(scene);
 
-            // Configurar tamaño
-            modalStage.setMinWidth(500);
-            modalStage.setMinHeight(450);
+            modalStage.setMinWidth(600);
+            modalStage.setMinHeight(600);
             modalStage.setResizable(false);
 
-            // Centrar y mostrar
             modalStage.centerOnScreen();
             modalStage.showAndWait();
 
-            // Después de cerrar el modal, recargar las prendas
             cargarPrendas();
 
         } catch (IOException e) {
@@ -126,7 +114,39 @@ public class GestionPrendasController {
         }
     }
 
+    /**
+     * ✅ NUEVO: Abre el modal para ver el historial de etapas de una prenda
+     */
+    private void verHistorialPrenda(Prenda prenda) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/grupo/proyecto_aula_carpethome/HistorialEtapas.fxml")
+            );
+            Parent root = loader.load();
 
+            HistorialEtapasController controller = loader.getController();
+            controller.cargarPrenda(prenda);
+
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initStyle(StageStyle.DECORATED);
+            modalStage.setTitle("Historial de Etapas - " + prenda.getNombrePrenda());
+
+            Scene scene = new Scene(root);
+            modalStage.setScene(scene);
+
+            modalStage.setMinWidth(750);
+            modalStage.setMinHeight(650);
+            modalStage.setResizable(true);
+
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarError("Error", "No se pudo abrir el historial de etapas: " + e.getMessage());
+        }
+    }
 
     private VBox crearTarjetaPrenda(Prenda prenda) {
         VBox card = new VBox(12);
@@ -154,11 +174,19 @@ public class GestionPrendasController {
         HBox acciones = new HBox(8);
         acciones.setAlignment(Pos.CENTER_RIGHT);
 
-        Button btnCambiarEtapa = crearBotonAccion("📋", () -> cambiarEtapaPrenda(prenda));
-        Button btnEditar = crearBotonAccion("✏️", () -> editarPrenda(prenda));
-        Button btnEliminar = crearBotonAccion("🗑️", () -> eliminarPrenda(prenda));
+        Button btnHistorial = crearBotonAccion("📜", () -> verHistorialPrenda(prenda));
+        btnHistorial.setTooltip(new Tooltip("Ver Historial de Etapas"));
 
-        acciones.getChildren().addAll(btnCambiarEtapa, btnEditar, btnEliminar);
+        Button btnCambiarEtapa = crearBotonAccion("📋", () -> cambiarEtapaPrenda(prenda));
+        btnCambiarEtapa.setTooltip(new Tooltip("Cambiar Etapa"));
+
+        Button btnEditar = crearBotonAccion("✏️", () -> editarPrenda(prenda));
+        btnEditar.setTooltip(new Tooltip("Editar Prenda"));
+
+        Button btnEliminar = crearBotonAccion("🗑️", () -> eliminarPrenda(prenda));
+        btnEliminar.setTooltip(new Tooltip("Eliminar Prenda"));
+
+        acciones.getChildren().addAll(btnHistorial, btnCambiarEtapa, btnEditar, btnEliminar);
         header.getChildren().addAll(lblNombre, acciones);
 
         // Descripción
@@ -302,9 +330,8 @@ public class GestionPrendasController {
             scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
             modalStage.setScene(scene);
 
-            modalStage.setScene(scene);
-            modalStage.setMaxWidth(900);  // Ancho máximo
-            modalStage.setMaxHeight(800); // Alto máximo
+            modalStage.setMaxWidth(900);
+            modalStage.setMaxHeight(800);
             modalStage.setResizable(false);
 
             modalStage.centerOnScreen();
@@ -342,7 +369,6 @@ public class GestionPrendasController {
         stage.close();
     }
 
-    // Efectos hover
     @FXML
     private void handleAgregarHover(MouseEvent event) {
         btnAgregarPrenda.setStyle(btnAgregarPrenda.getStyle() + "-fx-background-color: #4a433e;");
