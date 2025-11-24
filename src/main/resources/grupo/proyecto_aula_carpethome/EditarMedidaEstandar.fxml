@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.EditarMedidaEstandarController"
+      style="-fx-background-color: white;
+             -fx-background-radius: 20;
+             -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 20, 0, 0, 5);"
+      spacing="0"
+      maxWidth="700"
+      prefWidth="700">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT"
+          style="-fx-background-color: #61564A;
+                 -fx-background-radius: 20 20 0 0;
+                 -fx-padding: 24 30;">
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="✏️ Editar Medida Estándar"
+                   style="-fx-font-size: 24px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: white;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label fx:id="lblIdMedida"
+                   text="ID: MED-001"
+                   style="-fx-font-size: 13px;
+                          -fx-text-fill: #E4DFD7;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <Button fx:id="btnCerrar"
+                text="✕"
+                onAction="#handleCerrar"
+                style="-fx-background-color: transparent;
+                       -fx-text-fill: white;
+                       -fx-font-size: 24px;
+                       -fx-font-weight: 700;
+                       -fx-cursor: hand;
+                       -fx-padding: 0;
+                       -fx-min-width: 30;
+                       -fx-min-height: 30;"/>
+    </HBox>
+
+    <!-- CONTENIDO DEL FORMULARIO -->
+    <ScrollPane fitToWidth="true"
+                style="-fx-background-color: white;
+                       -fx-background: white;"
+                VBox.vgrow="ALWAYS">
+        <VBox spacing="25" style="-fx-padding: 30;">
+
+            <!-- INFORMACIÓN BÁSICA -->
+            <VBox spacing="15">
+                <Label text="📋 Información Básica"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #61564A;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <VBox spacing="8">
+                    <Label text="Nombre de la Talla *"
+                           style="-fx-font-size: 13px;
+                                  -fx-font-weight: 600;
+                                  -fx-text-fill: #61564A;
+                                  -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                    <TextField fx:id="txtNombre"
+                               promptText="Ej: XS, S, M, L, XL, XXL..."
+                               style="-fx-background-color: #F5F5F5;
+                                      -fx-background-radius: 10;
+                                      -fx-border-color: transparent;
+                                      -fx-border-radius: 10;
+                                      -fx-padding: 12 16;
+                                      -fx-font-size: 14px;
+                                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+                </VBox>
+            </VBox>
+
+            <Separator style="-fx-background-color: #E0E0E0;"/>
+
+            <!-- MEDIDAS DEL TORSO -->
+            <VBox spacing="15">
+                <Label text="👕 Medidas del Torso"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #61564A;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                    </columnConstraints>
+
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Contorno Busto (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtCBusto" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Contorno Cintura (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtCCintura" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Contorno Cadera (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtCCadera" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="Altura Busto (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtAlturaBusto" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="Separación Busto (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtSeparacionBusto" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Label text="Radio Busto (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtRadioBusto" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                        <Label text="Bajo Busto (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtBajoBusto" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+            <Separator style="-fx-background-color: #E0E0E0;"/>
+
+            <!-- MEDIDAS DE LARGO -->
+            <VBox spacing="15">
+                <Label text="📏 Medidas de Largo"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: 700;
+                              -fx-text-fill: #61564A;
+                              -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                        <ColumnConstraints percentWidth="33.33"/>
+                    </columnConstraints>
+
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label text="Largo Falda (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtLargoFalda" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Label text="Largo Cadera (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtLargoCadera" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Label text="Largo Vestido (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtLargoVestido" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label text="Largo Pantalón (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtLargoPantalon" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+
+                    <VBox spacing="8" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label text="Largo Manga (cm)"
+                               style="-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #61564A;"/>
+                        <TextField fx:id="txtLargoManga" promptText="0.00"
+                                   style="-fx-background-color: #F5F5F5; -fx-background-radius: 10; -fx-padding: 12 16; -fx-font-size: 14px;"/>
+                    </VBox>
+                </GridPane>
+            </VBox>
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- BOTONES DE ACCIÓN -->
+    <HBox spacing="15" alignment="CENTER_RIGHT"
+          style="-fx-padding: 20 30 30 30;
+                 -fx-background-color: white;
+                 -fx-background-radius: 0 0 20 20;">
+
+        <Button text="Cancelar"
+                onAction="#handleCerrar"
+                style="-fx-background-color: #E4DFD7;
+                       -fx-text-fill: #61564A;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 6, 0, 0, 2);"/>
+
+        <Button fx:id="btnGuardar"
+                text="💾 Guardar Cambios"
+                onAction="#handleGuardar"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 12 32;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"/>
+    </HBox>
+
+</VBox>

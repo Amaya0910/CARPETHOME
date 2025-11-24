@@ -24,7 +24,8 @@ public class MenuController {
     @FXML private Label lblUserName;
     @FXML private Label lblUserRole;
     @FXML private Button btnProjects;
-    @FXML private Button btnEtapas;  // ✨ NUEVO
+    @FXML private Button btnEtapas;
+    @FXML private Button btnMedidas;  // ✨ NUEVO
     @FXML private Button btnClients;
     @FXML private Button btnUsers;
     @FXML private Button btnStatistics;
@@ -93,6 +94,14 @@ public class MenuController {
         System.out.println("Gestión de Etapas seleccionada");
         selectButton(btnEtapas);
         loadView("GestionEtapas.fxml");
+    }
+
+    // ✨ NUEVO: Handler para Medidas Estándar
+    @FXML
+    private void handleMedidasClick() {
+        System.out.println("Medidas Estándar seleccionada");
+        selectButton(btnMedidas);
+        loadView("GestionMedidasEstandar.fxml");
     }
 
     @FXML

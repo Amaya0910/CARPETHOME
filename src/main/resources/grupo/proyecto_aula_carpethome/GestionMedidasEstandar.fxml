@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="grupo.proyecto_aula_carpethome.controllers.GestionMedidasEstandarController"
+      style="-fx-background-color: #E4DFD7;"
+      spacing="0">
+
+    <!-- ENCABEZADO -->
+    <HBox alignment="CENTER_LEFT" spacing="20"
+          style="-fx-background-color: white;
+                 -fx-padding: 30 40;
+                 -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 8, 0, 0, 2);">
+
+        <VBox spacing="5" HBox.hgrow="ALWAYS">
+            <Label text="📐 Medidas Estándar"
+                   style="-fx-font-size: 28px;
+                          -fx-font-weight: 700;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+            <Label text="Gestiona las tallas estándar del sistema (XXS, XS, S, M, L, XL, XXL)"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+        </VBox>
+
+        <Button fx:id="btnAgregarMedida"
+                text="+ Nueva Medida"
+                onAction="#handleAgregarMedida"
+                style="-fx-background-color: #61564A;
+                       -fx-text-fill: white;
+                       -fx-font-size: 14px;
+                       -fx-font-weight: 600;
+                       -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                       -fx-background-radius: 10;
+                       -fx-cursor: hand;
+                       -fx-padding: 14 28;
+                       -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 8, 0, 0, 2);"
+                onMouseEntered="#handleAgregarHover"
+                onMouseExited="#handleAgregarExit"/>
+    </HBox>
+
+    <!-- BARRA DE BÚSQUEDA -->
+    <HBox alignment="CENTER_LEFT" spacing="15"
+          style="-fx-background-color: white;
+                 -fx-padding: 20 40;
+                 -fx-border-color: #E0E0E0;
+                 -fx-border-width: 0 0 1 0;">
+
+        <TextField fx:id="searchField"
+                   promptText="🔍 Buscar medida por nombre o talla..."
+                   style="-fx-background-color: #F5F5F5;
+                          -fx-background-radius: 10;
+                          -fx-border-color: transparent;
+                          -fx-border-radius: 10;
+                          -fx-padding: 12 16;
+                          -fx-font-size: 14px;
+                          -fx-pref-width: 350;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label fx:id="lblContador" text="0 medidas"
+               style="-fx-font-size: 13px;
+                      -fx-text-fill: #61564A;
+                      -fx-font-weight: 600;
+                      -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+    </HBox>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <StackPane VBox.vgrow="ALWAYS" style="-fx-padding: 30 40;">
+
+        <!-- Lista de medidas -->
+        <ScrollPane fx:id="scrollPane"
+                    fitToWidth="true"
+                    style="-fx-background-color: transparent;
+                           -fx-background: transparent;"
+                    VBox.vgrow="ALWAYS">
+            <VBox fx:id="medidasContainer"
+                  spacing="18"
+                  style="-fx-padding: 5;"/>
+        </ScrollPane>
+
+        <!-- Estado vacío -->
+        <VBox fx:id="emptyStateContainer"
+              alignment="CENTER"
+              spacing="20"
+              visible="false"
+              managed="false"
+              style="-fx-padding: 60;">
+
+            <Label text="📐"
+                   style="-fx-font-size: 80px;"/>
+
+            <Label text="No hay medidas estándar registradas"
+                   style="-fx-font-size: 20px;
+                          -fx-font-weight: 600;
+                          -fx-text-fill: #181716;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+            <Label text="Comienza agregando las tallas estándar del sistema"
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #A59B8F;
+                          -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;"/>
+
+            <Button text="+ Nueva Medida Estándar"
+                    onAction="#handleAgregarMedida"
+                    style="-fx-background-color: #61564A;
+                           -fx-text-fill: white;
+                           -fx-font-size: 14px;
+                           -fx-font-weight: 600;
+                           -fx-font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+                           -fx-background-radius: 10;
+                           -fx-cursor: hand;
+                           -fx-padding: 14 32;"/>
+        </VBox>
+
+    </StackPane>
+
+</VBox>
